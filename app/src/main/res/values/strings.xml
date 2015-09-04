@@ -3,4 +3,20 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <string name="matt">Matt</string>
+    <string name="steven">Steven</string>
+    <string name="cole">Cole</string>
+    <string name="connor">Connor</string>
+    <string name="mosa">Mosa</string>
+    <string name="nelson">Nelson</string>
+    <string name="rayan">Rayan</string>
+    <string name="thomas">Thomas</string>
+    <string name="wenxi">Wenxi</string>
+
+    <string name="set_listener">Please set your on click listener</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

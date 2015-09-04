@@ -1,17 +1,36 @@
-package edu.uco.schambers.classmate;
+package edu.uco.schambers.classmate.Activites;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
-public class MainActivity extends Activity {
+import edu.uco.schambers.classmate.Fragments.Debug;
+import edu.uco.schambers.classmate.Fragments.StudentResponse;
+import edu.uco.schambers.classmate.R;
+
+
+public class MainActivity extends Activity implements StudentResponse.OnFragmentInteractionListener
+{
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FragmentTransaction trans = getFragmentManager().beginTransaction();
+        Fragment debugFragment = new Debug();
+        trans.replace(R.id.fragment_container, debugFragment);
+        trans.commit();
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -33,5 +52,10 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onFragmentInteraction(Uri uri)
+    {
+        //todo
     }
 }
