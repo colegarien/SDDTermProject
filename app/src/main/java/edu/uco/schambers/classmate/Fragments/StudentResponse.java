@@ -7,6 +7,13 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import edu.uco.schambers.classmate.R;
 
@@ -28,6 +35,11 @@ public class StudentResponse extends Fragment
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    //UI Components
+    private RadioGroup radioGroup;
+    private Button sendBtn;
+    private TextView questionText;
 
     private OnFragmentInteractionListener mListener;
 
@@ -71,7 +83,37 @@ public class StudentResponse extends Fragment
                              Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_student_response, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_student_response, container, false);
+        initUI(rootView);
+        return rootView;
+    }
+
+    private void initUI(final View rootView)
+    {
+        radioGroup = (RadioGroup) rootView.findViewById(R.id.radio_response_group);
+        sendBtn = (Button) rootView.findViewById(R.id.btn_send_question_response);
+        questionText = (TextView) rootView.findViewById(R.id.response_card_question_text);
+        sendBtn.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                int selectedId = radioGroup.getCheckedRadioButtonId();
+                RadioButton selectedButton = (RadioButton) rootView.findViewById(selectedId);
+                if (selectedButton != null)
+                {
+                    sendResponse(selectedButton.getText());
+                }
+            }
+        });
+    }
+
+    private void sendResponse(CharSequence text)
+    {
+        //TODO implement send method
+
+        //placeholder toast
+        Toast.makeText(getActivity(), String.format("You selected option %s",text), Toast.LENGTH_SHORT).show();
     }
 
     /**

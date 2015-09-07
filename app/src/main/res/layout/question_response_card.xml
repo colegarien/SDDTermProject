@@ -19,7 +19,7 @@
             >
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/response_card_question_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -30,7 +30,7 @@
                 android:id="@+id/radio_response_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/textView"
+                android:layout_below="@+id/response_card_question_text"
                 android:layout_margin="16dp"
                 >
 
