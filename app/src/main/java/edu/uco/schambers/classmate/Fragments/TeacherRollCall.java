@@ -7,6 +7,10 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import edu.uco.schambers.classmate.R;
 
@@ -27,6 +31,12 @@ public class TeacherRollCall extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    //UI Components
+    private Button startBtn;
+    private EditText teacherText;
+    private EditText classText;
+    private ListView connectedList;
 
     private OnFragmentInteractionListener mListener;
 
@@ -65,7 +75,25 @@ public class TeacherRollCall extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_teacher_roll_call, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_teacher_roll_call, container, false);
+        initUI(rootView);
+        return rootView;
+    }
+
+
+    private void initUI(final View rootView)
+    {
+        startBtn = (Button) rootView.findViewById(R.id.btn_start_roll_call);
+        teacherText = (EditText) rootView.findViewById(R.id.txt_rc_teacher);
+        classText = (EditText) rootView.findViewById(R.id.txt_rc_class);
+        connectedList = (ListView) rootView.findViewById(R.id.list_connected);
+        startBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /// TODO: Intialize Roll Call Service
+                Toast.makeText(getActivity(), String.format("Teacher, %s, started Class, %s",teacherText.getText(),classText.getText()), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -145,9 +145,8 @@ public class Debug extends Fragment
             @Override
             public void onClick(View v)
             {
-                showRequestToast();
-                //create an instance of your fragment here and pass it to the next function
-                launchFragment(null);
+                Fragment teacherRollCall = TeacherRollCall.newInstance("test","test");
+                launchFragment(teacherRollCall);
             }
         });
 
