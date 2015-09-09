@@ -12,11 +12,12 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import edu.uco.schambers.classmate.Fragments.Debug;
+import edu.uco.schambers.classmate.Fragments.Login;
 import edu.uco.schambers.classmate.Fragments.StudentResponse;
 import edu.uco.schambers.classmate.R;
 
 
-public class MainActivity extends Activity implements StudentResponse.OnFragmentInteractionListener
+public class MainActivity extends Activity implements StudentResponse.OnFragmentInteractionListener, Login.OnFragmentInteractionListener
 {
 
 
@@ -26,6 +27,7 @@ public class MainActivity extends Activity implements StudentResponse.OnFragment
         setContentView(R.layout.activity_main);
         FragmentTransaction trans = getFragmentManager().beginTransaction();
         Fragment debugFragment = new Debug();
+        Fragment login = new Login();
         trans.replace(R.id.fragment_container, debugFragment);
         trans.commit();
     }
