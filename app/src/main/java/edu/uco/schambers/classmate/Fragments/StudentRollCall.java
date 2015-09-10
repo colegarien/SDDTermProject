@@ -4,6 +4,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -65,6 +68,41 @@ public class StudentRollCall extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        final MenuItem mute = menu.add("Mute when checked-in");
+        mute.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+
+        final MenuItem vibrate = menu.add("Vibrate when checked-in");
+        vibrate.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        vibrate.setVisible(!mute.isVisible());
+
+        mute.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                vibrate.setVisible(true);
+                mute.setVisible(false);
+
+                return true;
+            }
+        });
+
+        vibrate.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                vibrate.setVisible(false);
+                mute.setVisible(true);
+
+                return true;
+            }
+        });
     }
 
     @Override
