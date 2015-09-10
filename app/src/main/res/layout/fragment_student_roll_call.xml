@@ -1,0 +1,26 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="edu.uco.schambers.classmate.Fragments.StudentRollCall">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity ="center">
+
+        <Button android:id="@+id/btn_check_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/btn_check_in" />
+
+        <TextView
+            android:id="@+id/lbl_checkin_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/btn_check_in"
+            android:layout_marginTop="10dp"
+            android:text="@string/lbl_status_not_connected"/>
+    </RelativeLayout >
+</FrameLayout>
