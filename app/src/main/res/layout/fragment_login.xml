@@ -14,16 +14,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="LOGIN"
-            android:id="@+id/Login_Lbl"
+            android:text="@string/signup"
+            android:id="@+id/Signup_lbl"
             android:layout_gravity="center_horizontal" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="user name:"
-            android:id="@+id/username_lbl"
+            android:text="@string/name"
+            android:id="@+id/name_lbl"
             android:layout_gravity="center_horizontal" />
 
         <EditText
@@ -38,33 +38,48 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="password:"
-            android:id="@+id/password_lbl"
+            android:text="@string/student_id"
+            android:id="@+id/studentID_lbl"
             android:layout_gravity="center_horizontal" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
+            android:inputType="number"
             android:ems="10"
-            android:id="@+id/password_et"
+            android:id="@+id/studentID_et"
             android:layout_gravity="center_horizontal" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Login"
+            android:text="@string/signup"
             android:id="@+id/login_btn"
+            android:layout_gravity="center_horizontal" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Student"
+            android:id="@+id/student_cb"
+            android:layout_gravity="center_horizontal"
+            android:checked="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="name label"
+            android:id="@+id/storedName_lbl"
             android:layout_gravity="center_horizontal" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="sign-up"
-            android:id="@+id/signup_btn"
-            android:layout_gravity="center_horizontal"
-            android:clickable="true" />
+            android:text="id label"
+            android:id="@+id/storedID_lbl"
+            android:layout_gravity="center_horizontal" />
 
     </LinearLayout>
 
