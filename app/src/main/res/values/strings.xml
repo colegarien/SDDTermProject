@@ -34,4 +34,9 @@
     <string name="lbl_rc_class">Class</string>
     <string name="lbl_rc_connected">Connected Students</string>
 
+
+    <!--Student Roll Call UI Strings-->
+    <string name="btn_check_in">Check in</string>
+    <string name="lbl_status_checked_in">You have checked-in</string>
+    <string name="lbl_status_not_connected">Not connected</string>
 </resources>
