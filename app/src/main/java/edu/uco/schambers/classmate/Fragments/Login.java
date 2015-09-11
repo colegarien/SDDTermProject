@@ -2,17 +2,21 @@ package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.util.Log;
 
-import java.util.PriorityQueue;
 
 import edu.uco.schambers.classmate.R;
+
+import static android.widget.Toast.makeText;
 
 
 /**
@@ -34,6 +38,11 @@ public class Login extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    //ui components
+    private CheckBox cb;
+    private EditText idET;
+    private TextView idTV;
 
 
     /**
@@ -66,7 +75,6 @@ public class Login extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-
     }
 
 
@@ -74,7 +82,9 @@ public class Login extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_login, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+        initUI(rootView);
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -83,6 +93,30 @@ public class Login extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
+
+    private void initUI(final View rootView) {
+
+        cb = (CheckBox) rootView.findViewById(R.id.student_cb);
+        idET = (EditText) rootView.findViewById(R.id.student_id_et);
+        idTV = (TextView) rootView.findViewById(R.id.student_id_lbl);
+        cb.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if (!cb.isChecked())
+                {
+                    idET.setVisibility(View.INVISIBLE);
+                    idTV.setVisibility(View.INVISIBLE);
+                }else{
+                    idET.setVisibility(View.VISIBLE);
+                    idTV.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+    }
+
 
     @Override
     public void onAttach(Activity activity) {

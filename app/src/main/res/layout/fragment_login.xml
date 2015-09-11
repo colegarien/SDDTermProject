@@ -1,6 +1,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context="edu.uco.schambers.classmate.Fragments.Login">
+    android:layout_height="match_parent" tools:context="edu.uco.schambers.classmate.Fragments.Login"
+    android:clickable="true"
+    android:nestedScrollingEnabled="true"
+    android:onClick="cbClick">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -39,7 +42,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/student_id"
-            android:id="@+id/studentID_lbl"
+            android:id="@+id/student_id_lbl"
             android:layout_gravity="center_horizontal" />
 
         <EditText
@@ -47,7 +50,7 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:ems="10"
-            android:id="@+id/studentID_et"
+            android:id="@+id/student_id_et"
             android:layout_gravity="center_horizontal" />
 
         <Button
@@ -63,14 +66,15 @@
             android:text="Student"
             android:id="@+id/student_cb"
             android:layout_gravity="center_horizontal"
-            android:checked="true" />
+            android:checked="true"
+            android:nestedScrollingEnabled="true" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="name label"
-            android:id="@+id/storedName_lbl"
+            android:id="@+id/stored_name_lbl"
             android:layout_gravity="center_horizontal" />
 
         <TextView
@@ -78,7 +82,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="id label"
-            android:id="@+id/storedID_lbl"
+            android:id="@+id/stored_id_lbl"
             android:layout_gravity="center_horizontal" />
 
     </LinearLayout>
