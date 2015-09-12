@@ -7,16 +7,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
+import edu.uco.schambers.classmate.BroadcastReceivers.CallForStudentQuestionResponseReceiver;
 import edu.uco.schambers.classmate.Fragments.Debug;
-import edu.uco.schambers.classmate.Fragments.StudentResponse;
+import edu.uco.schambers.classmate.Fragments.StudentResponseFragment;
 import edu.uco.schambers.classmate.R;
 
 
-public class MainActivity extends Activity implements StudentResponse.OnFragmentInteractionListener
+public class MainActivity extends Activity implements StudentResponseFragment.OnFragmentInteractionListener
 {
 
 
@@ -24,12 +22,31 @@ public class MainActivity extends Activity implements StudentResponse.OnFragment
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FragmentTransaction trans = getFragmentManager().beginTransaction();
-        Fragment debugFragment = new Debug();
-        trans.replace(R.id.fragment_container, debugFragment);
-        trans.commit();
+
+        String intentAction = getIntent().getAction();
+        startFragmentAccordingToIntentAction(intentAction);
+
     }
 
+    private void startFragmentAccordingToIntentAction(String intentAction)
+    {
+        FragmentTransaction trans = getFragmentManager().beginTransaction();
+        switch(intentAction)
+        {
+
+            case CallForStudentQuestionResponseReceiver.ACTION_REQUEST_QUESTION_RESPONSE:
+                StudentResponseFragment studentResponseFragment= new StudentResponseFragment();
+                trans.replace(R.id.fragment_container,studentResponseFragment);
+                break;
+
+            default:
+                Fragment debugFragment = new Debug();
+                trans.replace(R.id.fragment_container, debugFragment);
+                break;
+
+        }
+        trans.commit();
+    }
 
 
     @Override
