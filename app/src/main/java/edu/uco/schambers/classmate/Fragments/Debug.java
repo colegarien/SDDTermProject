@@ -67,8 +67,9 @@ public class Debug extends Fragment
             @Override
             public void onClick(View v)
             {
-                Fragment login = Login.newInstance("test", "test");
-                launchFragment(login);
+                showRequestToast();
+                //create an instance of your fragment here and pass it to the next function
+                launchFragment(null);
             }
         });
 
