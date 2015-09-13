@@ -24,6 +24,11 @@
     <string name="name">Name: </string>
     <string name="student_id">Student ID: </string>
     <string name="student">Student</string>
+    <string name="roll">Roll Call</string>
+    <string name="attendance">Attendance Records</string>
+    <string name="response">In Class Response</string>
+    <string name="responseres">Response Results</string>
+    <string name="classmanage">Class Management</string>
 
 <!--Question Response Interface Strings -->
     <string name="default_simple_question_description">Your teacher has read a question and its

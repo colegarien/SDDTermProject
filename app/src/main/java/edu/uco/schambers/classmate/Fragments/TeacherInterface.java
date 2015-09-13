@@ -1,32 +1,27 @@
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 
 import edu.uco.schambers.classmate.R;
 
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link Login.OnFragmentInteractionListener} interface
+ * {@link TeacherInterface.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link Login#newInstance} factory method to
+ * Use the {@link TeacherInterface#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Login extends Fragment {
+public class TeacherInterface extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -36,16 +31,12 @@ public class Login extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private Button rollcall;
+    private Button classManagement;
+    private Button inClassResponse;
+    private Button responseResults;
+
     private OnFragmentInteractionListener mListener;
-
-    //ui components
-    private CheckBox cb;
-    private EditText idET;
-    private TextView idTV;
-    private Button   confirm;
-    private TextView namelbl;
-    private TextView idlbl;
-
 
     /**
      * Use this factory method to create a new instance of
@@ -53,11 +44,11 @@ public class Login extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment Login.
+     * @return A new instance of fragment TeacherInterface.
      */
     // TODO: Rename and change types and number of parameters
-    public static Login newInstance(String param1, String param2) {
-        Login fragment = new Login();
+    public static TeacherInterface newInstance(String param1, String param2) {
+        TeacherInterface fragment = new TeacherInterface();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -65,7 +56,7 @@ public class Login extends Fragment {
         return fragment;
     }
 
-    public Login() {
+    public TeacherInterface() {
         // Required empty public constructor
     }
 
@@ -76,15 +67,12 @@ public class Login extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_teacher_interface, container, false);
         initUI(rootView);
         return rootView;
     }
@@ -94,49 +82,32 @@ public class Login extends Fragment {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+
+
+
     }
 
     private void initUI(final View rootView) {
 
-        cb = (CheckBox) rootView.findViewById(R.id.student_cb);
-        idET = (EditText) rootView.findViewById(R.id.student_id_et);
-        idTV = (TextView) rootView.findViewById(R.id.student_id_lbl);
-        confirm = (Button)rootView.findViewById(R.id.signup_btn);
-        cb.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                if (!cb.isChecked())
-                {
-                    idET.setVisibility(View.INVISIBLE);
-                    idTV.setVisibility(View.INVISIBLE);
-                }else{
-                    idET.setVisibility(View.VISIBLE);
-                    idTV.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+        rollcall = (Button) rootView.findViewById(R.id.teach_roll_btn);
+        classManagement = (Button)rootView.findViewById(R.id.teach_manage_btn);
+        inClassResponse = (Button)rootView.findViewById(R.id.teach_response_btn);
+        responseResults = (Button)rootView.findViewById(R.id.teach_results_btn);
 
-        confirm.setOnClickListener(new View.OnClickListener()
+
+        rollcall.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
 
-                if (!cb.isChecked()){
-                    Fragment teacher = TeacherInterface.newInstance("test", "test");
-                    launchFragment(teacher);
-                }else{
-                    Fragment student = StudentInterface.newInstance("test", "test");
-                    launchFragment(student);
-                }
+                Fragment roll = TeacherRollCall.newInstance("test", "test");
+                launchFragment(roll);
 
             }
         });
 
     }
-
 
     @Override
     public void onAttach(Activity activity) {
@@ -167,7 +138,7 @@ public class Login extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        public void onFragmentInteraction(Uri uri);
     }
 
     private void launchFragment(Fragment f)

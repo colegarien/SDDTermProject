@@ -1,6 +1,7 @@
 package edu.uco.schambers.classmate.Fragments;
 
-import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -13,19 +14,18 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
+import edu.uco.schambers.classmate.BroadcastReceivers.CallForStudentQuestionResponseReceiver;
 import edu.uco.schambers.classmate.R;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link StudentResponse.OnFragmentInteractionListener} interface
+ * {@link StudentResponseFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link StudentResponse#newInstance} factory method to
+ * Use the {@link StudentResponseFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class StudentResponse extends Fragment
+public class StudentResponseFragment extends Fragment
 {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -49,12 +49,12 @@ public class StudentResponse extends Fragment
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment StudentResponse.
+     * @return A new instance of fragment StudentResponseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static StudentResponse newInstance(String param1, String param2)
+    public static StudentResponseFragment newInstance(String param1, String param2)
     {
-        StudentResponse fragment = new StudentResponse();
+        StudentResponseFragment fragment = new StudentResponseFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -62,7 +62,7 @@ public class StudentResponse extends Fragment
         return fragment;
     }
 
-    public StudentResponse()
+    public StudentResponseFragment()
     {
         // Required empty public constructor
     }
@@ -112,8 +112,8 @@ public class StudentResponse extends Fragment
     {
         //TODO implement send method
 
-        //placeholder toast
-        Toast.makeText(getActivity(), String.format("You selected option %s",text), Toast.LENGTH_SHORT).show();
+        //testing notifications
+        sendTestCallToResponseBroadcast();
     }
 
     /**
@@ -130,6 +130,11 @@ public class StudentResponse extends Fragment
     {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+    private void sendTestCallToResponseBroadcast()
+    {
+        Intent questionResponseBroadcastIntent = CallForStudentQuestionResponseReceiver.getStartIntent(getActivity());
+        getActivity().sendBroadcast(questionResponseBroadcastIntent);
     }
 
 }
