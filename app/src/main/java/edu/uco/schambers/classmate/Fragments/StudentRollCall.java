@@ -1,5 +1,8 @@
 package edu.uco.schambers.classmate.Fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -37,6 +40,8 @@ public class StudentRollCall extends Fragment {
     private Button btnCheckin;
     private TextView lblCheckinStatus;
 
+    private SharedPreferences prefs;
+
     private OnFragmentInteractionListener mListener;
 
     /**
@@ -69,6 +74,9 @@ public class StudentRollCall extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
+        // Load preference for student roll call module
+        prefs = this.getActivity().getSharedPreferences("studentRollCallPrefs", Context.MODE_PRIVATE);
+
         setHasOptionsMenu(true);
     }
 
@@ -80,7 +88,32 @@ public class StudentRollCall extends Fragment {
 
         final MenuItem vibrate = menu.add("Vibrate when checked-in");
         vibrate.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+
+        // Get user preference
+        String checkedInMode = prefs.getString("CheckedInMode", null);
+
+        // If no preference found
+        if (checkedInMode == null || checkedInMode.isEmpty()){
+            SharedPreferences.Editor editor = prefs.edit();
+
+            // set the mute as default mode
+            editor.putString("CheckedInMode", "Mute");
+            editor.commit();
+
+            checkedInMode = "Mute";
+        }
+
+        // Set the visibility of mute and vibrate menu items
+        if (checkedInMode.equalsIgnoreCase("Mute")){
+            mute.setVisible(false);
+        }
+        else {
+            mute.setVisible(true);
+        }
         vibrate.setVisible(!mute.isVisible());
+
+        // Declare an editor for modify user's preference
+        final SharedPreferences.Editor editor = prefs.edit();
 
         mute.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
@@ -88,6 +121,9 @@ public class StudentRollCall extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 vibrate.setVisible(true);
                 mute.setVisible(false);
+
+                editor.putString("CheckedInMode", "Mute");
+                editor.commit();
 
                 return true;
             }
@@ -99,6 +135,9 @@ public class StudentRollCall extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 vibrate.setVisible(false);
                 mute.setVisible(true);
+
+                editor.putString("CheckedInMode", "Vibrate");
+                editor.commit();
 
                 return true;
             }
@@ -123,11 +162,35 @@ public class StudentRollCall extends Fragment {
         btnCheckin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /// TODO: Intialize Roll Call Service
+                // Mute or vibrate user's devices
+                changeAudioSetting(prefs.getString("CheckedInMode", null));
+
                 lblCheckinStatus.setText(getString(R.string.lbl_status_checked_in));
                 Toast.makeText(getActivity(), "You've checked-in", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void changeAudioSetting(String audioMode){
+        AudioManager am;
+        am= (AudioManager) getActivity().getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+
+        if (audioMode == null){
+            return;
+        }
+
+        if (audioMode.equalsIgnoreCase("Mute")){
+            // If the device is in vibrate mode, reset it to normal first
+            // Otherwise the vibrate and mute mode will be accumulated
+            if (am.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE){
+                am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+            }
+
+            am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+        }
+        else if (audioMode.equalsIgnoreCase("Vibrate")){
+            am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
