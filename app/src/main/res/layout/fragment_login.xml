@@ -63,7 +63,7 @@
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Student"
+            android:text="@string/student"
             android:id="@+id/student_cb"
             android:layout_gravity="center_horizontal"
             android:checked="true"
@@ -73,7 +73,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="name label"
+            android:text="@string/name"
             android:id="@+id/stored_name_lbl"
             android:layout_gravity="center_horizontal" />
 
@@ -81,7 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="id label"
+            android:text="@string/student_id"
             android:id="@+id/stored_id_lbl"
             android:layout_gravity="center_horizontal" />
 
