@@ -75,7 +75,7 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         {
             FragmentTransaction trans = getFragmentManager().beginTransaction();
             Fragment debugFragment = new Debug();
-            trans.replace(R.id.fragment_container, debugFragment);
+            trans.replace(R.id.fragment_container, debugFragment).addToBackStack(null);
             trans.commit();
             return true;
         }
