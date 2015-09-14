@@ -3,7 +3,7 @@
     android:layout_height="match_parent" tools:context="edu.uco.schambers.classmate.Fragments.Login"
     android:clickable="true"
     android:nestedScrollingEnabled="true"
-    android:onClick="cbClick">
+    >
 
     <!-- TODO: Update blank fragment layout -->
 
