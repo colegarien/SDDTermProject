@@ -10,11 +10,15 @@ import android.view.MenuItem;
 
 import edu.uco.schambers.classmate.BroadcastReceivers.CallForStudentQuestionResponseReceiver;
 import edu.uco.schambers.classmate.Fragments.Debug;
+import edu.uco.schambers.classmate.Fragments.Login;
+import edu.uco.schambers.classmate.Fragments.StudentInterface;
 import edu.uco.schambers.classmate.Fragments.StudentResponseFragment;
+import edu.uco.schambers.classmate.Fragments.TeacherInterface;
 import edu.uco.schambers.classmate.R;
 
 
-public class MainActivity extends Activity implements StudentResponseFragment.OnFragmentInteractionListener
+public class MainActivity extends Activity implements StudentResponseFragment.OnFragmentInteractionListener, Login.OnFragmentInteractionListener,
+        StudentInterface.OnFragmentInteractionListener, TeacherInterface.OnFragmentInteractionListener
 {
 
 
@@ -40,8 +44,8 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                 break;
 
             default:
-                Fragment debugFragment = new Debug();
-                trans.replace(R.id.fragment_container, debugFragment);
+                Fragment loginFragment = new Login();
+                trans.replace(R.id.fragment_container, loginFragment);
                 break;
 
         }
@@ -67,7 +71,14 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         if (id == R.id.action_settings) {
             return true;
         }
-
+        if(id == R.id.action_debug)
+        {
+            FragmentTransaction trans = getFragmentManager().beginTransaction();
+            Fragment debugFragment = new Debug();
+            trans.replace(R.id.fragment_container, debugFragment);
+            trans.commit();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
     @Override

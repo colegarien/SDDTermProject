@@ -28,6 +28,17 @@
     <string name="option_d">D</string>
     <string name="btn_send">Send</string>
 
+<!-- Sign Up & Dedicated Interface Strings-->
+    <string name="signup">Sign Up</string>
+    <string name="name">Name: </string>
+    <string name="student_id">Student ID: </string>
+    <string name="student">Student</string>
+    <string name="roll">Roll Call</string>
+    <string name="attendance">Attendance Records</string>
+    <string name="response">In Class Response</string>
+    <string name="responseres">Response Results</string>
+    <string name="classmanage">Class Management</string>
+
 <!--Roll Call UI Strings-->
     <string name="btn_roll_call">Call Roll</string>
     <string name="lbl_rc_teacher">Teacher</string>
@@ -39,4 +50,5 @@
     <string name="btn_check_in">Check in</string>
     <string name="lbl_status_checked_in">You have checked-in</string>
     <string name="lbl_status_not_connected">Not connected</string>
+    <string name="action_debug">Debug</string>
 </resources>
