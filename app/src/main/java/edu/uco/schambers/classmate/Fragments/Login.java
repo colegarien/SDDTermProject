@@ -114,16 +114,14 @@ public class Login extends Fragment {
             }
         });
 
-        confirm.setOnClickListener(new View.OnClickListener()
-        {
+        confirm.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
 
-                if (!cb.isChecked()){
+                if (!cb.isChecked()) {
                     Fragment teacher = TeacherInterface.newInstance("test", "test");
                     launchFragment(teacher);
-                }else{
+                } else {
                     Fragment student = StudentInterface.newInstance("test", "test");
                     launchFragment(student);
                 }
@@ -155,6 +153,13 @@ public class Login extends Fragment {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+
+        cbVisibility();
     }
 
     @Override
