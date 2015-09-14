@@ -174,14 +174,18 @@ public class StudentRollCall extends Fragment {
     private void changeAudioSetting(String audioMode){
         AudioManager am;
         am= (AudioManager) getActivity().getBaseContext().getSystemService(Context.AUDIO_SERVICE);
-        // Reset to normal mode.
-        am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
 
         if (audioMode == null){
             return;
         }
 
         if (audioMode.equalsIgnoreCase("Mute")){
+            // If the device is in vibrate mode, reset it to normal first
+            // Otherwise the vibrate and mute mode will be accumulated
+            if (am.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE){
+                am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+            }
+
             am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
         }
         else if (audioMode.equalsIgnoreCase("Vibrate")){
