@@ -102,19 +102,15 @@ public class Login extends Fragment {
         idET = (EditText) rootView.findViewById(R.id.student_id_et);
         idTV = (TextView) rootView.findViewById(R.id.student_id_lbl);
         confirm = (Button)rootView.findViewById(R.id.signup_btn);
+
+        cbVisibility();
+
         cb.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                if (!cb.isChecked())
-                {
-                    idET.setVisibility(View.INVISIBLE);
-                    idTV.setVisibility(View.INVISIBLE);
-                }else{
-                    idET.setVisibility(View.VISIBLE);
-                    idTV.setVisibility(View.VISIBLE);
-                }
+                cbVisibility();
             }
         });
 
@@ -135,6 +131,18 @@ public class Login extends Fragment {
             }
         });
 
+    }
+
+    public void cbVisibility(){
+
+        if (!cb.isChecked())
+        {
+            idET.setVisibility(View.INVISIBLE);
+            idTV.setVisibility(View.INVISIBLE);
+        }else{
+            idET.setVisibility(View.VISIBLE);
+            idTV.setVisibility(View.VISIBLE);
+        }
     }
 
 
