@@ -145,10 +145,10 @@ public class Login extends Fragment {
             public void onClick(View v) {
 
                 //check for all appropriate information and toast if missing anything
-                if(name.getText().toString() != null   ||
-                   pass.getText().toString() != null   ||
-                   email.getText().toString()!= null   ||
-                   (cb.isChecked() && idET != null)    ){
+                if(!name.getText().toString().matches("")   ||
+                   !pass.getText().toString().matches("")   ||
+                   !email.getText().toString().matches("")  ||
+                   (cb.isChecked() && !idET.getText().toString().matches(""))){
 
                     //split name into first and last & set to user
                     String bothNames = name.getText().toString();
@@ -197,6 +197,7 @@ public class Login extends Fragment {
                 }else{
                     Toast warning = Toast.makeText(getActivity(), "please fill out all appropriate information", Toast.LENGTH_LONG);
                     warning.show();
+
                 }
 
                 user.setIsMale(false);
