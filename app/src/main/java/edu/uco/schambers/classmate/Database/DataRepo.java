@@ -18,12 +18,12 @@ public class DataRepo extends SQLiteOpenHelper {
 			"email text, ismale integer)";
 
 	private static final String Role = "create table dbRoles " +
-			"id int not null, " +
+			"id int, " +
 			"group text, " +
 			"primary key(user_id, group),"+
 			"CONSTRAINT user_fkey Foreign key(user_id) references users(id) ON DELETE CASCADE ON UPDATE RESTRICT"+
 			")";
-	
+
 	public DataRepo(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
@@ -33,7 +33,7 @@ public class DataRepo extends SQLiteOpenHelper {
 		db.execSQL(CREATE_TABLE_USER);
 		//db.execSQL(Role);
 	}
-	
+
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.d("DEBUG", "Database version has changed to version: " + DATABASE_VERSION);
@@ -80,47 +80,47 @@ public class DataRepo extends SQLiteOpenHelper {
 
 	public User getUser(String username) {
 		SQLiteDatabase db = this.getReadableDatabase();
-	      Cursor res =  db.rawQuery( "select * from users where username = '" + username + "'", null);
-	      
-	      if (res.moveToNext())
-	      {
-	    	  User user = new User();
-	    	  
-	    	  user.setId(res.getInt(0));
-	    	  user.setUsername(res.getString(1));
-	    	  user.setPassword(res.getString(2));
-	    	  user.setFname(res.getString(3));
-	    	  user.setLname(res.getString(4));
-	    	  user.setIsStudent(res.getInt(5) == 1);
-	    	  user.setIsStaff(res.getInt(6) == 1);
-	    	  user.setPhone(res.getString(7));
-	    	  user.setEmail(res.getString(8));
-	    	  user.setIsMale(res.getInt(9) == 1);
+		Cursor res =  db.rawQuery( "select * from users where username = '" + username + "'", null);
 
-	    	  return user;
-	      }
-	      
-	      return null;
+		if (res.moveToNext())
+		{
+			User user = new User();
+
+			user.setId(res.getInt(0));
+			user.setUsername(res.getString(1));
+			user.setPassword(res.getString(2));
+			user.setFname(res.getString(3));
+			user.setLname(res.getString(4));
+			user.setIsStudent(res.getInt(5) == 1);
+			user.setIsStaff(res.getInt(6) == 1);
+			user.setPhone(res.getString(7));
+			user.setEmail(res.getString(8));
+			user.setIsMale(res.getInt(9) == 1);
+
+			return user;
+		}
+
+		return null;
 	}
 
 	public boolean validateUser(String username, String password) {
 		SQLiteDatabase db = this.getReadableDatabase();
-	      Cursor res =  db.rawQuery( "select * from users where username = '" + username + "' and password = '" + password + "'", null);
-	      
-	      if (res.getCount() > 0)
-	    	  return true;
-	      
-	      return false;
+		Cursor res =  db.rawQuery( "select * from users where username = '" + username + "' and password = '" + password + "'", null);
+
+		if (res.getCount() > 0)
+			return true;
+
+		return false;
 	}
-	
+
 	public boolean validateUser(String password) {
 		SQLiteDatabase db = this.getReadableDatabase();
-	      Cursor res =  db.rawQuery( "select * from users where password = '" + password + "'", null);
-	      
-	      if (res.getCount() > 0)
-	    	  return true;
-	      
-	      return false;
+		Cursor res =  db.rawQuery( "select * from users where password = '" + password + "'", null);
+
+		if (res.getCount() > 0)
+			return true;
+
+		return false;
 	}
 
 }
