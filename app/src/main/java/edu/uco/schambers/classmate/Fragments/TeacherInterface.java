@@ -130,6 +130,15 @@ public class TeacherInterface extends Fragment {
 
             }
         });
+        classManagement.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Fragment teacherAttendanceFragment = TeacherAttendance.newInstance(null,null);
+                launchFragment(teacherAttendanceFragment);
+            }
+        });
 
 
 
