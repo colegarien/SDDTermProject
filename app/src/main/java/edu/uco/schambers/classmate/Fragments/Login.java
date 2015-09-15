@@ -145,10 +145,15 @@ public class Login extends Fragment {
             public void onClick(View v) {
 
                 //check for all appropriate information and toast if missing anything
-                if(!name.getText().toString().matches("")   ||
-                   !pass.getText().toString().matches("")   ||
-                   !email.getText().toString().matches("")  ||
-                   (cb.isChecked() && !idET.getText().toString().matches(""))){
+                if(name.getText().toString().matches("")   ||
+                   pass.getText().toString().matches("")   ||
+                   email.getText().toString().matches("")  ||
+                   (cb.isChecked() && idET.getText().toString().matches(""))){
+
+                    Toast warning = Toast.makeText(getActivity(), "please fill out all appropriate information", Toast.LENGTH_LONG);
+                    warning.show();
+
+                }else {
 
                     //split name into first and last & set to user
                     String bothNames = name.getText().toString();
@@ -192,23 +197,18 @@ public class Login extends Fragment {
                         Fragment student = StudentInterface.newInstance("test", "test");
                         launchFragment(student);
                     }
-                }else{
-                    Toast warning = Toast.makeText(getActivity(), "please fill out all appropriate information", Toast.LENGTH_LONG);
-                    warning.show();
 
+                    user.setIsMale(false);
+                    user.setPhone("none");
+                    //store user in dataRepo
+                    dr = new DataRepo(getActivity());
+                    dr.createUser(user);
+                    //store username in Shared Preferences
+                    sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+                    editor = sp.edit();
+                    editor.putString("USER_KEY", user.getUsername());
+                    editor.commit();
                 }
-
-                user.setIsMale(false);
-                user.setPhone("none");
-                //store user in dataRepo
-                dr = new DataRepo(getActivity());
-                dr.createUser(user);
-                //store username in Shared Preferences
-                sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-                editor = sp.edit();
-                editor.putString("USER_KEY", user.getUsername());
-                editor.commit();
-
             }
         });
 
