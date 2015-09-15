@@ -18,7 +18,7 @@ public class DataRepo extends SQLiteOpenHelper {
 			"email text, ismale integer)";
 
 	private static final String Role = "create table dbRoles " +
-			"user_id int not null, " +
+			"id int not null, " +
 			"group text, " +
 			"primary key(user_id, group),"+
 			"CONSTRAINT user_fkey Foreign key(user_id) references users(id) ON DELETE CASCADE ON UPDATE RESTRICT"+
@@ -31,7 +31,7 @@ public class DataRepo extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(CREATE_TABLE_USER);
-		db.execSQL(Role);
+		//db.execSQL(Role);
 	}
 	
 	@Override

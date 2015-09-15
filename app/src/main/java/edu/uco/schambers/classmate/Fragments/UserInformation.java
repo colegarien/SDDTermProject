@@ -1,14 +1,20 @@
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import edu.uco.schambers.classmate.Database.DataRepo;
+import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.R;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +35,20 @@ public class UserInformation extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private TextView name;
+    private TextView password;
+    private TextView email;
+
+    public SharedPreferences sp;
+    public SharedPreferences.Editor editor;
+    public static final String MyPREFS = "MyPREFS";
+    public String user_key;
+    private DataRepo dr;
+    public User user;
+    Fragment context = this;
+
+
 
     /**
      * Use this factory method to create a new instance of
@@ -64,8 +84,9 @@ public class UserInformation extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_information, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_user_information, container, false);
+        initUI(rootView);
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -73,6 +94,27 @@ public class UserInformation extends Fragment {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    private void initUI(final View rootView) {
+
+        name         = (TextView)rootView.findViewById(R.id.stored_name_lbl);
+        password     = (TextView)rootView.findViewById(R.id.stored_pass_lbl);
+        email        = (TextView)rootView.findViewById(R.id.stored_email_lbl);
+
+        sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+        user_key = sp.getString("USER_KEY", null);
+        dr = new DataRepo(getActivity());
+        user = dr.getUser(user_key);
+
+
+        name.setText(user.username);
+        password.setText(user.password);
+        email.setText(user.email);
+
+
+
+
     }
 
     @Override
