@@ -113,7 +113,7 @@ public class StudentResponseFragment extends Fragment
         //TODO implement send method
 
         //testing notifications
-        sendTestCallToResponseBroadcast();
+        Toast.makeText(getActivity(), String.format(getResources().getString(R.string.response_sent),text), Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -131,10 +131,4 @@ public class StudentResponseFragment extends Fragment
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-    private void sendTestCallToResponseBroadcast()
-    {
-        Intent questionResponseBroadcastIntent = CallForStudentQuestionResponseReceiver.getStartIntent(getActivity());
-        getActivity().sendBroadcast(questionResponseBroadcastIntent);
-    }
-
 }
