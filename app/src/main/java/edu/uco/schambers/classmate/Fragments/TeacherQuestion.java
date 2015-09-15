@@ -1,7 +1,7 @@
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
-import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -9,19 +9,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
-
+import edu.uco.schambers.classmate.BroadcastReceivers.CallForStudentQuestionResponseReceiver;
 import edu.uco.schambers.classmate.R;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link TeacherInterface.OnFragmentInteractionListener} interface
+ * {@link TeacherQuestion.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link TeacherInterface#newInstance} factory method to
+ * Use the {@link TeacherQuestion#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TeacherInterface extends Fragment {
+public class TeacherQuestion extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -31,10 +32,10 @@ public class TeacherInterface extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private Button rollcall;
-    private Button classManagement;
-    private Button inClassResponse;
-    private Button responseResults;
+    private Button toggleBtn;
+
+    private boolean toggle;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -44,11 +45,11 @@ public class TeacherInterface extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment TeacherInterface.
+     * @return A new instance of fragment TeacherQuestion.
      */
     // TODO: Rename and change types and number of parameters
-    public static TeacherInterface newInstance(String param1, String param2) {
-        TeacherInterface fragment = new TeacherInterface();
+    public static TeacherQuestion newInstance(String param1, String param2) {
+        TeacherQuestion fragment = new TeacherQuestion();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -56,7 +57,7 @@ public class TeacherInterface extends Fragment {
         return fragment;
     }
 
-    public TeacherInterface() {
+    public TeacherQuestion() {
         // Required empty public constructor
     }
 
@@ -72,71 +73,54 @@ public class TeacherInterface extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_teacher_interface, container, false);
+        // Inflate the layout for this fragment
+        View rootView = inflater.inflate(R.layout.fragment_teacher_question, container, false);
         initUI(rootView);
         return rootView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    private void initUI(final View rootView){
+        toggleBtn = (Button) rootView.findViewById(R.id.btn_send_question_propose);
+        toggle = true;
 
-
-
-    }
-
-    private void initUI(final View rootView) {
-
-        rollcall = (Button) rootView.findViewById(R.id.teach_roll_btn);
-        classManagement = (Button)rootView.findViewById(R.id.teach_manage_btn);
-        inClassResponse = (Button)rootView.findViewById(R.id.teach_response_btn);
-        responseResults = (Button)rootView.findViewById(R.id.teach_results_btn);
-
-
-        rollcall.setOnClickListener(new View.OnClickListener()
-        {
+        toggleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-
-                Fragment roll = TeacherRollCall.newInstance("test", "test");
-                launchFragment(roll);
-
-            }
-        });
-
-        inClassResponse.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-
-                Fragment teacherQuestion = TeacherQuestion.newInstance("test", "test");
-                launchFragment(teacherQuestion);
-
+            public void onClick(View v) {
+                if (toggle) {
+                    toggleBtn.setText(R.string.btn_teacher_collect);
+                    sendQuestion();
+                    toggle = false;
+                } else {
+                    toggleBtn.setText(R.string.btn_teacher_send);
+                    sendCollection();
+                    toggle = true;
+                }
             }
         });
 
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+    private void sendQuestion(){
+        //TODO implement sendQuestion method
+
+        sendTestCallToResponseBroadcast();
+        //stub toast
+        Toast.makeText(getActivity(), "Question sent to class!", Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    private void sendCollection(){
+        //TODO implement sendCollection method
+
+        //stub toast
+        Toast.makeText(getActivity(), "Answers collected from class!", Toast.LENGTH_SHORT).show();
     }
+
+    private void sendTestCallToResponseBroadcast()
+    {
+        Intent questionResponseBroadcastIntent = CallForStudentQuestionResponseReceiver.getStartIntent(getActivity());
+        getActivity().sendBroadcast(questionResponseBroadcastIntent);
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -151,16 +135,6 @@ public class TeacherInterface extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
-    }
-
-    private void launchFragment(Fragment f)
-    {
-        if(f != null)
-        {
-            FragmentTransaction trans = getFragmentManager().beginTransaction();
-            trans.replace(R.id.fragment_container, f).addToBackStack("debug");
-            trans.commit();
-        }
     }
 
 }
