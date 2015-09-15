@@ -1,26 +1,30 @@
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
-import android.app.FragmentTransaction;
+import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.TextView;
 
+import edu.uco.schambers.classmate.Database.DataRepo;
+import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.R;
+
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link StudentInterface.OnFragmentInteractionListener} interface
+ * {@link UserInformation.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link StudentInterface#newInstance} factory method to
+ * Use the {@link UserInformation#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class StudentInterface extends Fragment {
+public class UserInformation extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -30,12 +34,21 @@ public class StudentInterface extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private Button rollcall;
-    private Button attendanceRecords;
-    private Button inClassResponse;
-    private Button userInfo;
-
     private OnFragmentInteractionListener mListener;
+
+    private TextView name;
+    private TextView password;
+    private TextView email;
+
+    public SharedPreferences sp;
+    public SharedPreferences.Editor editor;
+    public static final String MyPREFS = "MyPREFS";
+    public String user_key;
+    private DataRepo dr;
+    public User user;
+    Fragment context = this;
+
+
 
     /**
      * Use this factory method to create a new instance of
@@ -43,11 +56,11 @@ public class StudentInterface extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment StudentInterface.
+     * @return A new instance of fragment UserInformation.
      */
     // TODO: Rename and change types and number of parameters
-    public static StudentInterface newInstance(String param1, String param2) {
-        StudentInterface fragment = new StudentInterface();
+    public static UserInformation newInstance(String param1, String param2) {
+        UserInformation fragment = new UserInformation();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -55,7 +68,7 @@ public class StudentInterface extends Fragment {
         return fragment;
     }
 
-    public StudentInterface() {
+    public UserInformation() {
         // Required empty public constructor
     }
 
@@ -71,7 +84,7 @@ public class StudentInterface extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_student_interface, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_user_information, container, false);
         initUI(rootView);
         return rootView;
     }
@@ -83,6 +96,27 @@ public class StudentInterface extends Fragment {
         }
     }
 
+    private void initUI(final View rootView) {
+
+        name         = (TextView)rootView.findViewById(R.id.stored_name_lbl);
+        password     = (TextView)rootView.findViewById(R.id.stored_pass_lbl);
+        email        = (TextView)rootView.findViewById(R.id.stored_email_lbl);
+
+        sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+        user_key = sp.getString("USER_KEY", null);
+        dr = new DataRepo(getActivity());
+        user = dr.getUser(user_key);
+
+
+        name.setText(user.username);
+        password.setText(user.password);
+        email.setText(user.email);
+
+
+
+
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -92,56 +126,6 @@ public class StudentInterface extends Fragment {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-    }
-
-    private void initUI(final View rootView) {
-
-        rollcall = (Button) rootView.findViewById(R.id.stu_roll_btn);
-        attendanceRecords = (Button)rootView.findViewById(R.id.stu_attendance_btn);
-        inClassResponse = (Button)rootView.findViewById(R.id.stu_response_btn);
-        userInfo = (Button)rootView.findViewById(R.id.user_info_btn);
-
-
-        rollcall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Fragment roll = StudentRollCall.newInstance("test", "test");
-                launchFragment(roll);
-
-            }
-        });
-
-        attendanceRecords.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-
-
-            }
-        });
-
-        inClassResponse.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-
-                Fragment response = StudentResponseFragment.newInstance("test", "test");
-                launchFragment(response);
-
-            }
-        });
-
-        userInfo.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-
-                Fragment user = UserInformation.newInstance("test", "test");
-                launchFragment(user);
-
-            }
-        });
-
-
-
     }
 
     @Override
@@ -165,13 +149,4 @@ public class StudentInterface extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
-    private void launchFragment(Fragment f)
-    {
-        if(f != null)
-        {
-            FragmentTransaction trans = getFragmentManager().beginTransaction();
-            trans.replace(R.id.fragment_container, f).addToBackStack("debug");
-            trans.commit();
-        }
-    }
 }

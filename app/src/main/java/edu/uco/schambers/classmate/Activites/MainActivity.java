@@ -15,11 +15,13 @@ import edu.uco.schambers.classmate.Fragments.StudentInterface;
 import edu.uco.schambers.classmate.Fragments.StudentResponseFragment;
 import edu.uco.schambers.classmate.Fragments.TeacherInterface;
 import edu.uco.schambers.classmate.Fragments.TeacherQuestionResults;
+import edu.uco.schambers.classmate.Fragments.UserInformation;
 import edu.uco.schambers.classmate.R;
 
 
 public class MainActivity extends Activity implements StudentResponseFragment.OnFragmentInteractionListener, Login.OnFragmentInteractionListener,
-        StudentInterface.OnFragmentInteractionListener, TeacherInterface.OnFragmentInteractionListener, TeacherQuestionResults.OnFragmentInteractionListener
+        StudentInterface.OnFragmentInteractionListener, UserInformation.OnFragmentInteractionListener, TeacherInterface.OnFragmentInteractionListener,
+        TeacherQuestionResults.OnFragmentInteractionListener
 {
 
 
