@@ -3,9 +3,10 @@ package edu.uco.schambers.classmate.Fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import edu.uco.schambers.classmate.Database.DataRepo;
 import edu.uco.schambers.classmate.Database.User;
@@ -40,6 +40,11 @@ public class Login extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    public static final String MyPREFS = "MyPREFS";
+    public SharedPreferences sp;
+    public SharedPreferences.Editor editor;
+
+
 
     //ui components
     private CheckBox cb;
@@ -54,6 +59,8 @@ public class Login extends Fragment {
     //user class
     public User user;
     private DataRepo dr;
+
+
 
 
     /**
@@ -86,6 +93,7 @@ public class Login extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
+
     }
 
 
@@ -116,6 +124,11 @@ public class Login extends Fragment {
         name = (EditText)rootView.findViewById(R.id.username_et);
         email = (EditText)rootView.findViewById(R.id.email_et);
 
+        sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+        editor = sp.edit();
+        user = new User();
+        dr   = new DataRepo(getActivity());
+
         cbVisibility();
 
         cb.setOnClickListener(new View.OnClickListener()
@@ -132,57 +145,71 @@ public class Login extends Fragment {
             public void onClick(View v) {
 
                 //check for all appropriate information and toast if missing anything
-//                if(name.getText().toString() != null   ||
-//                   pass.getText().toString() != null   ||
-//                   email.getText().toString()!= null   ||
-//                   (cb.isChecked() && idET != null)    ){
-//
-//                    //split name into first and last & set to user
-//                    String bothNames = name.getText().toString();
-//
-//                    String[] nameArr = bothNames.split("\\s+");
-//
-//                    if(nameArr.length == 1) {
-//                        user.setFname(bothNames);
-//                        user.setLname(bothNames);
-//                    }else if(nameArr.length > 1){
-//                        user.setFname(nameArr[0]);
-//                        user.setLname(nameArr[1]);
-//                    }
-//
-//                    //set email to user.
-//                    user.setEmail(email.getText().toString());
-//
-//
-//                    //check passwords match and save encrypted pass to user
-//                    if (pass.getText() == confirmPass.getText()) {
-//                        user.setPassword(pass.getText().toString());
-//                    } else {
-//                        Toast toast = Toast.makeText(getActivity(), "passwords do not match", Toast.LENGTH_LONG);
-//                        toast.show();
-//                    }
+                if(name.getText().toString() != null   ||
+                   pass.getText().toString() != null   ||
+                   email.getText().toString()!= null   ||
+                   (cb.isChecked() && idET != null)    ){
+
+                    //split name into first and last & set to user
+                    String bothNames = name.getText().toString();
+
+                    String[] nameArr = bothNames.split("\\s+");
+
+                    if(nameArr.length == 1) {
+                        user.setFname(bothNames);
+                        user.setLname(bothNames);
+                    }else if(nameArr.length > 1){
+                        user.setFname(nameArr[0]);
+                        user.setLname(nameArr[1]);
+                    }
+
+                    //set username
+                    user.setUsername(name.getText().toString());
+
+                    //set email to user.
+                    user.setEmail(email.getText().toString());
+
+
+                    //check passwords match and save encrypted pass to user
+                    if (pass.getText().toString().equals(confirmPass.getText().toString())) {
+                        user.setPassword(pass.getText().toString());
+                    } else {
+                        Toast toast = Toast.makeText(getActivity(), "passwords do not match", Toast.LENGTH_LONG);
+                        toast.show();
+
+                    }
 
 
                     //add role & id, send to appropriate fragment
                     if (!cb.isChecked()) {
-//                        user.setId(0);
-//                        user.setIsStudent(false);
-//                        user.setIsStaff(true);
+                        user.setId(0);
+                        user.setIsStudent(false);
+                        user.setIsStaff(true);
                         Fragment teacher = TeacherInterface.newInstance("test", "test");
                         launchFragment(teacher);
                     } else {
-//                        user.setId(Integer.parseInt(idET.getText().toString()));
-//                        user.setIsStudent(true);
-//                        user.setIsStaff(false);
+                        user.setId(Integer.parseInt(idET.getText().toString()));
+                        user.setIsStudent(true);
+                        user.setIsStaff(false);
                         Fragment student = StudentInterface.newInstance("test", "test");
                         launchFragment(student);
                     }
-//                }else{
-//                    Toast warning = Toast.makeText(getActivity(), "please fill out all appropriate information", Toast.LENGTH_LONG);
-//                    warning.show();
-//                }
-//                //store user in dataRepo
-//                dr.createUser(user);
+                }else{
+                    Toast warning = Toast.makeText(getActivity(), "please fill out all appropriate information", Toast.LENGTH_LONG);
+                    warning.show();
+                }
+
+                user.setIsMale(false);
+                user.setPhone("none");
+                //store user in dataRepo
+                dr = new DataRepo(getActivity());
+                dr.createUser(user);
+                //store username in Shared Preferences
+                sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+                editor = sp.edit();
+                editor.putString("USER_KEY", user.username);
+                editor.commit();
+
             }
         });
 
