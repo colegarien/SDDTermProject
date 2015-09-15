@@ -184,13 +184,11 @@ public class Login extends Fragment {
                     if (!cb.isChecked()) {
                         user.setId(0);
                         user.setIsStudent(false);
-                        user.setIsStaff(true);
                         Fragment teacher = TeacherInterface.newInstance("test", "test");
                         launchFragment(teacher);
                     } else {
                         user.setId(Integer.parseInt(idET.getText().toString()));
                         user.setIsStudent(true);
-                        user.setIsStaff(false);
                         Fragment student = StudentInterface.newInstance("test", "test");
                         launchFragment(student);
                     }
@@ -208,7 +206,7 @@ public class Login extends Fragment {
                 //store username in Shared Preferences
                 sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
                 editor = sp.edit();
-                editor.putString("USER_KEY", user.username);
+                editor.putString("USER_KEY", user.getUsername());
                 editor.commit();
 
             }

@@ -39,6 +39,7 @@ public class UserInformation extends Fragment {
     private TextView name;
     private TextView password;
     private TextView email;
+    private TextView id;
 
     public SharedPreferences sp;
     public SharedPreferences.Editor editor;
@@ -101,6 +102,7 @@ public class UserInformation extends Fragment {
         name         = (TextView)rootView.findViewById(R.id.stored_name_lbl);
         password     = (TextView)rootView.findViewById(R.id.stored_pass_lbl);
         email        = (TextView)rootView.findViewById(R.id.stored_email_lbl);
+        id        = (TextView)rootView.findViewById(R.id.stored_id_lbl);
 
         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
         user_key = sp.getString("USER_KEY", null);
@@ -108,9 +110,10 @@ public class UserInformation extends Fragment {
         user = dr.getUser(user_key);
 
 
-        name.setText(user.username);
-        password.setText(user.password);
-        email.setText(user.email);
+        name.setText(user.getUsername());
+        password.setText(user.getPassword());
+        email.setText(user.getEmail());
+        id.setText(Integer.toString(user.getId()));
 
 
 

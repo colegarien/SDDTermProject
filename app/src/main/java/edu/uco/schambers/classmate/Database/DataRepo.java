@@ -9,19 +9,19 @@ import android.util.Log;
 
 
 public class DataRepo extends SQLiteOpenHelper {
-	private static final int DATABASE_VERSION = 4;
+	private static final int DATABASE_VERSION = 7;
 	private static final String DATABASE_NAME = "CLASSMATE_TABLES";
 	private static final String CREATE_TABLE_USER = "create table users " +
 			"(id integer primary key, username " +
 			"text, password text, fname text,lname text , " +
-			"isstudent integer, isstaff integer, phone text, " +
+			"isstudent integer, phone text, " +
 			"email text, ismale integer)";
 
 	private static final String Role = "create table dbRoles " +
-			"id int, " +
-			"group text, " +
-			"primary key(user_id, group),"+
-			"CONSTRAINT user_fkey Foreign key(user_id) references users(id) ON DELETE CASCADE ON UPDATE RESTRICT"+
+			"(user_id integer, " +
+			"groups text, " +
+			"primary key(user_id, groups), "+
+			"CONSTRAINT user_fkey Foreign key(user_id) references users(id)"+
 			")";
 
 	public DataRepo(Context context) {
@@ -31,7 +31,7 @@ public class DataRepo extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(CREATE_TABLE_USER);
-		//db.execSQL(Role);
+		db.execSQL(Role);
 	}
 
 	@Override
@@ -53,7 +53,6 @@ public class DataRepo extends SQLiteOpenHelper {
 		contentValues.put("fname", user.getFname());
 		contentValues.put("lname", user.getLname());
 		contentValues.put("isstudent", user.isStudent() ? 1 : 0);
-		contentValues.put("isstaff", user.isFaculty() ? 1 : 0);
 		contentValues.put("phone", user.getPhone());
 		contentValues.put("email", user.getEmail());
 		contentValues.put("ismale", user.isMale() ? 1 : 0);
@@ -67,12 +66,12 @@ public class DataRepo extends SQLiteOpenHelper {
 		ContentValues contentValues = new ContentValues();
 
 		if(user.isStudent()) {
-			contentValues.put("id", user.getId());
-			contentValues.put("group", "StudentGroup");
+			contentValues.put("user_id", user.getId());
+			contentValues.put("groups", "StudentGroup");
 		}
-		else if(user.isFaculty()){
-			contentValues.put("id", user.getId());
-			contentValues.put("group", "FacultyGroup");
+		else{
+			contentValues.put("user_id", user.getId());
+			contentValues.put("groups", "FacultyGroup");
 		}
 
 		db.insert("dbRoles", null, contentValues);
@@ -92,10 +91,9 @@ public class DataRepo extends SQLiteOpenHelper {
 			user.setFname(res.getString(3));
 			user.setLname(res.getString(4));
 			user.setIsStudent(res.getInt(5) == 1);
-			user.setIsStaff(res.getInt(6) == 1);
-			user.setPhone(res.getString(7));
-			user.setEmail(res.getString(8));
-			user.setIsMale(res.getInt(9) == 1);
+			user.setPhone(res.getString(6));
+			user.setEmail(res.getString(7));
+			user.setIsMale(res.getInt(8) == 1);
 
 			return user;
 		}

@@ -4,16 +4,15 @@ import java.io.Serializable;
 
 
 public class User implements Serializable {
-	public int id;
-	public String username;
-	public String password;
-	public String fname;
-	public String lname;
-	public boolean Student;
-	public boolean faculty;
-	public String phone;
-	public String email;
-	public boolean Male;
+	private int id;
+	private String username;
+	private String password;
+	private String fname;
+	private String lname;
+	private boolean Student;
+	private String phone;
+	private String email;
+	private boolean Male;
 
 	public int getId() {
 		return id;
@@ -61,14 +60,6 @@ public class User implements Serializable {
 
 	public void setIsStudent(boolean Student) {
 		this.Student = Student;
-	}
-
-	public boolean isFaculty() {
-		return faculty;
-	}
-
-	public void setIsStaff(boolean Staff) {
-		this.faculty = Staff;
 	}
 
 	public String getPhone() {
