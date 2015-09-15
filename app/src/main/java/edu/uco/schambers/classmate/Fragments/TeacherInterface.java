@@ -109,17 +109,18 @@ public class TeacherInterface extends Fragment {
             }
         });
 
-        responseResults.setOnClickListener(new View.OnClickListener()
+        inClassResponse.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
 
-                Fragment response= TeacherQuestionResults.newInstance("test", "test");
-                launchFragment(response);
+                Fragment teacherQuestion = TeacherQuestion.newInstance("test", "test");
+                launchFragment(teacherQuestion);
 
             }
         });
+
 
 
 
