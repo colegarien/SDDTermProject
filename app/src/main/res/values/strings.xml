@@ -35,8 +35,8 @@
     <string name="btn_send">Send</string>
     <string name="response_sent">You selected option %s</string>
 
-<!-- Sign Up & Dedicated Interface Strings-->
-    <string name="signup">Sign Up</string>
+<!-- Sign up/Dedicated Interface/User info Strings-->
+    <string name="signup">SIGN UP</string>
     <string name="name">Name: </string>
     <string name="student_id">Student ID: </string>
     <string name="student">Student</string>
@@ -45,6 +45,11 @@
     <string name="response">In Class Response</string>
     <string name="responseres">Response Results</string>
     <string name="classmanage">Class Management</string>
+    <string name="pass">Password: </string>
+    <string name="confirm_pass">Confirm Password: </string>
+    <string name="email">E-mail: </string>
+    <string name="user">USER INFO</string>
+    <string name="user_btn">User Info</string>
 
 <!--Roll Call UI Strings-->
     <string name="btn_roll_call">Call Roll</string>
