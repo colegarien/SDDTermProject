@@ -3,6 +3,8 @@ package edu.uco.schambers.classmate.Fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,7 +16,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
+import edu.uco.schambers.classmate.Database.DataRepo;
+import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.R;
 
 
@@ -37,14 +40,27 @@ public class Login extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    public static final String MyPREFS = "MyPREFS";
+    public SharedPreferences sp;
+    public SharedPreferences.Editor editor;
+
+
 
     //ui components
     private CheckBox cb;
     private EditText idET;
     private TextView idTV;
     private Button   confirm;
-    private TextView namelbl;
-    private TextView idlbl;
+    private EditText pass;
+    private EditText confirmPass;
+    private EditText name;
+    private EditText email;
+
+    //user class
+    public User user;
+    private DataRepo dr;
+
+
 
 
     /**
@@ -77,6 +93,7 @@ public class Login extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
+
     }
 
 
@@ -102,6 +119,15 @@ public class Login extends Fragment {
         idET = (EditText) rootView.findViewById(R.id.student_id_et);
         idTV = (TextView) rootView.findViewById(R.id.student_id_lbl);
         confirm = (Button)rootView.findViewById(R.id.signup_btn);
+        pass = (EditText) rootView.findViewById(R.id.pass_et);
+        confirmPass = (EditText)rootView.findViewById(R.id.confirm_pass_et);
+        name = (EditText)rootView.findViewById(R.id.username_et);
+        email = (EditText)rootView.findViewById(R.id.email_et);
+
+        sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+        editor = sp.edit();
+        user = new User();
+        dr   = new DataRepo(getActivity());
 
         cbVisibility();
 
@@ -118,14 +144,95 @@ public class Login extends Fragment {
             @Override
             public void onClick(View v) {
 
-                if (!cb.isChecked()) {
-                    Fragment teacher = TeacherInterface.newInstance("test", "test");
-                    launchFragment(teacher);
-                } else {
-                    Fragment student = StudentInterface.newInstance("test", "test");
-                    launchFragment(student);
-                }
+                //check for all appropriate information and toast if missing anything
+                if(name.getText().toString().matches("")   ||
+                        pass.getText().toString().matches("")   ||
+                        email.getText().toString().matches("")  ||
+                        (cb.isChecked() && idET.getText().toString().matches(""))){
 
+                    Toast warning = Toast.makeText(getActivity(), "please fill out all appropriate information", Toast.LENGTH_LONG);
+                    warning.show();
+
+                }else {
+                    dr = new DataRepo(getActivity());
+                    //check passwords match and save encrypted pass to user
+                    if (pass.getText().toString().equals(confirmPass.getText().toString())) {
+                        user.setPassword(pass.getText().toString());
+
+                        boolean userExists = true;
+                        try
+                        {
+                            userExists = dr.userExist(Integer.parseInt(idET.getText().toString()));
+                        }
+                        catch (NumberFormatException e)
+                        {
+                            //if an integer cant be parsed from the idET, user must be a teacher, allowing to continue on
+                        }
+                        if(userExists) {
+                            //split name into first and last & set to user
+                            String bothNames = name.getText().toString();
+
+                            String[] nameArr = bothNames.split("\\s+");
+
+                            if (nameArr.length == 1) {
+                                user.setFname(bothNames);
+                                user.setLname(bothNames);
+                            } else if (nameArr.length > 1) {
+                                user.setFname(nameArr[0]);
+                                user.setLname(nameArr[1]);
+                            }
+
+                            //set username
+                            user.setUsername(name.getText().toString());
+
+                            //set email to user.
+                            user.setEmail(email.getText().toString());
+
+
+                            //check passwords match and save encrypted pass to user
+                            if (pass.getText().toString().equals(confirmPass.getText().toString())) {
+                                user.setPassword(pass.getText().toString());
+                            } else {
+                                Toast toast = Toast.makeText(getActivity(), "passwords do not match", Toast.LENGTH_LONG);
+                                toast.show();
+
+                            }
+
+
+                            //add role & id, send to appropriate fragment
+                            if (!cb.isChecked()) {
+                                user.setId(0);
+                                user.setIsStudent(false);
+                                Fragment teacher = TeacherInterface.newInstance("test", "test");
+                                launchFragment(teacher);
+                            } else {
+                                user.setId(Integer.parseInt(idET.getText().toString()));
+                                user.setIsStudent(true);
+                                Fragment student = StudentInterface.newInstance("test", "test");
+                                launchFragment(student);
+                            }
+
+                            user.setIsMale(false);
+                            user.setPhone("none");
+                            //store user in dataRepo
+
+                            dr.createUser(user);
+                            //store username in Shared Preferences
+                            sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+                            editor = sp.edit();
+                            editor.putString("USER_KEY", user.getUsername());
+                            editor.commit();
+                        }
+                        else {
+                            Toast warning = Toast.makeText(getActivity(), "This Student ID already exist", Toast.LENGTH_LONG);
+                            warning.show();
+                        }
+                    } else {
+                        Toast toast = Toast.makeText(getActivity(), "passwords do not match", Toast.LENGTH_LONG);
+                        toast.show();
+
+                    }
+                }
             }
         });
 

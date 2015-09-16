@@ -33,6 +33,7 @@ public class StudentInterface extends Fragment {
     private Button rollcall;
     private Button attendanceRecords;
     private Button inClassResponse;
+    private Button userInfo;
 
     private OnFragmentInteractionListener mListener;
 
@@ -98,6 +99,7 @@ public class StudentInterface extends Fragment {
         rollcall = (Button) rootView.findViewById(R.id.stu_roll_btn);
         attendanceRecords = (Button)rootView.findViewById(R.id.stu_attendance_btn);
         inClassResponse = (Button)rootView.findViewById(R.id.stu_response_btn);
+        userInfo = (Button)rootView.findViewById(R.id.user_info_btn);
 
 
         rollcall.setOnClickListener(new View.OnClickListener() {
@@ -126,6 +128,16 @@ public class StudentInterface extends Fragment {
 
                 Fragment response = StudentResponseFragment.newInstance("test", "test");
                 launchFragment(response);
+
+            }
+        });
+
+        userInfo.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+
+                Fragment user = UserInformation.newInstance("test", "test");
+                launchFragment(user);
 
             }
         });
