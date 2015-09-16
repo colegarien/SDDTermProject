@@ -113,6 +113,8 @@ public class StudentInterface extends Fragment {
         attendanceRecords.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                Fragment studentAttendanceFragment = StudentAttendance.newInstance(null,null);
+                launchFragment(studentAttendanceFragment);
 
 
             }
@@ -127,6 +129,7 @@ public class StudentInterface extends Fragment {
 
             }
         });
+
 
 
 
