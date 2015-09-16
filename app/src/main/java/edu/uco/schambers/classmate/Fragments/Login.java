@@ -159,8 +159,16 @@ public class Login extends Fragment {
                     if (pass.getText().toString().equals(confirmPass.getText().toString())) {
                         user.setPassword(pass.getText().toString());
 
-
-                        if(dr.userExist(Integer.parseInt(idET.getText().toString()))) {
+                        boolean userExists = true;
+                        try
+                        {
+                            userExists = dr.userExist(Integer.parseInt(idET.getText().toString()));
+                        }
+                        catch (NumberFormatException e)
+                        {
+                            //if an integer cant be parsed from the idET, user must be a teacher, allowing to continue on
+                        }
+                        if(userExists) {
                             //split name into first and last & set to user
                             String bothNames = name.getText().toString();
 
