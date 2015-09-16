@@ -102,7 +102,7 @@ public class StudentAttendance extends Fragment {
                 "Software Design and Development", "Web Server Programming", "Mobile Application Programming", "Programming II", "Programming Languages"
         };
         Spinner s = (Spinner) rootView.findViewById(R.id.classlist);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getContext(),
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_spinner_item, arraySpinner);
         s.setAdapter(adapter);
     }
