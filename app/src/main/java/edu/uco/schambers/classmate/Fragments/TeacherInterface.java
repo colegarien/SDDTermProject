@@ -118,6 +118,7 @@ public class TeacherInterface extends Fragment {
                 launchFragment(teacherQuestion);
             }
         });
+
         userInfo.setOnClickListener(new View.OnClickListener()
         {
             @Override
