@@ -9,7 +9,7 @@ import android.util.Log;
 
 
 public class DataRepo extends SQLiteOpenHelper {
-	private static final int DATABASE_VERSION = 7;
+	private static final int DATABASE_VERSION = 8;
 	private static final String DATABASE_NAME = "CLASSMATE_TABLES";
 	private static final String CREATE_TABLE_USER = "create table users " +
 			"(id integer primary key, username " +
@@ -40,6 +40,16 @@ public class DataRepo extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS users");
 		db.execSQL("DROP TABLE IF EXISTS dbRoles");
 		onCreate(db);
+	}
+
+	public boolean userExist(int id) {
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor res =  db.rawQuery( "select * from users where id = '" + id + "'", null);
+
+		if (res.getCount() > 0)
+			return false;
+
+		return true;
 	}
 
 

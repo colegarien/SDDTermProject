@@ -146,68 +146,84 @@ public class Login extends Fragment {
 
                 //check for all appropriate information and toast if missing anything
                 if(name.getText().toString().matches("")   ||
-                   pass.getText().toString().matches("")   ||
-                   email.getText().toString().matches("")  ||
-                   (cb.isChecked() && idET.getText().toString().matches(""))){
+                        pass.getText().toString().matches("")   ||
+                        email.getText().toString().matches("")  ||
+                        (cb.isChecked() && idET.getText().toString().matches(""))){
 
                     Toast warning = Toast.makeText(getActivity(), "please fill out all appropriate information", Toast.LENGTH_LONG);
                     warning.show();
 
                 }else {
-
-                    //split name into first and last & set to user
-                    String bothNames = name.getText().toString();
-
-                    String[] nameArr = bothNames.split("\\s+");
-
-                    if(nameArr.length == 1) {
-                        user.setFname(bothNames);
-                        user.setLname(bothNames);
-                    }else if(nameArr.length > 1){
-                        user.setFname(nameArr[0]);
-                        user.setLname(nameArr[1]);
-                    }
-
-                    //set username
-                    user.setUsername(name.getText().toString());
-
-                    //set email to user.
-                    user.setEmail(email.getText().toString());
-
-
+                    dr = new DataRepo(getActivity());
                     //check passwords match and save encrypted pass to user
                     if (pass.getText().toString().equals(confirmPass.getText().toString())) {
                         user.setPassword(pass.getText().toString());
+
+
+                        if(dr.userExist(Integer.parseInt(idET.getText().toString()))) {
+                            //split name into first and last & set to user
+                            String bothNames = name.getText().toString();
+
+                            String[] nameArr = bothNames.split("\\s+");
+
+                            if (nameArr.length == 1) {
+                                user.setFname(bothNames);
+                                user.setLname(bothNames);
+                            } else if (nameArr.length > 1) {
+                                user.setFname(nameArr[0]);
+                                user.setLname(nameArr[1]);
+                            }
+
+                            //set username
+                            user.setUsername(name.getText().toString());
+
+                            //set email to user.
+                            user.setEmail(email.getText().toString());
+
+
+                            //check passwords match and save encrypted pass to user
+                            if (pass.getText().toString().equals(confirmPass.getText().toString())) {
+                                user.setPassword(pass.getText().toString());
+                            } else {
+                                Toast toast = Toast.makeText(getActivity(), "passwords do not match", Toast.LENGTH_LONG);
+                                toast.show();
+
+                            }
+
+
+                            //add role & id, send to appropriate fragment
+                            if (!cb.isChecked()) {
+                                user.setId(0);
+                                user.setIsStudent(false);
+                                Fragment teacher = TeacherInterface.newInstance("test", "test");
+                                launchFragment(teacher);
+                            } else {
+                                user.setId(Integer.parseInt(idET.getText().toString()));
+                                user.setIsStudent(true);
+                                Fragment student = StudentInterface.newInstance("test", "test");
+                                launchFragment(student);
+                            }
+
+                            user.setIsMale(false);
+                            user.setPhone("none");
+                            //store user in dataRepo
+
+                            dr.createUser(user);
+                            //store username in Shared Preferences
+                            sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+                            editor = sp.edit();
+                            editor.putString("USER_KEY", user.getUsername());
+                            editor.commit();
+                        }
+                        else {
+                            Toast warning = Toast.makeText(getActivity(), "This Student ID already exist", Toast.LENGTH_LONG);
+                            warning.show();
+                        }
                     } else {
                         Toast toast = Toast.makeText(getActivity(), "passwords do not match", Toast.LENGTH_LONG);
                         toast.show();
 
                     }
-
-
-                    //add role & id, send to appropriate fragment
-                    if (!cb.isChecked()) {
-                        user.setId(0);
-                        user.setIsStudent(false);
-                        Fragment teacher = TeacherInterface.newInstance("test", "test");
-                        launchFragment(teacher);
-                    } else {
-                        user.setId(Integer.parseInt(idET.getText().toString()));
-                        user.setIsStudent(true);
-                        Fragment student = StudentInterface.newInstance("test", "test");
-                        launchFragment(student);
-                    }
-
-                    user.setIsMale(false);
-                    user.setPhone("none");
-                    //store user in dataRepo
-                    dr = new DataRepo(getActivity());
-                    dr.createUser(user);
-                    //store username in Shared Preferences
-                    sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-                    editor = sp.edit();
-                    editor.putString("USER_KEY", user.getUsername());
-                    editor.commit();
                 }
             }
         });
