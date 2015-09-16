@@ -3,8 +3,124 @@
     android:layout_height="match_parent"
     tools:context="edu.uco.schambers.classmate.Fragments.TeacherQuestionResults">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!-- TODO: Update blank fragment layout -->
+
+        <TextView
+            android:id="@+id/question"
+            android:textSize="23dp"
+            android:layout_width="match_parent" android:layout_height="match_parent"
+            android:text="How much wood could a woodchuck chuck if a woodchuck could chuck wood?
+        A: 15 wood
+        B: 20 wood
+        C: 30 wood
+        D: 1000 wood"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="asdf"
+            android:layout_below="@+id/question"/>
+
+
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/lin02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:layout_above="@+id/title"
+        android:layout_gravity="center">
+
+        <TextView
+            android:layout_alignParentLeft="true"
+            android:id="@+id/colortext01"
+            android:layout_width="60dp"
+            android:layout_height="200dp"
+            android:layout_gravity="bottom"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:padding="10dp"
+            android:background="#4CA613"/>
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="A"
+            android:gravity="center"
+            android:layout_above="@+id/colortext01"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:layout_toRightOf="@+id/colortext01"
+            android:id="@+id/colortext02"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:layout_gravity="bottom"
+            android:layout_alignParentBottom="true"
+            android:padding="10dp"
+            android:textSize="16sp"
+            android:background="#FF9A39"/>
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="B"
+            android:gravity="center"
+            android:layout_above="@+id/colortext02"
+            android:layout_toEndOf="@+id/colortext01"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:layout_toRightOf="@+id/colortext02"
+            android:id="@+id/colortext03"
+            android:layout_width="60dp"
+            android:layout_height="140dp"
+            android:gravity="bottom"
+            android:layout_gravity="bottom"
+            android:layout_alignParentBottom="true"
+            android:padding="10dp"
+            android:textSize="16sp"
+            android:background="#2a23ff"/>
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="C"
+            android:gravity="center"
+            android:layout_above="@+id/colortext03"
+            android:layout_toEndOf="@+id/colortext02"
+            android:textSize="20sp"/>
+
+
+        <TextView
+            android:layout_toRightOf="@+id/colortext03"
+            android:id="@+id/colortext04"
+            android:layout_width="60dp"
+            android:layout_height="90dp"
+            android:gravity="bottom"
+            android:layout_gravity="bottom"
+            android:layout_alignParentBottom="true"
+            android:padding="10dp"
+            android:textSize="16sp"
+            android:background="#faff1e1c"/>
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="D"
+            android:gravity="center"
+            android:layout_above="@+id/colortext04"
+            android:layout_toEndOf="@+id/colortext03"
+            android:textSize="20sp"/>
+
+    </RelativeLayout>
 
 </FrameLayout>
