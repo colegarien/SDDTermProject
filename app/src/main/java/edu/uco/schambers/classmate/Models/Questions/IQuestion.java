@@ -8,8 +8,10 @@ import java.util.List;
  */
 public interface IQuestion extends Serializable
 {
-    public String getQuestionText();
-    public List<String> getQuestionChoices();
-    public void answerQuestion(String answer);
-    public boolean questionIsAnswered();
+    String getQuestionText();
+    List<String> getQuestionChoices();
+    void answerQuestion(String answer);
+    boolean questionIsAnswered();
+    String getAnswer();
+
 }

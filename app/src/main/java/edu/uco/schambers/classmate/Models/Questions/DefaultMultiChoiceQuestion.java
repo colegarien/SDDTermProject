@@ -49,4 +49,10 @@ public class DefaultMultiChoiceQuestion implements IQuestion
     {
         return responseIndex > -1;
     }
+
+    @Override
+    public String getAnswer()
+    {
+        return choiceList.get(responseIndex);
+    }
 }
