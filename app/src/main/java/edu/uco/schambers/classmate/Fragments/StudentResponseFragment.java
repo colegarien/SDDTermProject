@@ -77,6 +77,15 @@ public class StudentResponseFragment extends Fragment
     private void initUI(final View rootView)
     {
         radioGroup = (RadioGroup) rootView.findViewById(R.id.radio_response_group);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId)
+            {
+                RadioButton checked = (RadioButton) rootView.findViewById(checkedId);
+                question.answerQuestion(checked.getText().toString());
+            }
+        });
         sendBtn = (Button) rootView.findViewById(R.id.btn_send_question_response);
         questionText = (TextView) rootView.findViewById(R.id.response_card_question_text);
         sendBtn.setOnClickListener(new View.OnClickListener()
@@ -84,11 +93,9 @@ public class StudentResponseFragment extends Fragment
             @Override
             public void onClick(View v)
             {
-                int selectedId = radioGroup.getCheckedRadioButtonId();
-                RadioButton selectedButton = (RadioButton) rootView.findViewById(selectedId);
-                if (selectedButton != null)
+                if (question.questionIsAnswered())
                 {
-                    sendResponse(selectedButton.getText());
+                    sendResponse(question.getAnswer());
                 }
             }
         });
@@ -113,6 +120,13 @@ public class StudentResponseFragment extends Fragment
         if(question != null)
         {
             questionText.setText(question.getQuestionText());
+            int index = 0;
+            for(String s : question.getQuestionChoices())
+            {
+                RadioButton radioButton =(RadioButton) radioGroup.getChildAt(index);
+                radioButton.setText(s);
+                index++;
+            }
         }
     }
 }
