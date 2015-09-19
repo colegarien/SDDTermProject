@@ -1,14 +1,17 @@
 package edu.uco.schambers.classmate.Fragments;
 
+import android.app.ActionBar;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -120,13 +123,21 @@ public class StudentResponseFragment extends Fragment
         if(question != null)
         {
             questionText.setText(question.getQuestionText());
-            int index = 0;
             for(String s : question.getQuestionChoices())
             {
-                RadioButton radioButton =(RadioButton) radioGroup.getChildAt(index);
-                radioButton.setText(s);
-                index++;
+                RadioButton rb = generateRadioButtonForResponse(s);
+                radioGroup.addView(rb);
             }
         }
+    }
+    private RadioButton generateRadioButtonForResponse(String s)
+    {
+        RadioButton radioButton = new RadioButton(getActivity());
+        radioButton.setId(View.generateViewId());
+        RadioGroup.LayoutParams params = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.MATCH_PARENT, RadioGroup.LayoutParams.WRAP_CONTENT);
+        radioButton.setGravity(Gravity.CENTER_VERTICAL);
+        radioButton.setLayoutParams(params);
+        radioButton.setText(s);
+        return radioButton;
     }
 }

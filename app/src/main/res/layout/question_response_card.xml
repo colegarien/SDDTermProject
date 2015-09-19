@@ -33,35 +33,6 @@
                 android:layout_margin="16dp"
                 >
 
-                <RadioButton
-                    android:id="@+id/radio_btn_a"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    />
-
-                <RadioButton
-                    android:id="@+id/radio_btn_b"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    />
-
-                <RadioButton
-                    android:id="@+id/radio_btn_c"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    />
-
-                <RadioButton
-                    android:id="@+id/radio_btn_d"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    />
-
-
             </RadioGroup>
 
             <LinearLayout
