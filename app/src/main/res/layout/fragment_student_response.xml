@@ -4,6 +4,5 @@
              android:layout_height="match_parent"
              tools:context="edu.uco.schambers.classmate.Fragments.StudentResponseFragment">
 
-    <include layout="@layout/question_response_card"/>
 
 </FrameLayout>

@@ -126,7 +126,7 @@ public class StudentInterface extends Fragment {
             @Override
             public void onClick(View v){
 
-                Fragment response = StudentResponseFragment.newInstance("test", "test");
+                Fragment response = StudentResponseFragment.newInstance(null);
                 launchFragment(response);
 
             }

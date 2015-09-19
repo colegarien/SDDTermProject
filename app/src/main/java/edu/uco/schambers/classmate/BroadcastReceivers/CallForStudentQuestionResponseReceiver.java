@@ -6,9 +6,12 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
 import edu.uco.schambers.classmate.Activites.MainActivity;
+import edu.uco.schambers.classmate.Fragments.StudentResponseFragment;
+import edu.uco.schambers.classmate.Models.Questions.DefaultMultiChoiceQuestion;
 import edu.uco.schambers.classmate.R;
 
 public class CallForStudentQuestionResponseReceiver extends BroadcastReceiver
@@ -50,6 +53,9 @@ public class CallForStudentQuestionResponseReceiver extends BroadcastReceiver
 
         Intent notifyIntent = new Intent(context, MainActivity.class);
         notifyIntent.setAction(ACTION_REQUEST_QUESTION_RESPONSE);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(StudentResponseFragment.ARG_QUESTION, new DefaultMultiChoiceQuestion());
+        notifyIntent.putExtras(bundle);
         PendingIntent notifyPendingIntent = PendingIntent.getActivity(context,0,notifyIntent,PendingIntent.FLAG_CANCEL_CURRENT);
         notificationBuilder.setContentIntent(notifyPendingIntent);
 
