@@ -13,13 +13,11 @@ import edu.uco.schambers.classmate.R;
  */
 public class DefaultMultiChoiceQuestion implements IQuestion
 {
-    private Context context;
     private List<String> choiceList;
     private int responseIndex;
 
-    DefaultMultiChoiceQuestion(Context context)
+    public DefaultMultiChoiceQuestion()
     {
-        this.context = context;
         choiceList = new ArrayList<>();
         choiceList.add("A");
         choiceList.add("B");
@@ -31,7 +29,7 @@ public class DefaultMultiChoiceQuestion implements IQuestion
     @Override
     public String getQuestionText()
     {
-        return context.getResources().getString(R.string.default_simple_question_description);
+        return "Your teacher has read a question and its choices aloud. Mark your response to their question below and press send.";
     }
 
     @Override
