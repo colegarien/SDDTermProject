@@ -3,6 +3,7 @@ package edu.uco.schambers.classmate.Activites;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,6 +17,7 @@ import edu.uco.schambers.classmate.Fragments.StudentResponseFragment;
 import edu.uco.schambers.classmate.Fragments.TeacherInterface;
 import edu.uco.schambers.classmate.Fragments.TeacherQuestionResults;
 import edu.uco.schambers.classmate.Fragments.UserInformation;
+import edu.uco.schambers.classmate.Models.Questions.IQuestion;
 import edu.uco.schambers.classmate.R;
 
 
@@ -29,19 +31,20 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String intentAction = getIntent().getAction();
-        startFragmentAccordingToIntentAction(intentAction);
+        startFragmentAccordingToIntentAction(getIntent());
 
     }
 
-    private void startFragmentAccordingToIntentAction(String intentAction)
+    private void startFragmentAccordingToIntentAction(Intent intent)
     {
         FragmentTransaction trans = getFragmentManager().beginTransaction();
-        switch(intentAction)
+        switch(intent.getAction())
         {
 
             case CallForStudentQuestionResponseReceiver.ACTION_REQUEST_QUESTION_RESPONSE:
-                StudentResponseFragment studentResponseFragment= new StudentResponseFragment();
+                Bundle bundle= intent.getExtras();
+                IQuestion question =(IQuestion) bundle.getSerializable(StudentResponseFragment.ARG_QUESTION);
+                StudentResponseFragment studentResponseFragment= StudentResponseFragment.newInstance(question);
                 trans.replace(R.id.fragment_container,studentResponseFragment);
                 break;
 

@@ -23,7 +23,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/default_simple_question_description"
                 android:textAppearance="?android:attr/textAppearanceMedium"/>
 
             <RadioGroup
@@ -33,39 +32,6 @@
                 android:layout_below="@+id/response_card_question_text"
                 android:layout_margin="16dp"
                 >
-
-                <RadioButton
-                    android:id="@+id/radio_btn_a"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:text="@string/option_a"
-                    />
-
-                <RadioButton
-                    android:id="@+id/radio_btn_b"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:text="@string/option_b"
-                    />
-
-                <RadioButton
-                    android:id="@+id/radio_btn_c"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:text="@string/option_c"
-                    />
-
-                <RadioButton
-                    android:id="@+id/radio_btn_d"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:text="@string/option_d"
-                    />
-
 
             </RadioGroup>
 

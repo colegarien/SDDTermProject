@@ -77,7 +77,7 @@ public class Debug extends Fragment
             @Override
             public void onClick(View v)
             {
-                Fragment studentResponse = StudentResponseFragment.newInstance("test", "test");
+                Fragment studentResponse = StudentResponseFragment.newInstance(null);
                 launchFragment(studentResponse);
             }
         });
