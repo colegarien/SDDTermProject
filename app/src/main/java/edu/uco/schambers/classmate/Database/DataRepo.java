@@ -12,8 +12,9 @@ public class DataRepo extends SQLiteOpenHelper {
 	private static final int DATABASE_VERSION = 8;
 	private static final String DATABASE_NAME = "CLASSMATE_TABLES";
 	private static final String CREATE_TABLE_USER = "create table users " +
-			"(id integer primary key, username " +
-			"text, password text, fname text,lname text , " +
+			"(user_id integer primary key AUTOINCREMENT," +
+			"id integer, username text, " +
+			"password text, fname text,lname text , " +
 			"isstudent integer, phone text, " +
 			"email text, ismale integer)";
 
@@ -21,7 +22,7 @@ public class DataRepo extends SQLiteOpenHelper {
 			"(user_id integer, " +
 			"groups text, " +
 			"primary key(user_id, groups), "+
-			"CONSTRAINT user_fkey Foreign key(user_id) references users(id)"+
+			"CONSTRAINT user_fkey Foreign key(user_id) references users(user_id)"+
 			")";
 
 	public DataRepo(Context context) {
@@ -76,11 +77,11 @@ public class DataRepo extends SQLiteOpenHelper {
 		ContentValues contentValues = new ContentValues();
 
 		if(user.isStudent()) {
-			contentValues.put("user_id", user.getId());
+			//contentValues.put("user_id", user.getId());
 			contentValues.put("groups", "StudentGroup");
 		}
 		else{
-			contentValues.put("user_id", user.getId());
+			//contentValues.put("user_id", user.getId());
 			contentValues.put("groups", "FacultyGroup");
 		}
 
