@@ -145,15 +145,20 @@ public class Login extends Fragment {
             public void onClick(View v) {
 
                 //check for all appropriate information and toast if missing anything
-                if(name.getText().toString().matches("")   ||
-                        pass.getText().toString().matches("")   ||
-                        email.getText().toString().matches("")  ||
-                        (cb.isChecked() && idET.getText().toString().matches(""))){
+                if (cb.isChecked() && idET.getText().toString().matches("")){
 
                     Toast warning = Toast.makeText(getActivity(), "please fill out all appropriate information", Toast.LENGTH_LONG);
                     warning.show();
-
-                }else {
+                }
+                else if(!user.isValidName(name.getText().toString())) {
+                        name.setError("Invalid Name");}
+                else if(!user.isValidPassword(pass.getText().toString())){
+                        pass.setError("password must be less than 4 characters");}
+                else if (!pass.getText().toString().equals(confirmPass.getText().toString())){
+                        pass.setError("password do not match");}
+                else if(!user.isValidEmail(email.getText().toString())){
+                        email.setError("Invalid email");}
+                else {
                     dr = new DataRepo(getActivity());
                     //check passwords match and save encrypted pass to user
                     if (pass.getText().toString().equals(confirmPass.getText().toString())) {
@@ -190,13 +195,12 @@ public class Login extends Fragment {
 
 
                             //check passwords match and save encrypted pass to user
-                            if (pass.getText().toString().equals(confirmPass.getText().toString())) {
-                                user.setPassword(pass.getText().toString());
-                            } else {
-                                Toast toast = Toast.makeText(getActivity(), "passwords do not match", Toast.LENGTH_LONG);
-                                toast.show();
-
-                            }
+                           // if (pass.getText().toString().equals(confirmPass.getText().toString())) {
+                           //     user.setPassword(pass.getText().toString());
+                           // } else {
+                           //     Toast toast = Toast.makeText(getActivity(), "passwords do not match", Toast.LENGTH_LONG);
+                           //     toast.show();
+                           // }
 
 
                             //add role & id, send to appropriate fragment
