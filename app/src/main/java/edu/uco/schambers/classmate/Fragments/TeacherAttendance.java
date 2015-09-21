@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsoluteLayout;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -173,11 +174,8 @@ public class TeacherAttendance extends Fragment {
                         c1.setText(students[i].getStudentName());
                         TextView c2 = new TextView(view.getContext());
                         c2.setText(String.valueOf(students[i].getNumberAbsences()));
-                        TextView c3 = new TextView(view.getContext());
-                        c3.setText(String.valueOf(students[i].getCourse()));
                         tr.addView(c1);
                         tr.addView(c2);
-                        tr.addView(c3);
                         teacherAttendanceTable.addView(tr);
                     }
                 }
