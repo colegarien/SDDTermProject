@@ -3,8 +3,11 @@ package edu.uco.schambers.classmate.Activites;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.net.wifi.p2p.WifiP2pManager;
+import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,11 +28,18 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         StudentInterface.OnFragmentInteractionListener, TeacherInterface.OnFragmentInteractionListener, TeacherQuestionResults.OnFragmentInteractionListener, UserInformation.OnFragmentInteractionListener
 {
 
+    // For registering Application in the Wifi P2p framework
+    private WifiP2pManager mManager;
+    // For connecting with the Wifi P2p framework
+    private Channel mChannel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        mChannel = mManager.initialize(this, getMainLooper(), null);
 
         startFragmentAccordingToIntentAction(getIntent());
 
