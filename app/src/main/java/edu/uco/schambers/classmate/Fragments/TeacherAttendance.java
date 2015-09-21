@@ -1,3 +1,10 @@
+/* Team 9Lives
+ *
+ * Author: Rayan Al-Hammami
+ * Purpose:
+ *   UI backend for teacher attendance and class management
+ *   module.
+ */
 package edu.uco.schambers.classmate.Fragments;
 
 import android.content.Context;
