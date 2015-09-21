@@ -145,12 +145,7 @@ public class Login extends Fragment {
             public void onClick(View v) {
 
                 //check for all appropriate information and toast if missing anything
-                if (cb.isChecked() && idET.getText().toString().matches("")){
-
-                    Toast warning = Toast.makeText(getActivity(), "please fill out all appropriate information", Toast.LENGTH_LONG);
-                    warning.show();
-                }
-                else if(!user.isValidName(name.getText().toString())) {
+                     if(!user.isValidName(name.getText().toString())) {
                         name.setError("Invalid Name");}
                 else if(!user.isValidPassword(pass.getText().toString())){
                         pass.setError("password must be less than 4 characters");}
@@ -158,8 +153,13 @@ public class Login extends Fragment {
                         pass.setError("password do not match");}
                 else if(!user.isValidEmail(email.getText().toString())){
                         email.setError("Invalid email");}
+                else if (cb.isChecked() && idET.getText().toString().matches("")){
+
+                    Toast warning = Toast.makeText(getActivity(), "please fill out all appropriate information", Toast.LENGTH_LONG);
+                    warning.show();
+                }
                 else {
-                    dr = new DataRepo(getActivity());
+                    //dr = new DataRepo(getActivity());
                     //check passwords match and save encrypted pass to user
                     if (pass.getText().toString().equals(confirmPass.getText().toString())) {
                         user.setPassword(pass.getText().toString());
