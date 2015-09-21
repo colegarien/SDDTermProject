@@ -62,6 +62,8 @@ public class TeacherRollCall extends Fragment {
      * @return A new instance of fragment TeacherRollCall.
      */
     // TODO: Rename and change types and number of parameters
+    // TODO: Get Teacher Name from DB
+    // TODO: Get Class Name from DB/Dropdown Box
     public static TeacherRollCall newInstance(String param1, String param2) {
         TeacherRollCall fragment = new TeacherRollCall();
         Bundle args = new Bundle();
@@ -105,7 +107,7 @@ public class TeacherRollCall extends Fragment {
             public void onClick(View v) {
                 Activity activity = getActivity();
 
-                /// TODO: Intialize Roll Call Service
+                /// TODO: Start ServerSocket bidness
                 if(activity instanceof MainActivity) {
                     ((MainActivity) activity).addLocalService(8081, teacherText.getText().toString(), classText.getText().toString(), true);
                     //Toast.makeText(getActivity(), String.format("Teacher, %s, started Class, %s", teacherText.getText(), classText.getText()), Toast.LENGTH_SHORT).show();
