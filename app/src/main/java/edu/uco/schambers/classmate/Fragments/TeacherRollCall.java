@@ -1,3 +1,15 @@
+/* Team 9Lives
+ *
+ * Author: Cole Garien
+ * Purpose:
+ *   UI backend for teacher roll call module, used for starting and
+ *   stopping the Roll Call Wifi P2P service
+ *
+ * Edit: 9/21/2015
+ *   added button code for adding local wifi P2P service
+ *
+ */
+
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
@@ -95,7 +107,7 @@ public class TeacherRollCall extends Fragment {
 
                 /// TODO: Intialize Roll Call Service
                 if(activity instanceof MainActivity) {
-                    ((MainActivity) activity).addLocalService(8081, "test teacher", "test class", true);
+                    ((MainActivity) activity).addLocalService(8081, teacherText.getText().toString(), classText.getText().toString(), true);
                     //Toast.makeText(getActivity(), String.format("Teacher, %s, started Class, %s", teacherText.getText(), classText.getText()), Toast.LENGTH_SHORT).show();
                 }
             }
