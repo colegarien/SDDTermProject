@@ -8,9 +8,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
+import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import edu.uco.schambers.classmate.BroadcastReceivers.CallForStudentQuestionResponseReceiver;
 import edu.uco.schambers.classmate.Fragments.Debug;
@@ -100,5 +105,56 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
     public void onFragmentInteraction(Uri uri)
     {
         //todo
+    }
+
+    // For Adding Local WIFI P2P Services
+    public void addLocalService(int port, String buddyName, String className, boolean isTeacher){
+        //  Create a string map containing information about your service.
+        Map<String, String> record = new HashMap<String, String>();
+        record.put("listenport", String.valueOf(port));
+        // name of person running the service
+        record.put("buddyname", buddyName);
+        // name of the class the service is for
+        record.put("classname", className);
+        // is this server teacher run?
+        record.put("isteacher", Boolean.toString(isTeacher));
+        // service is visible
+        record.put("available", "visible");
+
+        // Service information.  Pass it an instance name, service type
+        // _protocol._transportlayer , and the map containing
+        // information other devices will want once they connect to this one.
+        WifiP2pDnsSdServiceInfo serviceInfo =
+                WifiP2pDnsSdServiceInfo.newInstance("_test", "_presence._tcp", record);
+
+        // Add the local service, sending the service info, network channel,
+        // and listener that will be used to indicate success or failure of
+        // the request.
+        mManager.addLocalService(mChannel, serviceInfo, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                // Command successful! Code isn't necessarily needed here,
+                // Unless you want to update the UI or add logging statements.
+                Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int reasonCode) {
+                // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
+                String errorMessage = "";
+                switch (reasonCode){
+                    case WifiP2pManager.BUSY:
+                        errorMessage = "Busy...";
+                        break;
+                    case WifiP2pManager.ERROR:
+                        errorMessage = "An Error Occurred";
+                        break;
+                    case WifiP2pManager.P2P_UNSUPPORTED:
+                        errorMessage = "P2P Unsupported";
+                        break;
+                }
+                Toast.makeText(getApplicationContext(),errorMessage,Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

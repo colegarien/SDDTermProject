@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import edu.uco.schambers.classmate.Activites.MainActivity;
 import edu.uco.schambers.classmate.R;
 
 /**
@@ -90,8 +91,13 @@ public class TeacherRollCall extends Fragment {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Activity activity = getActivity();
+
                 /// TODO: Intialize Roll Call Service
-                Toast.makeText(getActivity(), String.format("Teacher, %s, started Class, %s",teacherText.getText(),classText.getText()), Toast.LENGTH_SHORT).show();
+                if(activity instanceof MainActivity) {
+                    ((MainActivity) activity).addLocalService(8081, "test teacher", "test class", true);
+                    //Toast.makeText(getActivity(), String.format("Teacher, %s, started Class, %s", teacherText.getText(), classText.getText()), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
