@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Team 9Lives
+    *
+    * Author: Rayan Al-Hammami
+    * Purpose: Main layout for Class Management/Teacher Attendance
+    * records.
+    *
+    * Edit: 9/21/2015
+    *   Added author block
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -6,18 +15,57 @@
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"></TableLayout>
+        android:layout_gravity="center_horizontal">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select Class:"
-        android:id="@+id/textView" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <Spinner
-        android:layout_width="225dp"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Class:"
+                android:id="@+id/textView"
+                android:layout_weight="0.5" />
+            //Added sort button
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sort"
+                android:id="@+id/textView7"
+                android:layout_weight="0.5" />
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/spinnerClassSelect" />
+        android:layout_gravity="center_horizontal">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:baselineAligned="false">
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/spinnerClassSelect"
+                android:spinnerMode="dropdown"
+                android:layout_weight="0.5"
+                android:background="@android:drawable/spinner_background" />
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/spinnerSort"
+                android:spinnerMode="dropdown"
+                android:layout_weight="0.5"
+                android:background="@android:drawable/spinner_background" />
+
+        </TableRow>
+
+    </TableLayout>
 
     <TableRow
         android:layout_width="match_parent"
@@ -28,28 +76,22 @@
             android:layout_height="wrap_content"
             android:text="Name"
             android:id="@+id/textView4"
-            android:layout_weight="1" />
+            android:layout_weight=".5" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Absences"
             android:id="@+id/textView5"
-            android:layout_weight="0.52" />
+            android:layout_weight="0.3" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Class"
-            android:id="@+id/textView6"
-            android:layout_weight="0.27" />
     </TableRow>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/scrollView"
-        android:layout_gravity="center_horizontal" >
+        android:layout_gravity="center_horizontal">
 
         <TableLayout
             android:layout_width="match_parent"
