@@ -131,11 +131,9 @@ public class Login extends Fragment {
 
         cbVisibility();
 
-        cb.setOnClickListener(new View.OnClickListener()
-        {
+        cb.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 cbVisibility();
             }
         });
@@ -146,6 +144,33 @@ public class Login extends Fragment {
             public void onFocusChange(View view, boolean hasFocus) {
                 if(hasFocus){
                     name.setError(null);
+                }
+            }
+        });
+        //removes error warning when editing password
+        pass.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if(hasFocus){
+                    pass.setError(null);
+                }
+            }
+        });
+        //removes error warning when editing confirm password
+        confirmPass.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if(hasFocus){
+                    confirmPass.setError(null);
+                }
+            }
+        });
+        //removes error warning when editing email
+        email.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    email.setError(null);
                 }
             }
         });
@@ -160,7 +185,7 @@ public class Login extends Fragment {
                 else if(!user.isValidPassword(pass.getText().toString())){
                         pass.setError("password must be less than 4 characters");}
                 else if (!pass.getText().toString().equals(confirmPass.getText().toString())){
-                        pass.setError("password do not match");}
+                        confirmPass.setError("password do not match");}
                 else if(!user.isValidEmail(email.getText().toString())){
                         email.setError("Invalid email");}
                 else if (cb.isChecked() && idET.getText().toString().matches("")){
