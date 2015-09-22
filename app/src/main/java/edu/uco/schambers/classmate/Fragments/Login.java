@@ -140,6 +140,16 @@ public class Login extends Fragment {
             }
         });
 
+        //removes error warning when editing name
+        name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if(hasFocus){
+                    name.setError(null);
+                }
+            }
+        });
+
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
