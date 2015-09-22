@@ -1,3 +1,15 @@
+/* Team 9Lives
+ *
+ * Author: Cole Garien
+ * Purpose:
+ *   UI backend for teacher roll call module, used for starting and
+ *   stopping the Roll Call Wifi P2P service
+ *
+ * Edit: 9/21/2015
+ *   added button code for adding local wifi P2P service
+ *
+ */
+
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
@@ -12,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import edu.uco.schambers.classmate.Activites.MainActivity;
 import edu.uco.schambers.classmate.R;
 
 /**
@@ -49,6 +62,8 @@ public class TeacherRollCall extends Fragment {
      * @return A new instance of fragment TeacherRollCall.
      */
     // TODO: Rename and change types and number of parameters
+    // TODO: Get Teacher Name from DB
+    // TODO: Get Class Name from DB/Dropdown Box
     public static TeacherRollCall newInstance(String param1, String param2) {
         TeacherRollCall fragment = new TeacherRollCall();
         Bundle args = new Bundle();
@@ -90,8 +105,13 @@ public class TeacherRollCall extends Fragment {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /// TODO: Intialize Roll Call Service
-                Toast.makeText(getActivity(), String.format("Teacher, %s, started Class, %s",teacherText.getText(),classText.getText()), Toast.LENGTH_SHORT).show();
+                Activity activity = getActivity();
+
+                /// TODO: Start ServerSocket bidness
+                if(activity instanceof MainActivity) {
+                    ((MainActivity) activity).addLocalService(8081, teacherText.getText().toString(), classText.getText().toString(), true);
+                    //Toast.makeText(getActivity(), String.format("Teacher, %s, started Class, %s", teacherText.getText(), classText.getText()), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
