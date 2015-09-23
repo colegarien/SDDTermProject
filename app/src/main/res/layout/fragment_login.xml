@@ -19,15 +19,9 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/signup"
             android:id="@+id/Signup_lbl"
+            android:textStyle="bold"
             android:layout_gravity="center_horizontal" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/name"
-            android:id="@+id/name_lbl"
-            android:layout_gravity="center_horizontal" />
 
         <EditText
             android:layout_width="match_parent"
@@ -35,15 +29,9 @@
             android:inputType="textPersonName"
             android:ems="10"
             android:id="@+id/username_et"
+            android:hint="@string/name"
             android:layout_gravity="center_horizontal" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/pass"
-            android:id="@+id/pass_lbl"
-            android:layout_gravity="center_horizontal" />
 
         <EditText
             android:layout_width="match_parent"
@@ -51,15 +39,9 @@
             android:inputType="textPassword"
             android:ems="10"
             android:id="@+id/pass_et"
+            android:hint="@string/pass"
             android:layout_gravity="center_horizontal" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/confirm_pass"
-            android:id="@+id/confirm_pass_lbl"
-            android:layout_gravity="center_horizontal" />
 
         <EditText
             android:layout_width="match_parent"
@@ -67,14 +49,7 @@
             android:inputType="textPassword"
             android:ems="10"
             android:id="@+id/confirm_pass_et"
-            android:layout_gravity="center_horizontal" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/email"
-            android:id="@+id/email_lbl"
+            android:hint="@string/confirm_pass"
             android:layout_gravity="center_horizontal" />
 
         <EditText
@@ -83,6 +58,7 @@
             android:inputType="textEmailAddress"
             android:ems="10"
             android:id="@+id/email_et"
+            android:hint="@string/email"
             android:layout_gravity="center_horizontal" />
 
         <TextView
