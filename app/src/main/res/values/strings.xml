@@ -37,7 +37,7 @@
 
 <!-- Sign up/Dedicated Interface/User info Strings-->
     <string name="signup">SIGN UP</string>
-    <string name="name">Name: </string>
+    <string name="name">Name </string>
     <string name="student_id">Student ID: </string>
     <string name="student">Student</string>
     <string name="roll">Roll Call</string>
@@ -45,9 +45,9 @@
     <string name="response">In Class Response</string>
     <string name="responseres">Response Results</string>
     <string name="classmanage">Class Management</string>
-    <string name="pass">Password: </string>
-    <string name="confirm_pass">Confirm Password: </string>
-    <string name="email">E-mail: </string>
+    <string name="pass">Password </string>
+    <string name="confirm_pass">Confirm Password </string>
+    <string name="email">E-mail </string>
     <string name="user">USER INFO</string>
     <string name="user_btn">User Info</string>
 
