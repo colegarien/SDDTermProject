@@ -110,7 +110,7 @@ public class UserInformation extends Fragment {
         user = dr.getUser(user_key);
 
 
-        name.setText(user.getUsername());
+        name.setText(user.getName());
         password.setText(user.getPassword());
         email.setText(user.getEmail());
         id.setText(Integer.toString(user.getId()));
