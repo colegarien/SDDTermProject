@@ -6,7 +6,9 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
+import java.io.IOException;
+
+import edu.uco.schambers.classmate.Adapter.UserAdapter;
 import edu.uco.schambers.classmate.Database.DataRepo;
 import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.R;
@@ -59,7 +66,6 @@ public class Login extends Fragment {
     //user class
     public User user;
     private DataRepo dr;
-
 
 
 
@@ -160,7 +166,7 @@ public class Login extends Fragment {
         confirmPass.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
-                if(hasFocus){
+                if (hasFocus) {
                     confirmPass.setError(null);
                 }
             }
@@ -209,21 +215,8 @@ public class Login extends Fragment {
                             //if an integer cant be parsed from the idET, user must be a teacher, allowing to continue on
                         }
                         if(userExists) {
-                            //split name into first and last & set to user
-                            String bothNames = name.getText().toString();
-
-                            String[] nameArr = bothNames.split("\\s+");
-
-                            if (nameArr.length == 1) {
-                                user.setFname(bothNames);
-                                user.setLname(bothNames);
-                            } else if (nameArr.length > 1) {
-                                user.setFname(nameArr[0]);
-                                user.setLname(nameArr[1]);
-                            }
-
                             //set username
-                            user.setUsername(name.getText().toString());
+                            user.setName(name.getText().toString());
 
                             //set email to user.
                             user.setEmail(email.getText().toString());
@@ -251,15 +244,22 @@ public class Login extends Fragment {
                                 launchFragment(student);
                             }
 
-                            user.setIsMale(false);
-                            user.setPhone("none");
                             //store user in dataRepo
-
                             dr.createUser(user);
+                            //send to web api
+
+                            try {
+                                new UserAdapter().createUser(user);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
                             //store username in Shared Preferences
                             sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
                             editor = sp.edit();
-                            editor.putString("USER_KEY", user.getUsername());
+                            editor.putString("USER_KEY", user.getName());
                             editor.commit();
                         }
                         else {
