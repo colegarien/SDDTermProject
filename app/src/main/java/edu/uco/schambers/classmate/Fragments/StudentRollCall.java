@@ -1,5 +1,6 @@
 package edu.uco.schambers.classmate.Fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
@@ -16,6 +17,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import edu.uco.schambers.classmate.Activites.MainActivity;
 import edu.uco.schambers.classmate.R;
 
 /**
@@ -78,6 +80,9 @@ public class StudentRollCall extends Fragment {
         prefs = this.getActivity().getSharedPreferences("studentRollCallPrefs", Context.MODE_PRIVATE);
 
         setHasOptionsMenu(true);
+
+        // Discover teacher coll roll service
+        discoverService();
     }
 
     @Override
@@ -190,6 +195,15 @@ public class StudentRollCall extends Fragment {
         }
         else if (audioMode.equalsIgnoreCase("Vibrate")){
             am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+        }
+    }
+
+    private void discoverService(){
+        Activity activity = getActivity();
+
+        /// Start discovering teacher service
+        if(activity instanceof MainActivity) {
+            ((MainActivity) activity).discoverLocalService();
         }
     }
 
