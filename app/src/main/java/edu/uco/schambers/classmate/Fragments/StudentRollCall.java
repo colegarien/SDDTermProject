@@ -1,3 +1,15 @@
+/* Team 9Lives
+ *
+ * Author: Wenxi Zeng
+ * Purpose:
+ *   UI backend for student roll call module, used for checking and
+ *   discovering Roll Call Wifi P2P service
+ *
+ * Edit: 9/24/2015
+ *   added button onCreate method for activating Wifi discovery
+ *
+ */
+
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
