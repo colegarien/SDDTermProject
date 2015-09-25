@@ -6,10 +6,13 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
+import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -37,6 +40,11 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
     private WifiP2pManager mManager;
     // For connecting with the Wifi P2p framework
     private Channel mChannel;
+
+    // Service identity
+    public static final String SERVICE_INSTANCE = "_test";
+    // For creating service request, and initiate discovery
+    private WifiP2pDnsSdServiceRequest serviceRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +133,7 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         // _protocol._transportlayer , and the map containing
         // information other devices will want once they connect to this one.
         WifiP2pDnsSdServiceInfo serviceInfo =
-                WifiP2pDnsSdServiceInfo.newInstance("_test", "_presence._tcp", record);
+                WifiP2pDnsSdServiceInfo.newInstance(SERVICE_INSTANCE, "_presence._tcp", record);
 
         // Add the local service, sending the service info, network channel,
         // and listener that will be used to indicate success or failure of
@@ -156,5 +164,57 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                 Toast.makeText(getApplicationContext(),errorMessage,Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void discoverLocalService(){
+
+        //Register listeners for DNS-SD services. These are callbacks invoked
+        //by the system when a service is actually discovered.
+        mManager.setDnsSdResponseListeners(mChannel,
+                new WifiP2pManager.DnsSdServiceResponseListener() {
+                    @Override
+                    public void onDnsSdServiceAvailable(String instanceName, String registrationType, WifiP2pDevice srcDevice) {
+                        // A service has been discovered. Is this our app?
+                        if (instanceName.equalsIgnoreCase(SERVICE_INSTANCE)){
+                            // update UI
+                            Log.d("ServiceDiscovery", "Service found");
+                        }
+
+                    }
+                },
+
+                new WifiP2pManager.DnsSdTxtRecordListener() {
+                    @Override
+                    public void onDnsSdTxtRecordAvailable(String fullDomainName, Map<String, String> txtRecordMap, WifiP2pDevice srcDevice) {
+
+                    }
+                });
+
+        // After attaching listeners, create a service request and initiate discovery
+        serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
+        mManager.addServiceRequest(mChannel, serviceRequest,
+                new WifiP2pManager.ActionListener() {
+                    @Override
+                    public void onSuccess() {
+                        Log.d("ServiceDiscovery", "Added service discovery request");
+                    }
+
+                    @Override
+                    public void onFailure(int reason) {
+                        Log.d("ServiceDiscovery", "Failed adding service discovery request");
+                    }
+                });
+        mManager.discoverServices(mChannel,
+                new WifiP2pManager.ActionListener() {
+                    @Override
+                    public void onSuccess() {
+                        Log.d("ServiceDiscovery", "Service discovery initiated");
+                    }
+
+                    @Override
+                    public void onFailure(int reason) {
+                        Log.d("ServiceDiscovery", "Service discovery failed");
+                    }
+                });
     }
 }
