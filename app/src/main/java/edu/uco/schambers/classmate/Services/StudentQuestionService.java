@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
 
 import edu.uco.schambers.classmate.Activites.MainActivity;
 import edu.uco.schambers.classmate.Fragments.StudentResponseFragment;
@@ -21,18 +22,32 @@ public class StudentQuestionService extends Service
     public static final String ACTION_NOTIFY_QUESTION_RECEIVED = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_NOTIFY_QUESTION_RECEIVED";
     public static final String ACTION_REQUEST_QUESTION_RESPONSE = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_REQUEST_QUESTION_RESPONSE";
     public static final String ACTION_SEND_QUESTION_RESPONSE = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_SEND_QUESTION_RESPONSE";
+
     public StudentQuestionService()
     {
     }
 
     public static Intent getNewSendQuestionIntent(Context context, IQuestion question)
     {
-        Intent questionResponseBroadcastIntent = new Intent(context, StudentQuestionService.class);
+        Intent questionReceivedIntent = getBaseIntent(context,question);
+        questionReceivedIntent.setAction(ACTION_NOTIFY_QUESTION_RECEIVED);
+        return questionReceivedIntent;
+    }
+
+    public static Intent getNewSendResponseIntent(Context context, IQuestion question)
+    {
+        Intent questionResponseIntent = getBaseIntent(context,question);
+        questionResponseIntent.setAction(ACTION_SEND_QUESTION_RESPONSE);
+        return questionResponseIntent;
+    }
+
+    private static Intent getBaseIntent(Context context, IQuestion question)
+    {
+        Intent baseQuestionIntent= new Intent(context, StudentQuestionService.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable(StudentResponseFragment.ARG_QUESTION, question);
-        questionResponseBroadcastIntent.putExtras(bundle);
-        questionResponseBroadcastIntent.setAction(ACTION_NOTIFY_QUESTION_RECEIVED);
-        return questionResponseBroadcastIntent;
+        baseQuestionIntent.putExtras(bundle);
+        return baseQuestionIntent;
     }
 
     @Override
@@ -46,17 +61,25 @@ public class StudentQuestionService extends Service
     public int onStartCommand(Intent intent, int flags, int startId)
     {
         String action = intent.getAction();
+        IQuestion question;
         switch (action)
         {
             case ACTION_NOTIFY_QUESTION_RECEIVED:
-                IQuestion question = (IQuestion) intent.getExtras().getSerializable(StudentResponseFragment.ARG_QUESTION);
+                question = (IQuestion) intent.getExtras().getSerializable(StudentResponseFragment.ARG_QUESTION);
                 notifyQuestionReceived(question);
                 break;
             case ACTION_SEND_QUESTION_RESPONSE:
-                //TODO
+                question = (IQuestion) intent.getExtras().getSerializable(StudentResponseFragment.ARG_QUESTION);
+                sendQuestionResponse(question);
                 break;
         }
         return START_NOT_STICKY;
+    }
+
+    private void sendQuestionResponse(IQuestion question)
+    {
+        //todo actual implementation
+        Toast.makeText(this, String.format(getResources().getString(R.string.response_sent), question.getAnswer()), Toast.LENGTH_SHORT).show();
     }
 
     private void notifyQuestionReceived(IQuestion question)
@@ -74,7 +97,7 @@ public class StudentQuestionService extends Service
         Bundle bundle = new Bundle();
         bundle.putSerializable(StudentResponseFragment.ARG_QUESTION, question);
         notifyIntent.putExtras(bundle);
-        PendingIntent notifyPendingIntent = PendingIntent.getActivity(this,0,notifyIntent,PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent notifyPendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         notificationBuilder.setContentIntent(notifyPendingIntent);
 
         notificationManager.notify(R.integer.question_received_notification, notificationBuilder.build());
