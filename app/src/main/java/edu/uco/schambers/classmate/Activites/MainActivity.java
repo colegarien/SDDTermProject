@@ -20,7 +20,6 @@ import android.widget.Toast;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.uco.schambers.classmate.BroadcastReceivers.CallForStudentQuestionResponseReceiver;
 import edu.uco.schambers.classmate.Fragments.Debug;
 import edu.uco.schambers.classmate.Fragments.Login;
 import edu.uco.schambers.classmate.Fragments.StudentInterface;
@@ -30,6 +29,7 @@ import edu.uco.schambers.classmate.Fragments.TeacherQuestionResults;
 import edu.uco.schambers.classmate.Fragments.UserInformation;
 import edu.uco.schambers.classmate.Models.Questions.IQuestion;
 import edu.uco.schambers.classmate.R;
+import edu.uco.schambers.classmate.Services.StudentQuestionService;
 
 
 public class MainActivity extends Activity implements StudentResponseFragment.OnFragmentInteractionListener, Login.OnFragmentInteractionListener,
@@ -64,7 +64,7 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         switch(intent.getAction())
         {
 
-            case CallForStudentQuestionResponseReceiver.ACTION_REQUEST_QUESTION_RESPONSE:
+            case StudentQuestionService.ACTION_REQUEST_QUESTION_RESPONSE:
                 Bundle bundle= intent.getExtras();
                 IQuestion question =(IQuestion) bundle.getSerializable(StudentResponseFragment.ARG_QUESTION);
                 StudentResponseFragment studentResponseFragment= StudentResponseFragment.newInstance(question);
