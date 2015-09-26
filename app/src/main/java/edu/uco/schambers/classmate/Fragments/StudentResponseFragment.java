@@ -1,12 +1,18 @@
 package edu.uco.schambers.classmate.Fragments;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -20,7 +26,7 @@ public class StudentResponseFragment extends Fragment
 {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    public static final String ARG_QUESTION= "edu.uco.schambers.classmate.arq_question";
+    public static final String ARG_QUESTION = "edu.uco.schambers.classmate.arq_question";
 
     // TODO: Rename and change types of parameters
     private IQuestion question;
@@ -29,6 +35,7 @@ public class StudentResponseFragment extends Fragment
     private RadioGroup radioGroup;
     private Button sendBtn;
     private TextView questionText;
+    private View questionCardView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -62,9 +69,9 @@ public class StudentResponseFragment extends Fragment
     {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_student_response, container, false);
-        if(question != null)
+        if (question != null)
         {
-            View questionCardView = inflater.inflate(R.layout.question_response_card,(ViewGroup)rootView);
+            questionCardView = inflater.inflate(R.layout.question_response_card, (ViewGroup) rootView);
             initUI(questionCardView);
             populateQuestionCardFromQuestion();
 
@@ -102,9 +109,35 @@ public class StudentResponseFragment extends Fragment
     private void sendResponse(CharSequence text)
     {
         //TODO implement send method
-
+        dismissCardAnimation();
         //testing notifications
-        Toast.makeText(getActivity(), String.format(getResources().getString(R.string.response_sent),text), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), String.format(getResources().getString(R.string.response_sent), text), Toast.LENGTH_SHORT).show();
+    }
+
+    private void dismissCardAnimation()
+    {
+        Animation slideOutRight = AnimationUtils.loadAnimation(getActivity(), android.R.anim.slide_out_right);
+        slideOutRight.setAnimationListener(new Animation.AnimationListener()
+        {
+            @Override
+            public void onAnimationStart(Animation animation)
+            {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation)
+            {
+                questionCardView.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation)
+            {
+
+            }
+        });
+        questionCardView.startAnimation(slideOutRight);
     }
 
 
@@ -113,18 +146,20 @@ public class StudentResponseFragment extends Fragment
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
     private void populateQuestionCardFromQuestion()
     {
-        if(question != null)
+        if (question != null)
         {
             questionText.setText(question.getQuestionText());
-            for(String s : question.getQuestionChoices())
+            for (String s : question.getQuestionChoices())
             {
                 RadioButton rb = generateRadioButtonForResponse(s);
                 radioGroup.addView(rb);
             }
         }
     }
+
     private RadioButton generateRadioButtonForResponse(String s)
     {
         RadioButton radioButton = new RadioButton(getActivity());
