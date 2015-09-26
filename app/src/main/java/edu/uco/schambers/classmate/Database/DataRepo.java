@@ -48,12 +48,12 @@ public class DataRepo extends SQLiteOpenHelper {
 		Cursor res =  db.rawQuery( "select * from users where id = '" + id + "'", null);
 
 		if (res.getCount() > 0)
-			return false;
+			return true;
 
-		return true;
+		return false;
 	}
 
-
+	public String userEmail;
 	public void createUser(User user) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues contentValues = new ContentValues();
@@ -66,6 +66,7 @@ public class DataRepo extends SQLiteOpenHelper {
 
 		db.insert("users", null, contentValues);
 		createRole(user);
+		userEmail = user.getEmail();
 	}
 
 	public void createRole(User user) {
