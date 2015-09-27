@@ -9,14 +9,14 @@ import android.util.Log;
 
 
 public class DataRepo extends SQLiteOpenHelper {
-	private static final int DATABASE_VERSION = 8;
+	private static final int DATABASE_VERSION = 9;
 	private static final String DATABASE_NAME = "CLASSMATE_TABLES";
 	private static final String CREATE_TABLE_USER = "create table users " +
 			"(user_id integer primary key AUTOINCREMENT," +
-			"id integer, username text, " +
-			"password text, fname text,lname text , " +
-			"isstudent integer, phone text, " +
-			"email text, ismale integer)";
+			"id integer, name text, " +
+			"password text, " +
+			"isstudent integer, " +
+			"email text)";
 
 	private static final String Role = "create table dbRoles " +
 			"(user_id integer, " +
@@ -48,28 +48,25 @@ public class DataRepo extends SQLiteOpenHelper {
 		Cursor res =  db.rawQuery( "select * from users where id = '" + id + "'", null);
 
 		if (res.getCount() > 0)
-			return false;
+			return true;
 
-		return true;
+		return false;
 	}
 
-
+	public String userEmail;
 	public void createUser(User user) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues contentValues = new ContentValues();
 
 		contentValues.put("id", user.getId());
-		contentValues.put("username", user.getUsername());
+		contentValues.put("name", user.getName());
 		contentValues.put("password", user.getPassword());
-		contentValues.put("fname", user.getFname());
-		contentValues.put("lname", user.getLname());
 		contentValues.put("isstudent", user.isStudent() ? 1 : 0);
-		contentValues.put("phone", user.getPhone());
 		contentValues.put("email", user.getEmail());
-		contentValues.put("ismale", user.isMale() ? 1 : 0);
 
 		db.insert("users", null, contentValues);
 		createRole(user);
+		userEmail = user.getEmail();
 	}
 
 	public void createRole(User user) {
@@ -88,23 +85,19 @@ public class DataRepo extends SQLiteOpenHelper {
 		db.insert("dbRoles", null, contentValues);
 	}
 
-	public User getUser(String username) {
+	public User getUser(String email) {
 		SQLiteDatabase db = this.getReadableDatabase();
-		Cursor res =  db.rawQuery( "select * from users where username = '" + username + "'", null);
+		Cursor res =  db.rawQuery( "select * from users where email = '" + email + "'", null);
 
 		if (res.moveToNext())
 		{
 			User user = new User();
 
 			user.setId(res.getInt(0));
-			user.setUsername(res.getString(1));
+			user.setName(res.getString(1));
 			user.setPassword(res.getString(2));
-			user.setFname(res.getString(3));
-			user.setLname(res.getString(4));
-			user.setIsStudent(res.getInt(5) == 1);
-			user.setPhone(res.getString(6));
-			user.setEmail(res.getString(7));
-			user.setIsMale(res.getInt(8) == 1);
+			user.setIsStudent(res.getInt(3) == 1);
+			user.setEmail(res.getString(4));
 
 			return user;
 		}
@@ -112,9 +105,9 @@ public class DataRepo extends SQLiteOpenHelper {
 		return null;
 	}
 
-	public boolean validateUser(String username, String password) {
+	public boolean validateUser(String email, String password) {
 		SQLiteDatabase db = this.getReadableDatabase();
-		Cursor res =  db.rawQuery( "select * from users where username = '" + username + "' and password = '" + password + "'", null);
+		Cursor res =  db.rawQuery( "select * from users where email = '" + email + "' and password = '" + password + "'", null);
 
 		if (res.getCount() > 0)
 			return true;
