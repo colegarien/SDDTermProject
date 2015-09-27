@@ -33,7 +33,7 @@
     <string name="option_c">C</string>
     <string name="option_d">D</string>
     <string name="btn_send">Send</string>
-    <string name="response_sent">You selected option %s</string>
+    <string name="response_sent">You selected option %s. Your response is being sent to the teacher now.</string>
 
 <!-- Sign up/Dedicated Interface/User info Strings-->
     <string name="signup">SIGN UP</string>

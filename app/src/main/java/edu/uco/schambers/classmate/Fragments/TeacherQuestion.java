@@ -1,6 +1,5 @@
 package edu.uco.schambers.classmate.Fragments;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,8 +10,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import edu.uco.schambers.classmate.BroadcastReceivers.CallForStudentQuestionResponseReceiver;
+import edu.uco.schambers.classmate.Models.Questions.DefaultMultiChoiceQuestion;
+import edu.uco.schambers.classmate.Models.Questions.IQuestion;
 import edu.uco.schambers.classmate.R;
+import edu.uco.schambers.classmate.Services.StudentQuestionService;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -102,8 +103,9 @@ public class TeacherQuestion extends Fragment {
 
     private void sendQuestion(){
         //TODO implement sendQuestion method
-
-        sendTestCallToResponseBroadcast();
+        IQuestion question = new DefaultMultiChoiceQuestion();
+        Intent intent = StudentQuestionService.getNewSendQuestionIntent(getActivity(), question);
+        getActivity().startService(intent);
         //stub toast
         Toast.makeText(getActivity(), "Question sent to class!", Toast.LENGTH_SHORT).show();
     }
@@ -114,13 +116,6 @@ public class TeacherQuestion extends Fragment {
         //stub toast
         Toast.makeText(getActivity(), "Answers collected from class!", Toast.LENGTH_SHORT).show();
     }
-
-    private void sendTestCallToResponseBroadcast()
-    {
-        Intent questionResponseBroadcastIntent = CallForStudentQuestionResponseReceiver.getStartIntent(getActivity());
-        getActivity().sendBroadcast(questionResponseBroadcastIntent);
-    }
-
 
     /**
      * This interface must be implemented by activities that contain this
