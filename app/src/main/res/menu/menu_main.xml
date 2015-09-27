@@ -5,5 +5,5 @@
     <item android:id="@+id/action_debug" android:title="@string/action_debug"
           android:showAsAction="never"/>
     <item android:id="@+id/action_logout" android:title="logout"
-          android:showAsAction="never"/>
+          android:orderInCategory="300" android:showAsAction="never"/>
 </menu>

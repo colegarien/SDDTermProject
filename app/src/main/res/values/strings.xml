@@ -45,15 +45,9 @@
     <string name="response">In Class Response</string>
     <string name="responseres">Response Results</string>
     <string name="classmanage">Class Management</string>
-<<<<<<< HEAD
-    <string name="pass">Password  </string>
-    <string name="confirm_pass">Confirm Password </string>
-    <string name="email">E-mail  </string>
-=======
     <string name="pass">Password </string>
     <string name="confirm_pass">Confirm Password </string>
     <string name="email">E-mail </string>
->>>>>>> fb65f2d34f4407dad83f42e62758c703939b4cae
     <string name="user">USER INFO</string>
     <string name="user_btn">User Info</string>
     <string name="user_info_name">NAME: </string>

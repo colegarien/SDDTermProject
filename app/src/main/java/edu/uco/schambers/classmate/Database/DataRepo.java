@@ -94,20 +94,13 @@ public class DataRepo extends SQLiteOpenHelper {
 		{
 			User user = new User();
 
-<<<<<<< HEAD
+
 			user.setpKey(res.getInt(0));
 			user.setId(res.getInt(1));
 			user.setName(res.getString(2));
 			user.setPassword(res.getString(3));
 			user.setIsStudent(res.getInt(4) == 1);
 			user.setEmail(res.getString(5));
-=======
-			user.setId(res.getInt(0));
-			user.setName(res.getString(1));
-			user.setPassword(res.getString(2));
-			user.setIsStudent(res.getInt(3) == 1);
-			user.setEmail(res.getString(4));
->>>>>>> fb65f2d34f4407dad83f42e62758c703939b4cae
 
 			return user;
 		}

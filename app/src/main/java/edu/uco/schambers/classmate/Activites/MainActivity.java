@@ -21,11 +21,10 @@ import android.widget.Toast;
 import java.util.HashMap;
 import java.util.Map;
 
-<<<<<<< HEAD
-import edu.uco.schambers.classmate.BroadcastReceivers.CallForStudentQuestionResponseReceiver;
+
+//import edu.uco.schambers.classmate.BroadcastReceivers.CallForStudentQuestionResponseReceiver;
 import edu.uco.schambers.classmate.Fragments.Auth;
-=======
->>>>>>> fb65f2d34f4407dad83f42e62758c703939b4cae
+
 import edu.uco.schambers.classmate.Fragments.Debug;
 import edu.uco.schambers.classmate.Fragments.Login;
 import edu.uco.schambers.classmate.Fragments.ResetPassword;
