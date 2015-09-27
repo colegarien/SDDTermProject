@@ -115,6 +115,7 @@ public class Auth extends Fragment {
         signin = (Button) rootView.findViewById(R.id.sign_in_btn);
         signup = (TextView) rootView.findViewById(R.id.signup_lbl);
         resetLink = (TextView) rootView.findViewById(R.id.reset_pw_lbl);
+        dr = new DataRepo(getActivity());
 
         signup.setOnClickListener(new View.OnClickListener()
         {
@@ -126,11 +127,9 @@ public class Auth extends Fragment {
             }
         });
 
-        resetLink.setOnClickListener(new View.OnClickListener()
-        {
+        resetLink.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 Fragment reset = ResetPassword.newInstance("test", "test");
                 launchFragment(reset);
             }
@@ -141,7 +140,11 @@ public class Auth extends Fragment {
             @Override
             public void onClick(View v)
             {
-
+                if(!dr.validateUser(email.getText().toString(), pass.getText().toString())) {
+                    pass.setError("Incorrect E-Mail or Password");
+                }else{
+                    pass.setError("this is working");
+                }
             }
         });
 
