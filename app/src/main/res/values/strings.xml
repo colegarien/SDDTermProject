@@ -45,11 +45,22 @@
     <string name="response">In Class Response</string>
     <string name="responseres">Response Results</string>
     <string name="classmanage">Class Management</string>
-    <string name="pass">Password </string>
+    <string name="pass">Password  </string>
     <string name="confirm_pass">Confirm Password </string>
-    <string name="email">E-mail </string>
+    <string name="email">E-mail  </string>
     <string name="user">USER INFO</string>
     <string name="user_btn">User Info</string>
+    <string name="user_info_name">NAME: </string>
+    <string name="user_info_email">EMAIL: </string>
+    <string name="user_info_id">STUDENT ID: </string>
+    <string name="user_info_cpw">CURRENT PASSWORD: </string>
+    <string name="user_info_npw">NEW PASSWORD: </string>
+    <string name="user_info_cnpw">CONFIRM NEW PASSWORD: </string>
+    <string name="change_pw">Change Password</string>
+    <string name="cancel_pw">Cancel</string>
+    <string name="reset_pw_text">Enter your e-mail and we\'ll send you a link to reset your password.</string>
+    <string name="reset_pw_btn">Send Reset Link</string>
+    <string name="login_btn">LOGIN</string>
 
 <!--Roll Call UI Strings-->
     <string name="btn_roll_call">Call Roll</string>

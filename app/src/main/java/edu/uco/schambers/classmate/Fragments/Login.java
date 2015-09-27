@@ -54,7 +54,6 @@ public class Login extends Fragment {
     //ui components
     private CheckBox cb;
     private EditText idET;
-    private TextView idTV;
     private Button   confirm;
     private EditText pass;
     private EditText confirmPass;
@@ -115,7 +114,6 @@ public class Login extends Fragment {
     private void initUI(final View rootView) {
         cb = (CheckBox) rootView.findViewById(R.id.student_cb);
         idET = (EditText) rootView.findViewById(R.id.student_id_et);
-        idTV = (TextView) rootView.findViewById(R.id.student_id_lbl);
         confirm = (Button)rootView.findViewById(R.id.signup_btn);
         pass = (EditText) rootView.findViewById(R.id.pass_et);
         confirmPass = (EditText)rootView.findViewById(R.id.confirm_pass_et);
@@ -243,13 +241,10 @@ public class Login extends Fragment {
 
         if (!cb.isChecked())
         {
-            idET.setText("");
             idET.setVisibility(View.INVISIBLE);
-            idTV.setVisibility(View.INVISIBLE);
             idET.setText("");
         }else{
             idET.setVisibility(View.VISIBLE);
-            idTV.setVisibility(View.VISIBLE);
         }
     }
 

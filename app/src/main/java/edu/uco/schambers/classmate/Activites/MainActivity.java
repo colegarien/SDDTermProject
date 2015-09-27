@@ -18,8 +18,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.uco.schambers.classmate.BroadcastReceivers.CallForStudentQuestionResponseReceiver;
+import edu.uco.schambers.classmate.Fragments.Auth;
 import edu.uco.schambers.classmate.Fragments.Debug;
 import edu.uco.schambers.classmate.Fragments.Login;
+import edu.uco.schambers.classmate.Fragments.ResetPassword;
 import edu.uco.schambers.classmate.Fragments.StudentInterface;
 import edu.uco.schambers.classmate.Fragments.StudentResponseFragment;
 import edu.uco.schambers.classmate.Fragments.TeacherInterface;
@@ -30,7 +32,8 @@ import edu.uco.schambers.classmate.R;
 
 
 public class MainActivity extends Activity implements StudentResponseFragment.OnFragmentInteractionListener, Login.OnFragmentInteractionListener,
-        StudentInterface.OnFragmentInteractionListener, TeacherInterface.OnFragmentInteractionListener, TeacherQuestionResults.OnFragmentInteractionListener, UserInformation.OnFragmentInteractionListener
+        StudentInterface.OnFragmentInteractionListener, TeacherInterface.OnFragmentInteractionListener, TeacherQuestionResults.OnFragmentInteractionListener,
+        UserInformation.OnFragmentInteractionListener, Auth.OnFragmentInteractionListener, ResetPassword.OnFragmentInteractionListener
 {
 
     // For registering Application in the Wifi P2p framework

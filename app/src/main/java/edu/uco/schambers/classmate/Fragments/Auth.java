@@ -1,13 +1,19 @@
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
+import edu.uco.schambers.classmate.Database.DataRepo;
+import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.R;
 
 /**
@@ -27,6 +33,15 @@ public class Auth extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private EditText email;
+    private EditText pass;
+    private Button signin;
+    private TextView signup;
+    private TextView resetLink;
+
+    public User user;
+    private DataRepo dr;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -64,8 +79,9 @@ public class Auth extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_auth, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_auth, container, false);
+        initUI(rootView);
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -92,6 +108,48 @@ public class Auth extends Fragment {
         mListener = null;
     }
 
+    private void initUI(final View rootView) {
+
+        email = (EditText) rootView.findViewById(R.id.email_et);
+        pass = (EditText) rootView.findViewById(R.id.pass_et);
+        signin = (Button) rootView.findViewById(R.id.sign_in_btn);
+        signup = (TextView) rootView.findViewById(R.id.signup_lbl);
+        resetLink = (TextView) rootView.findViewById(R.id.reset_pw_lbl);
+
+        signup.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Fragment signup = Login.newInstance("test", "test");
+                launchFragment(signup);
+            }
+        });
+
+        resetLink.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Fragment reset = ResetPassword.newInstance("test", "test");
+                launchFragment(reset);
+            }
+        });
+
+        signin.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+
+            }
+        });
+
+
+
+
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -105,6 +163,16 @@ public class Auth extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+
+    private void launchFragment(Fragment f)
+    {
+        if(f != null)
+        {
+            FragmentTransaction trans = getFragmentManager().beginTransaction();
+            trans.replace(R.id.fragment_container, f).addToBackStack("debug");
+            trans.commit();
+        }
     }
 
 }
