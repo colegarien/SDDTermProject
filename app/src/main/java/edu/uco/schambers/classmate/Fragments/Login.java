@@ -120,8 +120,8 @@ public class Login extends Fragment {
         name = (EditText)rootView.findViewById(R.id.username_et);
         email = (EditText)rootView.findViewById(R.id.email_et);
 
-        //sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-        //editor = sp.edit();
+        sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+        editor = sp.edit();
         user = new User();
         dr   = new DataRepo(getActivity());
 

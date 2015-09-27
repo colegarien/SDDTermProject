@@ -6,11 +6,16 @@ import java.util.regex.Pattern;
 
 
 public class User implements Serializable {
+	private int pKey;
 	private int id;
 	private String name;
 	private String password;
 	private boolean Student;
 	private String email;
+
+	public int getpKey(){return pKey;}
+
+	public void setpKey(int pKey) {this.pKey = pKey;}
 
 	public int getId() {
 		return id;

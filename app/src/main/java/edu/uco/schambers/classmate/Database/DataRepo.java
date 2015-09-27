@@ -58,6 +58,7 @@ public class DataRepo extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues contentValues = new ContentValues();
 
+
 		contentValues.put("id", user.getId());
 		contentValues.put("name", user.getName());
 		contentValues.put("password", user.getPassword());
@@ -93,11 +94,12 @@ public class DataRepo extends SQLiteOpenHelper {
 		{
 			User user = new User();
 
-			user.setId(res.getInt(0));
-			user.setName(res.getString(1));
-			user.setPassword(res.getString(2));
-			user.setIsStudent(res.getInt(3) == 1);
-			user.setEmail(res.getString(4));
+			user.setpKey(res.getInt(0));
+			user.setId(res.getInt(1));
+			user.setName(res.getString(2));
+			user.setPassword(res.getString(3));
+			user.setIsStudent(res.getInt(4) == 1);
+			user.setEmail(res.getString(5));
 
 			return user;
 		}
