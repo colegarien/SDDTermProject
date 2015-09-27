@@ -38,27 +38,53 @@
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             android:ems="10"
+<<<<<<< HEAD
             android:id="@+id/email_et"
             android:hint="@string/email"
             android:layout_gravity="center_horizontal" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:ems="10"
+=======
             android:id="@+id/pass_et"
             android:hint="@string/pass"
             android:layout_gravity="center_horizontal" />
 
+>>>>>>> fb65f2d34f4407dad83f42e62758c703939b4cae
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:ems="10"
+<<<<<<< HEAD
+            android:id="@+id/pass_et"
+            android:hint="@string/pass"
+            android:layout_gravity="center_horizontal" />
+
+=======
             android:id="@+id/confirm_pass_et"
             android:hint="@string/confirm_pass"
+            android:layout_gravity="center_horizontal" />
+>>>>>>> fb65f2d34f4407dad83f42e62758c703939b4cae
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+<<<<<<< HEAD
+            android:id="@+id/confirm_pass_et"
+            android:hint="@string/confirm_pass"
+=======
+            android:id="@+id/email_et"
+            android:hint="@string/email"
+            android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/student_id"
+            android:id="@+id/student_id_lbl"
+>>>>>>> fb65f2d34f4407dad83f42e62758c703939b4cae
             android:layout_gravity="center_horizontal" />
 
         <EditText

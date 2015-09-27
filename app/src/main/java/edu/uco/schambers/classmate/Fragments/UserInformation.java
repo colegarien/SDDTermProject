@@ -141,6 +141,7 @@ public class UserInformation extends Fragment {
             idLbl.setVisibility(View.INVISIBLE);
         }
 
+<<<<<<< HEAD
         changePass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -180,6 +181,12 @@ public class UserInformation extends Fragment {
                       }
             }
         });
+=======
+        name.setText(user.getName());
+        password.setText(user.getPassword());
+        email.setText(user.getEmail());
+        id.setText(Integer.toString(user.getId()));
+>>>>>>> fb65f2d34f4407dad83f42e62758c703939b4cae
 
 
 

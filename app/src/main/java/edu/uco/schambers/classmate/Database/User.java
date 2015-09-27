@@ -12,10 +12,13 @@ public class User implements Serializable {
 	private String password;
 	private boolean Student;
 	private String email;
+<<<<<<< HEAD
 
 	public int getpKey(){return pKey;}
 
 	public void setpKey(int pKey) {this.pKey = pKey;}
+=======
+>>>>>>> fb65f2d34f4407dad83f42e62758c703939b4cae
 
 	public int getId() {
 		return id;

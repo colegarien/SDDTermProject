@@ -3,14 +3,14 @@
     package="edu.uco.schambers.classmate" >
 
     <uses-permission
-        android:required="true"
-        android:name="android.permission.ACCESS_WIFI_STATE"/>
+        android:name="android.permission.ACCESS_WIFI_STATE"
+        android:required="true" />
     <uses-permission
-        android:required="true"
-        android:name="android.permission.CHANGE_WIFI_STATE"/>
+        android:name="android.permission.CHANGE_WIFI_STATE"
+        android:required="true" />
     <uses-permission
-        android:required="true"
-        android:name="android.permission.INTERNET"/>
+        android:name="android.permission.INTERNET"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -27,11 +27,11 @@
             </intent-filter>
         </activity>
 
-        <receiver
-            android:name=".BroadcastReceivers.CallForStudentQuestionResponseReceiver"
+        <service
+            android:name=".Services.StudentQuestionService"
             android:enabled="true"
             android:exported="true" >
-        </receiver>
+        </service>
     </application>
 
 </manifest>
