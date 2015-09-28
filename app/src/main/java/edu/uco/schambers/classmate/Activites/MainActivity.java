@@ -12,6 +12,7 @@ import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,6 +46,9 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
     public static final String SERVICE_INSTANCE = "_test";
     // For creating service request, and initiate discovery
     private WifiP2pDnsSdServiceRequest serviceRequest;
+
+    // Constants
+    public static final String SERVICE_FOUND = "edu.uco.schambers.classmate.wifip2p.service_found";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,6 +172,8 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
 
     public void discoverLocalService(){
 
+        final LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(this);
+
         //Register listeners for DNS-SD services. These are callbacks invoked
         //by the system when a service is actually discovered.
         mManager.setDnsSdResponseListeners(mChannel,
@@ -177,6 +183,8 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                         // A service has been discovered. Is this our app?
                         if (instanceName.equalsIgnoreCase(SERVICE_INSTANCE)){
                             // update UI
+                            broadcaster.sendBroadcast(new Intent(MainActivity.SERVICE_FOUND));
+
                             Log.d("ServiceDiscovery", "Service found");
                         }
 
