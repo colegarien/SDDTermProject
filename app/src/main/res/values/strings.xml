@@ -38,7 +38,7 @@
 <!-- Sign up/Dedicated Interface/User info Strings-->
     <string name="signup">SIGN UP</string>
     <string name="name">Name </string>
-    <string name="student_id">Student ID: </string>
+    <string name="student_id">Student ID </string>
     <string name="student">Student</string>
     <string name="roll">Roll Call</string>
     <string name="attendance">Attendance Records</string>
