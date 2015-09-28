@@ -112,20 +112,23 @@ public class DataRepo extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor res =  db.rawQuery( "select * from users where email = '" + email + "' and password = '" + password + "'", null);
 
-		if (res.getCount() > 0)
+		if (res.getCount() > 0) {
 			return true;
-
-		return false;
+		}else {
+			return false;
+		}
 	}
 
 	public boolean validateUser(String password) {
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor res =  db.rawQuery( "select * from users where password = '" + password + "'", null);
 
-		if (res.getCount() > 0)
+		if (res.getCount() > 0) {
 			return true;
+		}else{
+			return false;
+		}
 
-		return false;
 	}
 
 }

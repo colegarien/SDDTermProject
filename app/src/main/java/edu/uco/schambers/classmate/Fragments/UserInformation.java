@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,8 +52,6 @@ public class UserInformation extends Fragment {
     private Button confirm;
     private CheckBox changePass;
     private boolean toChangePass;
-
-
 
 
     public SharedPreferences sp;
@@ -125,18 +124,18 @@ public class UserInformation extends Fragment {
         changePass = (CheckBox)rootView.findViewById(R.id.change_pw_cb);
 
 
-
         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
         user_key = sp.getString("USER_KEY", null);
         dr = new DataRepo(getActivity());
         user = dr.getUser(user_key);
+
         name.setText(user.getName().toString());
         email.setText(user.getEmail().toString());
         id.setText(Integer.toString(user.getId()));
         toChangePass = false;
         ChangePasswordVisibility(toChangePass);
 
-        if(!user.isStudent()){
+        if (!user.isStudent()) {
             id.setVisibility(View.INVISIBLE);
             idLbl.setVisibility(View.INVISIBLE);
         }
@@ -165,26 +164,21 @@ public class UserInformation extends Fragment {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                      if(!dr.validateUser(user.getEmail().toString(),currentPass.getText().toString())){
-                          currentPass.setError("Incorrect Current Password");
-                }else if(!user.isValidPassword(newPass.getText().toString())){
-                          newPass.setError("Password must be less than four characters");
-                }else if(!newPass.getText().toString().equals(confirmNewPass.getText().toString())){
-                          newPass.setError("New passwords do not match.");
-                      }else{
-                          user.setPassword(newPass.getText().toString());
-                          toChangePass = false;
-                          ChangePasswordVisibility(toChangePass);
-                          Toast.makeText(getActivity(), "Your Password has been Updated", Toast.LENGTH_LONG).show();
+                if (!dr.validateUser(user.getEmail().toString(), currentPass.getText().toString())) {
+                    currentPass.setError("Incorrect Current Password");
+                } else if (!user.isValidPassword(newPass.getText().toString())) {
+                    newPass.setError("Password must be less than four characters");
+                } else if (!newPass.getText().toString().equals(confirmNewPass.getText().toString())) {
+                    newPass.setError("New passwords do not match.");
+                } else {
+                    user.setPassword(newPass.getText().toString());
+                    toChangePass = false;
+                    ChangePasswordVisibility(toChangePass);
+                    Toast.makeText(getActivity(), "Your Password has been Updated", Toast.LENGTH_LONG).show();
 
                       }
             }
         });
-
-        name.setText(user.getName());
-        email.setText(user.getEmail());
-        id.setText(Integer.toString(user.getId()));
-
 
 
 

@@ -2,6 +2,8 @@ package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -39,8 +41,12 @@ public class Auth extends Fragment {
     private TextView signup;
     private TextView resetLink;
 
-    public User user;
+    public SharedPreferences sp;
+    public SharedPreferences.Editor editor;
+    public static final String MyPREFS = "MyPREFS";
     private DataRepo dr;
+    public User user;
+    Fragment context = this;
 
 
     private OnFragmentInteractionListener mListener;
@@ -143,14 +149,28 @@ public class Auth extends Fragment {
                 if(!dr.validateUser(email.getText().toString(), pass.getText().toString())) {
                     pass.setError("Incorrect E-Mail or Password");
                 }else{
-                    pass.setError("this is working");
+                    dr = new DataRepo(getActivity());
+                    user = dr.getUser(email.getText().toString());
+                    sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+                    editor = sp.edit();
+                    editor.putString("USER_KEY", user.getEmail());
+                    editor.commit();
+                    ChooseInterface(user);
                 }
             }
         });
 
 
+    }
 
-
+    public void ChooseInterface(User u) {
+        if (!u.isStudent()) {
+            Fragment teacher = TeacherInterface.newInstance("test", "test");
+            launchFragment(teacher);
+        }else{
+            Fragment student = StudentInterface.newInstance("test", "test");
+            launchFragment(student);
+        }
     }
 
     /**
