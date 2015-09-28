@@ -71,7 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:hint="Student ID: "
+            android:hint="@string/student_id"
             android:ems="10"
             android:id="@+id/student_id_et"
             android:layout_gravity="center_horizontal" />
