@@ -207,6 +207,11 @@ public class StudentRollCall extends Fragment {
                 Toast.makeText(getActivity(), "You've checked-in", Toast.LENGTH_SHORT).show();
             }
         });
+
+        // Disable the button.
+        // The check-in button can be enabled
+        // only if there is a teacher roll call service found.
+        btnCheckin.setEnabled(false);
     }
 
     private void changeAudioSetting(String audioMode){
