@@ -1,12 +1,17 @@
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import edu.uco.schambers.classmate.R;
 
@@ -27,6 +32,8 @@ public class ResetPassword extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private EditText email;
+    private Button reset;
 
     private OnFragmentInteractionListener mListener;
 
@@ -64,8 +71,9 @@ public class ResetPassword extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_reset_password, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_reset_password, container, false);
+        initUI(rootView);
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -92,6 +100,20 @@ public class ResetPassword extends Fragment {
         mListener = null;
     }
 
+    private void initUI(final View rootView){
+        email = (EditText) rootView.findViewById(R.id.user_email_et);
+        reset = (Button) rootView.findViewById(R.id.reset_pass_btn);
+
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //placeholder for verifying email is in database and sending link.
+               Toast linkSent = Toast.makeText(getActivity(), "Check your email!", Toast.LENGTH_LONG);
+                linkSent.show();
+            }
+        });
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -105,6 +127,16 @@ public class ResetPassword extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+
+    private void launchFragment(Fragment f)
+    {
+        if(f != null)
+        {
+            FragmentTransaction trans = getFragmentManager().beginTransaction();
+            trans.replace(R.id.fragment_container, f).addToBackStack("debug");
+            trans.commit();
+        }
     }
 
 }
