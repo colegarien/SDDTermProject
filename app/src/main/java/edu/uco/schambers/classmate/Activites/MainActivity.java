@@ -168,6 +168,8 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                 Toast.makeText(getApplicationContext(),errorMessage,Toast.LENGTH_SHORT).show();
             }
         });
+
+        discoverLocalService();
     }
 
     public void discoverLocalService(){
