@@ -8,6 +8,9 @@
  * Edit: 9/24/2015
  *   added button onCreate method for activating Wifi discovery
  *
+ * Edit: 9/27/2015
+ *   default the check-in button to be disable
+ *   Enable check-in button and display teacher's info when a roll call service is found
  */
 
 package edu.uco.schambers.classmate.Fragments;
