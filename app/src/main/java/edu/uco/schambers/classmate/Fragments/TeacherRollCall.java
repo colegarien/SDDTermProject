@@ -13,6 +13,8 @@
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -22,9 +24,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import edu.uco.schambers.classmate.Activites.MainActivity;
+import edu.uco.schambers.classmate.Database.DataRepo;
+import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.R;
 
 /**
@@ -47,11 +52,18 @@ public class TeacherRollCall extends Fragment {
 
     //UI Components
     private Button startBtn;
-    private EditText teacherText;
+    private TextView teacherText;
     private EditText classText;
     private ListView connectedList;
 
     private OnFragmentInteractionListener mListener;
+
+    // for retrieving teacher name
+    public SharedPreferences sp;
+    public static final String MyPREFS = "MyPREFS";
+    public String user_key;
+    private DataRepo dr;
+    public User user;
 
     /**
      * Use this factory method to create a new instance of
@@ -98,8 +110,18 @@ public class TeacherRollCall extends Fragment {
 
     private void initUI(final View rootView)
     {
+
+
         startBtn = (Button) rootView.findViewById(R.id.btn_start_roll_call);
-        teacherText = (EditText) rootView.findViewById(R.id.txt_rc_teacher);
+        teacherText = (TextView) rootView.findViewById(R.id.txt_rc_teacher);
+
+        sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+        user_key = sp.getString("USER_KEY", null);
+        dr = new DataRepo(getActivity());
+        user = dr.getUser(user_key);
+
+        teacherText.setText(user.getName());
+
         classText = (EditText) rootView.findViewById(R.id.txt_rc_class);
         connectedList = (ListView) rootView.findViewById(R.id.list_connected);
         startBtn.setOnClickListener(new View.OnClickListener() {

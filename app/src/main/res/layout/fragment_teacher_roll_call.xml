@@ -17,7 +17,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/lbl_rc_teacher"/>
-            <EditText android:id="@+id/txt_rc_teacher"
+            <TextView android:id="@+id/txt_rc_teacher"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
