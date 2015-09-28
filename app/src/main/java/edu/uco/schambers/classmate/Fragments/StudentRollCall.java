@@ -105,6 +105,7 @@ public class StudentRollCall extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 btnCheckin.setEnabled(true);
+                lblCheckinStatus.setText("Professor " + intent.getStringExtra("buddyname") + "'s class has been found");
             }
         };
 
