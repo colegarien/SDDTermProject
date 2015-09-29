@@ -64,8 +64,8 @@
 
 <!--Roll Call UI Strings-->
     <string name="btn_roll_call">Call Roll</string>
-    <string name="lbl_rc_teacher">Teacher</string>
-    <string name="lbl_rc_class">Class</string>
+    <string name="lbl_rc_teacher">Teacher:</string>
+    <string name="lbl_rc_class">Class:</string>
     <string name="lbl_rc_connected">Connected Students</string>
 
 
