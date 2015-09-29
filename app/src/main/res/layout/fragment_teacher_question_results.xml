@@ -10,19 +10,47 @@
 
         <TextView
             android:id="@+id/question"
-            android:textSize="23dp"
-            android:layout_width="match_parent" android:layout_height="match_parent"
-            android:text="How much wood could a woodchuck chuck if a woodchuck could chuck wood?
-        A: 15 wood
-        B: 20 wood
-        C: 30 wood
-        D: 1000 wood"/>
+            android:textSize="23sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Question"
+        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/choice01"
+            android:layout_below="@+id/question"
+            android:text="choice01"/>
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="asdf"
-            android:layout_below="@+id/question"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/choice02"
+            android:layout_below="@+id/choice01"
+            android:text="choice02"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/choice03"
+            android:layout_below="@+id/choice02"
+            android:text="choice03"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/choice04"
+            android:layout_below="@+id/choice03"
+            android:text="choice04"/>
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_below="@+id/choice04"
+            android:id="@+id/displayResultsButton"
+            android:text="Display Results"
+            />
+
 
 
 
@@ -34,28 +62,37 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="bottom"
-        android:layout_above="@+id/title"
         android:layout_gravity="center">
 
         <TextView
             android:layout_alignParentLeft="true"
             android:id="@+id/colortext01"
             android:layout_width="60dp"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_alignParentBottom="true"
             android:gravity="center"
             android:textSize="16sp"
-            android:padding="10dp"
+
             android:background="#4CA613"/>
 
         <TextView
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:text="A"
+            android:id="@+id/colortext01Text"
             android:gravity="center"
             android:layout_above="@+id/colortext01"
-            android:textSize="20sp"/>
+            android:textSize="15sp"/>
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/bottomText01"
+            android:textSize="20dp"
+            android:layout_below="@+id/colortext01"
+            android:layout_marginTop="-25sp"
+            android:gravity="center"
+            />
 
         <TextView
             android:layout_toRightOf="@+id/colortext01"
@@ -65,61 +102,92 @@
             android:gravity="bottom"
             android:layout_gravity="bottom"
             android:layout_alignParentBottom="true"
-            android:padding="10dp"
-            android:textSize="16sp"
-            android:background="#FF9A39"/>
-
-        <TextView
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:text="B"
-            android:gravity="center"
-            android:layout_above="@+id/colortext02"
-            android:layout_toEndOf="@+id/colortext01"
-            android:textSize="20sp"/>
-
-        <TextView
-            android:layout_toRightOf="@+id/colortext02"
-            android:id="@+id/colortext03"
-            android:layout_width="60dp"
-            android:layout_height="140dp"
-            android:gravity="bottom"
-            android:layout_gravity="bottom"
-            android:layout_alignParentBottom="true"
-            android:padding="10dp"
-            android:textSize="16sp"
-            android:background="#2a23ff"/>
-
-        <TextView
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:text="C"
-            android:gravity="center"
-            android:layout_above="@+id/colortext03"
-            android:layout_toEndOf="@+id/colortext02"
-            android:textSize="20sp"/>
-
-
-        <TextView
-            android:layout_toRightOf="@+id/colortext03"
-            android:id="@+id/colortext04"
-            android:layout_width="60dp"
-            android:layout_height="90dp"
-            android:gravity="bottom"
-            android:layout_gravity="bottom"
-            android:layout_alignParentBottom="true"
-            android:padding="10dp"
             android:textSize="16sp"
             android:background="#faff1e1c"/>
 
         <TextView
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:text="D"
             android:gravity="center"
+            android:id="@+id/colortext02Text"
+            android:layout_above="@+id/colortext02"
+            android:layout_toEndOf="@+id/colortext01"
+            android:layout_toRightOf="@+id/colortext01"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/bottomText02"
+            android:textSize="20dp"
+            android:layout_below="@+id/colortext02"
+            android:layout_toEndOf="@id/colortext01"
+            android:layout_marginTop="-25sp"
+            android:gravity="center"
+            />
+
+        <TextView
+            android:layout_toRightOf="@+id/colortext02"
+            android:id="@+id/colortext03"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:layout_gravity="bottom"
+            android:layout_alignParentBottom="true"
+            android:textSize="16sp"
+            android:background="#fa0c1eff"/>
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:id="@+id/colortext03Text"
+            android:layout_above="@+id/colortext03"
+            android:layout_toEndOf="@+id/colortext02"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/bottomText03"
+            android:textSize="20dp"
+            android:layout_below="@+id/colortext03"
+            android:layout_toEndOf="@+id/colortext02"
+            android:layout_marginTop="-25sp"
+            android:gravity="center"
+            />
+
+        <TextView
+            android:layout_toRightOf="@+id/colortext03"
+            android:id="@+id/colortext04"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:layout_gravity="bottom"
+            android:layout_alignParentBottom="true"
+            android:textSize="16sp"
+            android:background="#faffe204"
+            />
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:id="@+id/colortext04Text"
             android:layout_above="@+id/colortext04"
             android:layout_toEndOf="@+id/colortext03"
-            android:textSize="20sp"/>
+            android:textSize="15sp"/>
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/bottomText04"
+            android:textSize="20dp"
+            android:layout_below="@+id/colortext04"
+            android:layout_toEndOf="@+id/colortext03"
+            android:layout_marginTop="-25sp"
+            android:gravity="center"
+            />
 
     </RelativeLayout>
 
