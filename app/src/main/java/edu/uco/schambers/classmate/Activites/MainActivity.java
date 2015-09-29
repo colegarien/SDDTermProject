@@ -121,8 +121,12 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         {
             sp = this.getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
             editor = sp.edit();
+            Log.d("after", sp.getString("USER_KEY", ""));
+            editor.remove("USER_KEY");
             editor.clear();
+            editor.putString("USER_KEY", "");
             editor.commit();
+            Log.d("after", sp.getString("USER_KEY", ""));
             FragmentTransaction trans = getFragmentManager().beginTransaction();
             Fragment AuthFragment = new Auth();
             trans.replace(R.id.fragment_container, AuthFragment).addToBackStack(null);
