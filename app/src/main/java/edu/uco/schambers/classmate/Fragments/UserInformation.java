@@ -132,6 +132,7 @@ public class UserInformation extends Fragment {
         user = dr.getUser(user_key);
         Log.i("userEmail", user.getEmail());
         Log.i("userName", user.getName());
+        Log.i("userPass", user.getPassword());
 
         name.setText(user.getName().toString());
         email.setText(user.getEmail().toString());
@@ -176,7 +177,7 @@ public class UserInformation extends Fragment {
                     newPass.setError("New passwords do not match.");
                 } else {
                     user.setPassword(newPass.getText().toString());
-                    Log.i("after", user.getPassword().toString());
+                    Log.i("after", user.getPassword());
                     toChangePass = false;
                     ChangePasswordVisibility(toChangePass);
                     Toast.makeText(getActivity(), "Your Password has been Updated", Toast.LENGTH_LONG).show();
