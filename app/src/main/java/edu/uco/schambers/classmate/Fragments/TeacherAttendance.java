@@ -30,6 +30,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import edu.uco.schambers.classmate.R;
@@ -71,6 +73,7 @@ public class TeacherAttendance extends Fragment {
 
     //UI Components
     private Spinner spinClassSelect;
+    private Spinner spinSortTable;
     Student [] students = new Student[30];
 
     private SharedPreferences prefs;
@@ -153,7 +156,7 @@ public class TeacherAttendance extends Fragment {
     private void initUI(final View rootView)
     {
         final List<String> spinnerArray =  new ArrayList<String>();
-        //Hard-coded temporatily for testing purposes
+        //Hard-coded temporarily for testing purposes
         spinnerArray.add("All");
         spinnerArray.add("Data Structures");
         spinnerArray.add("Programming I");
@@ -164,28 +167,28 @@ public class TeacherAttendance extends Fragment {
                 rootView.getContext(), android.R.layout.simple_spinner_item, spinnerArray);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner sItems = (Spinner) rootView.findViewById(R.id.spinnerClassSelect);
+        final Spinner sItems = (Spinner) rootView.findViewById(R.id.spinnerClassSelect);
         sItems.setAdapter(adapter);
+
+        //For sorting spinner
+        final List<String> spinnerArraySort =  new ArrayList<String>();
+        //Hard-coded temporatily for testing purposes
+        spinnerArraySort.add("By Name A-Z");
+        spinnerArraySort.add("By Name Z-A");
+        spinnerArraySort.add("By Absences Low-High");
+        spinnerArraySort.add("By Absences High-Low");
+
+        ArrayAdapter<String> adapterSort = new ArrayAdapter<String>(
+                rootView.getContext(), android.R.layout.simple_spinner_item, spinnerArraySort);
+
+        adapterSort.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Spinner sItemsSort = (Spinner) rootView.findViewById(R.id.spinnerSort);
+        sItemsSort.setAdapter(adapterSort);
+        sItems.setSelection(0);
         sItems.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                TableLayout teacherAttendanceTable = (TableLayout) rootView.findViewById(R.id.teacherAttendanceTable);
-                teacherAttendanceTable.setStretchAllColumns(true);
-                teacherAttendanceTable.bringToFront();
-                teacherAttendanceTable.removeAllViews();
-                for (int i = 0; i < students.length; i++) {
-                    if (students[i].getCourse().equals(spinnerArray.get(position))||
-                            spinnerArray.get(position).equals("All")) {
-                        TableRow tr = new TableRow(view.getContext());
-                        TextView c1 = new TextView(view.getContext());
-                        c1.setText(students[i].getStudentName());
-                        TextView c2 = new TextView(view.getContext());
-                        c2.setText(String.valueOf(students[i].getNumberAbsences()));
-                        tr.addView(c1);
-                        tr.addView(c2);
-                        teacherAttendanceTable.addView(tr);
-                    }
-                }
+                buildTable(rootView,spinnerArray,position);
             }
 
             @Override
@@ -193,11 +196,100 @@ public class TeacherAttendance extends Fragment {
 
             }
         });
+        sItemsSort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (parent.getSelectedItem().equals("By Name A-Z")) {
+                    sortByName("asc");
+                }
+                else if (parent.getSelectedItem().equals("By Name Z-A")){
+                    sortByName("des");
+                }
+                else if (parent.getSelectedItem().equals("By Absences Low-High")){
+                    sortByAbsences("asc");
+                }
+                else{
+                    sortByAbsences("des");
+                }
+                buildTable(rootView,spinnerArray,sItems.getSelectedItemPosition());
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
-        //for (int i = 0; i < students.length; i++){
+            }
+        });
+    }
 
-        //}
+    public void buildTable(View view, List<String> spinnerArray, int position){
+        //initUI(view);
+        TableLayout teacherAttendanceTable = (TableLayout) view.findViewById(R.id.teacherAttendanceTable);
+        teacherAttendanceTable.setStretchAllColumns(true);
+        teacherAttendanceTable.bringToFront();
+        teacherAttendanceTable.removeAllViews();
+        for (int i = 0; i < students.length; i++) {
+            if (students[i].getCourse().equals(spinnerArray.get(position)) ||
+                    spinnerArray.get(position).equals("All")) {
+                TableRow tr = new TableRow(view.getContext());
+                TextView c1 = new TextView(view.getContext());
+                c1.setText(students[i].getStudentName());
+                TextView c2 = new TextView(view.getContext());
+                c2.setText(String.valueOf(students[i].getNumberAbsences()));
+                tr.addView(c1);
+                tr.addView(c2);
+                teacherAttendanceTable.addView(tr);
+            }
+        }
+    }
+
+    public void sortByName(String sortType){
+        int n = students.length;
+        int k;
+        for (int m = n; m >= 0; m--) {
+            for (int i = 0; i < n - 1; i++) {
+                k = i + 1;
+                int comp = students[i].getStudentName().compareTo(students[k].getStudentName());
+                if (sortType.equals("asc")) {
+                    if (comp > 0) {
+                        swapNumbers(i, k, students);
+                    }
+                }
+                else{
+                    if (comp < 0) {
+                        swapNumbers(i, k, students);
+                    }
+                }
+            }
+        }
+
+    }
+
+    public void sortByAbsences(String sortType){
+        int n = students.length;
+        int k;
+        for (int m = n; m >= 0; m--) {
+            for (int i = 0; i < n - 1; i++) {
+                k = i + 1;
+                if (sortType.equals("asc")) {
+                    if (students[i].numberAbsences > students[k].numberAbsences) {
+                        swapNumbers(i, k, students);
+                    }
+                }
+                else{
+                    if (students[i].numberAbsences < students[k].numberAbsences) {
+                        swapNumbers(i, k, students);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void swapNumbers(int i, int j, Student[] array) {
+
+        Student temp;
+        temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
     }
 
     /**
