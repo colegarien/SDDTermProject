@@ -149,7 +149,7 @@ public class StudentAttendance extends Fragment {
         s = (Spinner) rootView.findViewById(R.id.classlist);
         final TextView att = (TextView) rootView.findViewById(R.id.tvattendance);
         final TextView miss = (TextView) rootView.findViewById(R.id.tvabsences);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getContext(),
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_spinner_item, arraySpinner);
         s.setAdapter(adapter);
         s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -163,7 +163,7 @@ public class StudentAttendance extends Fragment {
                 missing.setText(String.valueOf(attrecords[position].absences));
                 String[] titles = new String[]{"attendance", "absences"};
                 int[] values = new int[]{attrecords[position].attendances, attrecords[position].absences};
-                drawPieChar(rootView, getContext(), titles, values);
+                drawPieChar(rootView, getActivity(), titles, values);
                 //att.set
                 //att.setText(sattendance(
                 // s.getSelectedItemPosition(), -1));
