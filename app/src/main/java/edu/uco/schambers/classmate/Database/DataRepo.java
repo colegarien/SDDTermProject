@@ -43,6 +43,7 @@ public class DataRepo extends SQLiteOpenHelper {
 		onCreate(db);
 	}
 
+	//checking if student id exit in the database
 	public boolean userExist(int id) {
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor res =  db.rawQuery( "select * from users where id = '" + id + "'", null);
@@ -53,7 +54,18 @@ public class DataRepo extends SQLiteOpenHelper {
 		return false;
 	}
 
-	public String userEmail;
+	//checking if email exit in the database
+	public boolean emailExist(String email) {
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor res =  db.rawQuery( "select * from users where email = '" + email + "'", null);
+
+		if (res.getCount() > 0)
+			return true;
+
+		return false;
+	}
+
+	//public String userEmail;
 	public void createUser(User user) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues contentValues = new ContentValues();
@@ -67,7 +79,7 @@ public class DataRepo extends SQLiteOpenHelper {
 
 		db.insert("users", null, contentValues);
 		createRole(user);
-		userEmail = user.getEmail();
+		//userEmail = user.getEmail();
 	}
 
 	public void createRole(User user) {
@@ -84,6 +96,16 @@ public class DataRepo extends SQLiteOpenHelper {
 		}
 
 		db.insert("dbRoles", null, contentValues);
+	}
+
+	public void updateUser(User user){
+		SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues contentValues = new ContentValues();
+		contentValues.put("id", user.getId());
+		contentValues.put("name", user.getName());
+		contentValues.put("password", user.getPassword());
+		contentValues.put("email", user.getEmail());
+		db.update("users", contentValues, "where user_id'" + user.getpKey() + "'", null);
 	}
 
 	public User getUser(String email) {
