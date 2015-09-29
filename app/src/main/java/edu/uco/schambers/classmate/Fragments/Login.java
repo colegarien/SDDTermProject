@@ -197,19 +197,30 @@ public class Login extends Fragment {
                 else if (cb.isChecked() && dr.userExist(Integer.parseInt(idET.getText().toString()))){
                          idET.setError("User already exist");}
                 else {
+                         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+                         editor = sp.edit();
+
                             //set username
                             user.setName(name.getText().toString());
+
                             //set email to user.
                             user.setEmail(email.getText().toString());
+
                             //add role & id, send to appropriate fragment
                             if (!cb.isChecked()) {
                                 idET.setId(0);
                                 user.setIsStudent(false);
+                                Log.i("name", user.getName());
+                                Log.i("email", user.getEmail());
+                                editor.putString("USER_KEY", user.getEmail());
+                                editor.commit();
                                 Fragment teacher = TeacherInterface.newInstance("test", "test");
                                 launchFragment(teacher);
                             } else {
                                 user.setId(Integer.parseInt(idET.getText().toString()));
                                 user.setIsStudent(true);
+                                editor.putString("USER_KEY", user.getEmail());
+                                editor.commit();
                                 Fragment student = StudentInterface.newInstance("test", "test");
                                 launchFragment(student);
                             }

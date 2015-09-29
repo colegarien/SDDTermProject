@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -126,8 +127,11 @@ public class UserInformation extends Fragment {
 
         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
         user_key = sp.getString("USER_KEY", null);
+        Log.i("before",user_key);
         dr = new DataRepo(getActivity());
         user = dr.getUser(user_key);
+        Log.i("userEmail", user.getEmail());
+        Log.i("userName", user.getName());
 
         name.setText(user.getName().toString());
         email.setText(user.getEmail().toString());
@@ -172,6 +176,7 @@ public class UserInformation extends Fragment {
                     newPass.setError("New passwords do not match.");
                 } else {
                     user.setPassword(newPass.getText().toString());
+                    Log.i("after", user.getPassword().toString());
                     toChangePass = false;
                     ChangePasswordVisibility(toChangePass);
                     Toast.makeText(getActivity(), "Your Password has been Updated", Toast.LENGTH_LONG).show();
