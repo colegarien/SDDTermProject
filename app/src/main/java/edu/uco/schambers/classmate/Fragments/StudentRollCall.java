@@ -8,17 +8,24 @@
  * Edit: 9/24/2015
  *   added button onCreate method for activating Wifi discovery
  *
+ * Edit: 9/27/2015
+ *   default the check-in button to be disable
+ *   Enable check-in button and display teacher's info when a roll call service is found
  */
 
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -55,6 +62,8 @@ public class StudentRollCall extends Fragment {
     private TextView lblCheckinStatus;
 
     private SharedPreferences prefs;
+
+    private BroadcastReceiver receiver;
 
     private OnFragmentInteractionListener mListener;
 
@@ -93,6 +102,22 @@ public class StudentRollCall extends Fragment {
 
         setHasOptionsMenu(true);
 
+        // Our handler for received Intents. This will be called whenever an Intent
+        // with an action named "service_found" is broadcasted.
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                btnCheckin.setEnabled(true);
+                lblCheckinStatus.setText("Professor " + intent.getStringExtra("buddyname") + "'s class has been found");
+            }
+        };
+
+        // Register to receive messages.
+        // We are registering an observer (receiver) to receive Intents
+        // with actions named "service_found".
+        LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver(receiver,
+                new IntentFilter(MainActivity.SERVICE_FOUND));
+
         // Discover teacher coll roll service
         discoverService();
     }
@@ -121,7 +146,7 @@ public class StudentRollCall extends Fragment {
         }
 
         // Set the visibility of mute and vibrate menu items
-        if (checkedInMode.equalsIgnoreCase("Mute")){
+        if (checkedInMode.equalsIgnoreCase("Mute")) {
             mute.setVisible(false);
         }
         else {
@@ -186,6 +211,11 @@ public class StudentRollCall extends Fragment {
                 Toast.makeText(getActivity(), "You've checked-in", Toast.LENGTH_SHORT).show();
             }
         });
+
+        // Disable the button.
+        // The check-in button can be enabled
+        // only if there is a teacher roll call service found.
+        btnCheckin.setEnabled(false);
     }
 
     private void changeAudioSetting(String audioMode){
@@ -224,6 +254,13 @@ public class StudentRollCall extends Fragment {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        // Unregister since the fragment is about to be closed.
+        LocalBroadcastManager.getInstance(this.getActivity()).unregisterReceiver(receiver);
+        super.onDestroy();
     }
 
     /**

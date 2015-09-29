@@ -13,6 +13,7 @@ import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,6 +56,9 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
     public static final String SERVICE_INSTANCE = "_test";
     // For creating service request, and initiate discovery
     private WifiP2pDnsSdServiceRequest serviceRequest;
+
+    // Constants
+    public static final String SERVICE_FOUND = "edu.uco.schambers.classmate.wifip2p.service_found";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,9 +195,15 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                 Toast.makeText(getApplicationContext(),errorMessage,Toast.LENGTH_SHORT).show();
             }
         });
+
+        discoverLocalService();
     }
 
     public void discoverLocalService(){
+
+        final LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(this);
+        // String map containing information about your service.
+        final HashMap<String, String> records = new HashMap<>();
 
         //Register listeners for DNS-SD services. These are callbacks invoked
         //by the system when a service is actually discovered.
@@ -203,7 +213,21 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                     public void onDnsSdServiceAvailable(String instanceName, String registrationType, WifiP2pDevice srcDevice) {
                         // A service has been discovered. Is this our app?
                         if (instanceName.equalsIgnoreCase(SERVICE_INSTANCE)){
-                            // update UI
+
+                            Intent intent = new Intent(MainActivity.SERVICE_FOUND);
+
+                            // Traverse all the key-value pair that sent from server
+                            // and put them to intent.
+                            for (Map.Entry<String,String> entry : records.entrySet()) {
+                                String key = entry.getKey();
+                                String value = entry.getValue();
+
+                                intent.putExtra(key, value);
+                            }
+
+                            // Notify the observers to update their UI
+                            broadcaster.sendBroadcast(intent);
+
                             Log.d("ServiceDiscovery", "Service found");
                         }
 
@@ -213,7 +237,8 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                 new WifiP2pManager.DnsSdTxtRecordListener() {
                     @Override
                     public void onDnsSdTxtRecordAvailable(String fullDomainName, Map<String, String> txtRecordMap, WifiP2pDevice srcDevice) {
-
+                        // Get all the information that sent from server.
+                        records.putAll(txtRecordMap);
                     }
                 });
 
