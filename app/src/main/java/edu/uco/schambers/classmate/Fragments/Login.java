@@ -54,7 +54,6 @@ public class Login extends Fragment {
     //ui components
     private CheckBox cb;
     private EditText idET;
-    private TextView idTV;
     private Button   confirm;
     private EditText pass;
     private EditText confirmPass;
@@ -115,7 +114,6 @@ public class Login extends Fragment {
     private void initUI(final View rootView) {
         cb = (CheckBox) rootView.findViewById(R.id.student_cb);
         idET = (EditText) rootView.findViewById(R.id.student_id_et);
-        idTV = (TextView) rootView.findViewById(R.id.student_id_lbl);
         confirm = (Button)rootView.findViewById(R.id.signup_btn);
         pass = (EditText) rootView.findViewById(R.id.pass_et);
         confirmPass = (EditText)rootView.findViewById(R.id.confirm_pass_et);
@@ -199,19 +197,31 @@ public class Login extends Fragment {
                 else if (cb.isChecked() && dr.userExist(Integer.parseInt(idET.getText().toString()))){
                          idET.setError("User already exist");}
                 else {
+                         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+                         editor = sp.edit();
+
                             //set username
                             user.setName(name.getText().toString());
+
                             //set email to user.
                             user.setEmail(email.getText().toString());
+                            user.setPassword(pass.getText().toString());
+
                             //add role & id, send to appropriate fragment
                             if (!cb.isChecked()) {
                                 idET.setId(0);
                                 user.setIsStudent(false);
+                                Log.i("name", user.getName());
+                                Log.i("email", user.getEmail());
+                                editor.putString("USER_KEY", user.getEmail());
+                                editor.commit();
                                 Fragment teacher = TeacherInterface.newInstance("test", "test");
                                 launchFragment(teacher);
                             } else {
                                 user.setId(Integer.parseInt(idET.getText().toString()));
                                 user.setIsStudent(true);
+                                editor.putString("USER_KEY", user.getEmail());
+                                editor.commit();
                                 Fragment student = StudentInterface.newInstance("test", "test");
                                 launchFragment(student);
                             }
@@ -245,11 +255,9 @@ public class Login extends Fragment {
         {
             idET.setText("");
             idET.setVisibility(View.INVISIBLE);
-            idTV.setVisibility(View.INVISIBLE);
             idET.setText("");
         }else{
             idET.setVisibility(View.VISIBLE);
-            idTV.setVisibility(View.VISIBLE);
         }
     }
 

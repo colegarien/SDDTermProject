@@ -38,7 +38,7 @@
 <!-- Sign up/Dedicated Interface/User info Strings-->
     <string name="signup">SIGN UP</string>
     <string name="name">Name </string>
-    <string name="student_id">Student ID: </string>
+    <string name="student_id">Student ID </string>
     <string name="student">Student</string>
     <string name="roll">Roll Call</string>
     <string name="attendance">Attendance Records</string>
@@ -50,6 +50,17 @@
     <string name="email">E-mail </string>
     <string name="user">USER INFO</string>
     <string name="user_btn">User Info</string>
+    <string name="user_info_name">NAME </string>
+    <string name="user_info_email">EMAIL </string>
+    <string name="user_info_id">STUDENT ID </string>
+    <string name="user_info_cpw">CURRENT PASSWORD </string>
+    <string name="user_info_npw">NEW PASSWORD </string>
+    <string name="user_info_cnpw">CONFIRM NEW PASSWORD </string>
+    <string name="change_pw">Change Password</string>
+    <string name="cancel_pw">Cancel</string>
+    <string name="reset_pw_text">Enter your e-mail and we\'ll send you a link to reset your password.</string>
+    <string name="reset_pw_btn">Send Reset Link</string>
+    <string name="login_btn">LOGIN</string>
 
 <!--Roll Call UI Strings-->
     <string name="btn_roll_call">Call Roll</string>

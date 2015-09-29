@@ -6,10 +6,16 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import edu.uco.schambers.classmate.Database.DataRepo;
 import edu.uco.schambers.classmate.Database.User;
@@ -37,9 +43,17 @@ public class UserInformation extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private TextView name;
-    private TextView password;
     private TextView email;
     private TextView id;
+    private TextView idLbl;
+    private EditText currentPass;
+    private EditText newPass;
+    private EditText confirmNewPass;
+    private Button cancel;
+    private Button confirm;
+    private CheckBox changePass;
+    private boolean toChangePass;
+
 
     public SharedPreferences sp;
     public SharedPreferences.Editor editor;
@@ -99,25 +113,100 @@ public class UserInformation extends Fragment {
 
     private void initUI(final View rootView) {
 
-        name         = (TextView)rootView.findViewById(R.id.stored_name_lbl);
-        password     = (TextView)rootView.findViewById(R.id.stored_pass_lbl);
-        email        = (TextView)rootView.findViewById(R.id.stored_email_lbl);
-        id        = (TextView)rootView.findViewById(R.id.stored_id_lbl);
+        name  = (TextView)rootView.findViewById(R.id.stored_name_lbl);
+        email = (TextView)rootView.findViewById(R.id.stored_email_lbl);
+        id = (TextView)rootView.findViewById(R.id.stored_id_lbl);
+        idLbl = (TextView)rootView.findViewById(R.id.ui_id_lbl);
+        currentPass = (EditText)rootView.findViewById(R.id.old_pass);
+        newPass = (EditText)rootView.findViewById(R.id.new_pass);
+        confirmNewPass = (EditText)rootView.findViewById(R.id.confirm_new_pass);
+        confirm = (Button)rootView.findViewById(R.id.confirm_btn);
+        cancel = (Button)rootView.findViewById(R.id.cancel_btn);
+        changePass = (CheckBox)rootView.findViewById(R.id.change_pw_cb);
+
 
         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
         user_key = sp.getString("USER_KEY", null);
+        Log.i("before",user_key);
         dr = new DataRepo(getActivity());
         user = dr.getUser(user_key);
+        Log.i("userEmail", user.getEmail());
+        Log.i("userName", user.getName());
+        Log.i("userPass", user.getPassword());
 
-
-        name.setText(user.getName());
-        password.setText(user.getPassword());
-        email.setText(user.getEmail());
+        name.setText(user.getName().toString());
+        email.setText(user.getEmail().toString());
         id.setText(Integer.toString(user.getId()));
+        toChangePass = false;
+        ChangePasswordVisibility(toChangePass);
+
+        if (!user.isStudent()) {
+            id.setVisibility(View.INVISIBLE);
+            idLbl.setVisibility(View.INVISIBLE);
+        }
+
+        changePass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toChangePass = true;
+                ChangePasswordVisibility(toChangePass);
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toChangePass = false;
+                ChangePasswordVisibility(toChangePass);
+                currentPass.setText("");
+                newPass.setText("");
+                confirmNewPass.setText("");
+                changePass.setChecked(false);
+
+            }
+        });
+
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!dr.validateUser(user.getEmail().toString(), currentPass.getText().toString())) {
+                    currentPass.setError("Incorrect Current Password");
+                } else if (!user.isValidPassword(newPass.getText().toString())) {
+                    newPass.setError("Password must be less than four characters");
+                } else if (!newPass.getText().toString().equals(confirmNewPass.getText().toString())) {
+                    newPass.setError("New passwords do not match.");
+                } else {
+                    user.setPassword(newPass.getText().toString());
+                    Log.i("after", user.getPassword());
+                    toChangePass = false;
+                    ChangePasswordVisibility(toChangePass);
+                    Toast.makeText(getActivity(), "Your Password has been Updated", Toast.LENGTH_LONG).show();
+
+                      }
+            }
+        });
 
 
 
+    }
 
+    private void ChangePasswordVisibility(boolean cp){
+        if(cp == true){
+            currentPass.setVisibility(View.VISIBLE);
+            newPass.setVisibility(View.VISIBLE);
+            confirmNewPass.setVisibility(View.VISIBLE);
+            confirm.setVisibility(View.VISIBLE);
+            cancel.setVisibility(View.VISIBLE);
+            changePass.setVisibility(View.INVISIBLE);
+
+        }else{
+            currentPass.setVisibility(View.INVISIBLE);
+            newPass.setVisibility(View.INVISIBLE);
+            confirmNewPass.setVisibility(View.INVISIBLE);
+            confirm.setVisibility(View.INVISIBLE);
+            cancel.setVisibility(View.INVISIBLE);
+            changePass.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

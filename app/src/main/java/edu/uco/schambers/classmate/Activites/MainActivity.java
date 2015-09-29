@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -21,8 +22,13 @@ import android.widget.Toast;
 import java.util.HashMap;
 import java.util.Map;
 
+
+//import edu.uco.schambers.classmate.BroadcastReceivers.CallForStudentQuestionResponseReceiver;
+import edu.uco.schambers.classmate.Fragments.Auth;
+
 import edu.uco.schambers.classmate.Fragments.Debug;
 import edu.uco.schambers.classmate.Fragments.Login;
+import edu.uco.schambers.classmate.Fragments.ResetPassword;
 import edu.uco.schambers.classmate.Fragments.StudentInterface;
 import edu.uco.schambers.classmate.Fragments.StudentResponseFragment;
 import edu.uco.schambers.classmate.Fragments.TeacherInterface;
@@ -34,13 +40,17 @@ import edu.uco.schambers.classmate.Services.StudentQuestionService;
 
 
 public class MainActivity extends Activity implements StudentResponseFragment.OnFragmentInteractionListener, Login.OnFragmentInteractionListener,
-        StudentInterface.OnFragmentInteractionListener, TeacherInterface.OnFragmentInteractionListener, TeacherQuestionResults.OnFragmentInteractionListener, UserInformation.OnFragmentInteractionListener
+        StudentInterface.OnFragmentInteractionListener, TeacherInterface.OnFragmentInteractionListener, TeacherQuestionResults.OnFragmentInteractionListener,
+        UserInformation.OnFragmentInteractionListener, Auth.OnFragmentInteractionListener, ResetPassword.OnFragmentInteractionListener
 {
 
     // For registering Application in the Wifi P2p framework
     private WifiP2pManager mManager;
     // For connecting with the Wifi P2p framework
     private Channel mChannel;
+    public static final String MyPREFS = "MyPREFS";
+    public SharedPreferences sp;
+    public SharedPreferences.Editor editor;
 
     // Service identity
     public static final String SERVICE_INSTANCE = "_test";
@@ -110,6 +120,23 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
             trans.replace(R.id.fragment_container, debugFragment).addToBackStack(null);
             trans.commit();
             return true;
+        }
+        if(id == R.id.action_logout)
+        {
+            sp = this.getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+            editor = sp.edit();
+            Log.d("after", sp.getString("USER_KEY", ""));
+            editor.remove("USER_KEY");
+            editor.clear();
+            editor.putString("USER_KEY", "");
+            editor.commit();
+            Log.d("after", sp.getString("USER_KEY", ""));
+            FragmentTransaction trans = getFragmentManager().beginTransaction();
+            Fragment AuthFragment = new Auth();
+            trans.replace(R.id.fragment_container, AuthFragment).addToBackStack(null);
+            trans.commit();
+            return true;
+
         }
         return super.onOptionsItemSelected(item);
     }

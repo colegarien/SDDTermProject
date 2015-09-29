@@ -23,6 +23,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/user_info_name"
+            android:id="@+id/ui_name_lbl"
+            android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/name"
             android:id="@+id/stored_name_lbl"
             android:layout_gravity="center_horizontal" />
@@ -31,8 +39,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/pass"
-            android:id="@+id/stored_pass_lbl"
+            android:text="@string/user_info_email"
+            android:id="@+id/ui_email_lbl"
             android:layout_gravity="center_horizontal" />
 
         <TextView
@@ -47,8 +55,65 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/user_info_id"
+            android:id="@+id/ui_id_lbl"
+            android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/student_id"
             android:id="@+id/stored_id_lbl"
+            android:layout_gravity="center_horizontal" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/old_pass"
+            android:hint="@string/user_info_cpw"
+            android:layout_gravity="center_horizontal" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/new_pass"
+            android:hint="@string/user_info_npw"
+            android:layout_gravity="center_horizontal" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/confirm_new_pass"
+            android:hint="@string/user_info_cnpw"
+            android:layout_gravity="center_horizontal" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/change_pw"
+            android:id="@+id/change_pw_cb"
+            android:layout_gravity="center_horizontal"
+            android:checked="false" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/change_pw"
+            android:id="@+id/confirm_btn"
+            android:layout_gravity="center_horizontal" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel_pw"
+            android:id="@+id/cancel_btn"
             android:layout_gravity="center_horizontal" />
 
 
