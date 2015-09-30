@@ -14,6 +14,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONException;
+
+import java.io.IOException;
+
+import edu.uco.schambers.classmate.Adapter.AuthAdapter;
+import edu.uco.schambers.classmate.Adapter.Callback;
 import edu.uco.schambers.classmate.Database.DataRepo;
 import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.R;
@@ -146,9 +152,38 @@ public class Auth extends Fragment {
             @Override
             public void onClick(View v)
             {
-                if(!dr.validateUser(email.getText().toString(), pass.getText().toString())) {
+
+                AuthAdapter auth = new AuthAdapter(getActivity());
+
+                try {
+                    auth.authenticate(email.getText().toString(), pass.getText().toString(), new Callback<String>() {
+                        @Override
+                        public void onComplete(String result) {
+                            sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+                            editor = sp.edit();
+                            editor.putString("AUTH_TOKEN", result);
+                            editor.commit();
+
+                            String[] split = result
+                                    .substring(1, result.length()-1)
+                                    .split("\\.");
+
+                            if (split.length >= 2)
+                                ChooseInterface(split[1] == "student");
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                /*if(!dr.validateUser(email.getText().toString(), pass.getText().toString())) {
                     pass.setError("Incorrect E-Mail or Password");
                 }else{
+
+
+
                     dr = new DataRepo(getActivity());
                     user = dr.getUser(email.getText().toString());
                     sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
@@ -156,15 +191,15 @@ public class Auth extends Fragment {
                     editor.putString("USER_KEY", user.getEmail());
                     editor.commit();
                     ChooseInterface(user);
-                }
+                }*/
             }
         });
 
 
     }
 
-    public void ChooseInterface(User u) {
-        if (!u.isStudent()) {
+    public void ChooseInterface(boolean isStudent) {
+        if (!isStudent) {
             Fragment teacher = TeacherInterface.newInstance("test", "test");
             launchFragment(teacher);
         }else{
