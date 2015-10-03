@@ -18,7 +18,7 @@ public abstract class SocketAction
    abstract void setUpSocket() throws  IOException;
    abstract void performAction() throws IOException;
    abstract void tearDownSocket() throws  IOException;
-   void execute()
+   public void execute()
    {
       Thread executionThread = new Thread(new Runnable()
       {

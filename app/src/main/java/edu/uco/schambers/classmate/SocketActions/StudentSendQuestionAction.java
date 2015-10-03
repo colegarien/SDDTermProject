@@ -24,6 +24,11 @@ public class StudentSendQuestionAction extends SocketAction
 
     boolean questionSentSuccessfully;
 
+    public StudentSendQuestionAction(IQuestion question)
+    {
+        this.questionToSend = question;
+    }
+
     @Override
     void setUpSocket() throws UnknownHostException, IOException
     {
@@ -58,11 +63,6 @@ public class StudentSendQuestionAction extends SocketAction
             objectOutputStream.close();
         }
 
-    }
-
-    public void setQuestionToSend(IQuestion questionToSend)
-    {
-        this.questionToSend = questionToSend;
     }
 
     public boolean isQuestionSentSuccessfully()
