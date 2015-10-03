@@ -89,7 +89,6 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
 
     private void sendQuestionResponse(IQuestion question)
     {
-        //todo actual implementation
         SocketAction sendQuestion = new StudentSendQuestionAction(question, this);
         sendQuestion.execute();
     }
