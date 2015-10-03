@@ -8,4 +8,5 @@ import edu.uco.schambers.classmate.Models.Questions.IQuestion;
 public interface OnQuestionReceivedListener
 {
     void onQuestionReceived(IQuestion q);
+    void onQuestionSentSuccessfully(String domain, int port);
 }

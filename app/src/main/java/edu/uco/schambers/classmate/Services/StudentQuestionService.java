@@ -7,7 +7,9 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -27,6 +29,8 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
     public static final String ACTION_SEND_QUESTION_RESPONSE = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_SEND_QUESTION_RESPONSE";
 
     private SocketAction listenForQuestions;
+
+    Handler handler;
 
     public StudentQuestionService()
     {
@@ -59,6 +63,7 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
     public void onCreate()
     {
         super.onCreate();
+        handler = new Handler(Looper.getMainLooper());
         listenForQuestions = new StudentReceiveQuestionsAction(this);
         listenForQuestions.execute();
     }
@@ -85,12 +90,8 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
     private void sendQuestionResponse(IQuestion question)
     {
         //todo actual implementation
-        SocketAction sendQuestion = new StudentSendQuestionAction(question);
+        SocketAction sendQuestion = new StudentSendQuestionAction(question, this);
         sendQuestion.execute();
-        if(((StudentSendQuestionAction)sendQuestion).isQuestionSentSuccessfully())
-        {
-            Toast.makeText(this, String.format(getResources().getString(R.string.response_sent), question.getAnswer()), Toast.LENGTH_SHORT).show();
-        }
     }
 
     private void notifyQuestionReceived(IQuestion question)
@@ -126,5 +127,22 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
     {
         Intent intent = getNewSendQuestionIntent(this, question);
         startService(intent);
+    }
+
+    @Override
+    public void onQuestionSentSuccessfully(String domain, int port)
+    {
+        final String domainFinal = domain;
+        final int portFinal = port;
+        //Yes, I know this is totally awful. Its not going to stay this way, I swear. Just want these toasts to fire for debug purposes.
+        handler.post(new Runnable()
+        {
+            @Override
+
+            public void run()
+            {
+                Toast.makeText(getBaseContext(),String.format("The question was sent successfully to domain: %s port %d ", domainFinal, portFinal), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import edu.uco.schambers.classmate.ListenerInterfaces.OnQuestionReceivedListener;
 import edu.uco.schambers.classmate.Models.Questions.IQuestion;
 
 /**
@@ -19,20 +20,23 @@ public class StudentSendQuestionAction extends SocketAction
 {
     ObjectOutputStream objectOutputStream;
     DataInputStream dataInputStream;
+    private String domain = "localhost";
 
     IQuestion questionToSend;
+    OnQuestionReceivedListener questionReceivedListener;
 
     boolean questionSentSuccessfully;
 
-    public StudentSendQuestionAction(IQuestion question)
+    public StudentSendQuestionAction(IQuestion question, OnQuestionReceivedListener listener)
     {
         this.questionToSend = question;
+        this.questionReceivedListener = listener;
     }
 
     @Override
     void setUpSocket() throws UnknownHostException, IOException
     {
-        socket = new Socket("localhost", QUESTIONS_PORT_NUMBER);
+        socket = new Socket(domain, QUESTIONS_PORT_NUMBER);
         objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
         dataInputStream = new DataInputStream(socket.getInputStream());
     }
@@ -45,6 +49,10 @@ public class StudentSendQuestionAction extends SocketAction
             objectOutputStream.writeObject(questionToSend);
         }
         questionSentSuccessfully = dataInputStream.readBoolean();
+        if(questionSentSuccessfully)
+        {
+            questionReceivedListener.onQuestionSentSuccessfully(domain,QUESTIONS_PORT_NUMBER);
+        }
     }
 
     @Override
@@ -63,10 +71,5 @@ public class StudentSendQuestionAction extends SocketAction
             objectOutputStream.close();
         }
 
-    }
-
-    public boolean isQuestionSentSuccessfully()
-    {
-        return questionSentSuccessfully;
     }
 }

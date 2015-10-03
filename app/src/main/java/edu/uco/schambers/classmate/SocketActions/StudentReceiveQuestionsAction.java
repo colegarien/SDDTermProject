@@ -48,6 +48,7 @@ public class StudentReceiveQuestionsAction extends SocketAction
             try
             {
                 IQuestion questionReceived =(IQuestion) objectInputStream.readObject();
+                questionReceivedSuccessfully = true;
                 questionReceivedListener.onQuestionReceived(questionReceived);
             }
             catch (ClassNotFoundException e)
