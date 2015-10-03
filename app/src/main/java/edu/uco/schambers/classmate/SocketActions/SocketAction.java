@@ -13,6 +13,7 @@ import java.net.UnknownHostException;
 public abstract class SocketAction
 {
    static final int QUESTIONS_PORT_NUMBER = 8080;
+   Socket socket;
 
    abstract void setUpSocket() throws  IOException;
    abstract void performAction() throws IOException;
@@ -32,11 +33,11 @@ public abstract class SocketAction
             }
             catch (UnknownHostException e)
             {
-               Log.d("StudentSendAction", "Host not found. Exception: " + e.toString());
+               Log.d("SocketAction", "Host not found. Exception: " + e.toString());
             }
             catch(IOException e)
             {
-               Log.d("StudentSendAction", "IOException: " + e.toString());
+               Log.d("SocketAction", "IOException: " + e.toString());
             }
          }
       });

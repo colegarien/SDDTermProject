@@ -73,7 +73,7 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
                 sendQuestionResponse(question);
                 break;
         }
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     private void sendQuestionResponse(IQuestion question)

@@ -17,7 +17,6 @@ import edu.uco.schambers.classmate.Models.Questions.IQuestion;
  */
 public class StudentSendQuestionAction extends SocketAction
 {
-    Socket socket;
     ObjectOutputStream objectOutputStream;
     DataInputStream dataInputStream;
 
