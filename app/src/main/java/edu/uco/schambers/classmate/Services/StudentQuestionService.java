@@ -7,21 +7,30 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import edu.uco.schambers.classmate.Activites.MainActivity;
 import edu.uco.schambers.classmate.Fragments.StudentResponseFragment;
-import edu.uco.schambers.classmate.Models.Questions.DefaultMultiChoiceQuestion;
+import edu.uco.schambers.classmate.ListenerInterfaces.OnQuestionReceivedListener;
 import edu.uco.schambers.classmate.Models.Questions.IQuestion;
 import edu.uco.schambers.classmate.R;
+import edu.uco.schambers.classmate.SocketActions.SocketAction;
+import edu.uco.schambers.classmate.SocketActions.StudentReceiveQuestionsAction;
+import edu.uco.schambers.classmate.SocketActions.StudentSendQuestionAction;
 
-public class StudentQuestionService extends Service
+public class StudentQuestionService extends Service implements OnQuestionReceivedListener
 {
     public static final String ACTION_NOTIFY_QUESTION_RECEIVED = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_NOTIFY_QUESTION_RECEIVED";
     public static final String ACTION_REQUEST_QUESTION_RESPONSE = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_REQUEST_QUESTION_RESPONSE";
     public static final String ACTION_SEND_QUESTION_RESPONSE = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_SEND_QUESTION_RESPONSE";
+
+    private SocketAction listenForQuestions;
+
+    Handler handler;
 
     public StudentQuestionService()
     {
@@ -54,7 +63,9 @@ public class StudentQuestionService extends Service
     public void onCreate()
     {
         super.onCreate();
-        //will probably set up wifi p2p connection instance here when we get that far.
+        handler = new Handler(Looper.getMainLooper());
+        listenForQuestions = new StudentReceiveQuestionsAction(this);
+        listenForQuestions.execute();
     }
 
     @Override
@@ -73,13 +84,13 @@ public class StudentQuestionService extends Service
                 sendQuestionResponse(question);
                 break;
         }
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     private void sendQuestionResponse(IQuestion question)
     {
-        //todo actual implementation
-        Toast.makeText(this, String.format(getResources().getString(R.string.response_sent), question.getAnswer()), Toast.LENGTH_SHORT).show();
+        SocketAction sendQuestion = new StudentSendQuestionAction(question, this);
+        sendQuestion.execute();
     }
 
     private void notifyQuestionReceived(IQuestion question)
@@ -108,5 +119,29 @@ public class StudentQuestionService extends Service
     {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public void onQuestionReceived(IQuestion question)
+    {
+        Intent intent = getNewSendQuestionIntent(this, question);
+        startService(intent);
+    }
+
+    @Override
+    public void onQuestionSentSuccessfully(String domain, int port)
+    {
+        final String domainFinal = domain;
+        final int portFinal = port;
+        //Yes, I know this is totally awful. Its not going to stay this way, I swear. Just want these toasts to fire for debug purposes.
+        handler.post(new Runnable()
+        {
+            @Override
+
+            public void run()
+            {
+                Toast.makeText(getBaseContext(),String.format("The question was sent successfully to domain: %s port %d ", domainFinal, portFinal), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
