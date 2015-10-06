@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import edu.uco.schambers.classmate.Database.DataRepo;
+import edu.uco.schambers.classmate.Database.TokenUtility;
 import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.R;
 
@@ -58,7 +60,7 @@ public class UserInformation extends Fragment {
     public SharedPreferences sp;
     public SharedPreferences.Editor editor;
     public static final String MyPREFS = "MyPREFS";
-    public String user_key;
+    public String token;
     private DataRepo dr;
     public User user;
     Fragment context = this;
@@ -100,7 +102,11 @@ public class UserInformation extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_user_information, container, false);
-        initUI(rootView);
+        try {
+            initUI(rootView);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return rootView;
     }
 
@@ -111,7 +117,7 @@ public class UserInformation extends Fragment {
         }
     }
 
-    private void initUI(final View rootView) {
+    private void initUI(final View rootView) throws JSONException {
 
         name  = (TextView)rootView.findViewById(R.id.stored_name_lbl);
         email = (TextView)rootView.findViewById(R.id.stored_email_lbl);
@@ -126,13 +132,13 @@ public class UserInformation extends Fragment {
 
 
         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-        user_key = sp.getString("USER_KEY", null);
-        Log.i("before",user_key);
-        dr = new DataRepo(getActivity());
-        user = dr.getUser(user_key);
+        token = sp.getString("AUTH_TOKEN", null);
+        Log.i("before", token);
+
+        user = TokenUtility.parseUserToken(token);
+
         Log.i("userEmail", user.getEmail());
         Log.i("userName", user.getName());
-        Log.i("userPass", user.getPassword());
 
         name.setText(user.getName().toString());
         email.setText(user.getEmail().toString());
