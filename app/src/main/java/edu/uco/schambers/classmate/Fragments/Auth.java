@@ -7,12 +7,14 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -20,7 +22,9 @@ import java.io.IOException;
 
 import edu.uco.schambers.classmate.Adapter.AuthAdapter;
 import edu.uco.schambers.classmate.Adapter.Callback;
+import edu.uco.schambers.classmate.Adapter.HttpResponse;
 import edu.uco.schambers.classmate.Database.DataRepo;
+import edu.uco.schambers.classmate.Database.TokenUtility;
 import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.R;
 
@@ -156,20 +160,22 @@ public class Auth extends Fragment {
                 AuthAdapter auth = new AuthAdapter(getActivity());
 
                 try {
-                    auth.authenticate(email.getText().toString(), pass.getText().toString(), new Callback<String>() {
+                    auth.authenticate(email.getText().toString(), pass.getText().toString(), new Callback<HttpResponse>() {
                         @Override
-                        public void onComplete(String result) {
+                        public void onComplete(HttpResponse result) {
                             sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
                             editor = sp.edit();
-                            editor.putString("AUTH_TOKEN", result);
+                            editor.putString("AUTH_TOKEN", result.getResponse());
                             editor.commit();
 
-                            String[] split = result
-                                    .substring(1, result.length()-1)
-                                    .split("\\.");
+                            try {
+                                User user = TokenUtility.parseUserToken(result.getResponse());
+                                ChooseInterface(user.isStudent());
+                            } catch (JSONException e) {
+                                Log.d("DEBUG", e.toString());
+                                Toast.makeText(null, "Error parsing token response", Toast.LENGTH_LONG);
+                            }
 
-                            if (split.length >= 2)
-                                ChooseInterface(split[1] == "student");
                         }
                     });
                 } catch (JSONException e) {
