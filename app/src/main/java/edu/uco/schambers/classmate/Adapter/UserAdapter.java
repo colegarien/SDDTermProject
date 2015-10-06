@@ -1,5 +1,6 @@
 package edu.uco.schambers.classmate.Adapter;
 
+import android.content.res.Resources;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -15,7 +16,7 @@ import edu.uco.schambers.classmate.Database.User;
 public class UserAdapter {
     private final static String Url = "http://classmateapi.azurewebsites.net/api/Users";
 
-    public void createUser(User user) throws JSONException, IOException {
+    public void createUser(User user, final Callback<HttpResponse> callback) throws JSONException, IOException {
         JSONObject json = new JSONObject();
 
         json.put("Name", user.getName());
@@ -26,15 +27,13 @@ public class UserAdapter {
 
         json.put("Role_Name", user.isStudent() ? "student" : "faculty");
 
-        ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<String>() {
+        ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
             @Override
-            public void onComplete(String json) {
-                Log.d("WS", json);
+            public void onComplete(HttpResponse response) {
+                callback.onComplete(response);
             }
         });
 
         call.execute(new ServiceCall(Url, "POST", json.toString()));
-
-        //ServiceHandler.makeServiceCall(Url, "POST", json.toString());
     }
 }
