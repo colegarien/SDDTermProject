@@ -5,8 +5,8 @@
  *   UI backend for teacher roll call module, used for starting and
  *   stopping the Roll Call Wifi P2P service
  *
- * Edit: 9/21/2015
- *   added button code for adding local wifi P2P service
+ * Edit: 10/7/2015
+ *   added button code for starting service
  *
  */
 
@@ -14,6 +14,7 @@ package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,6 +32,8 @@ import edu.uco.schambers.classmate.Activites.MainActivity;
 import edu.uco.schambers.classmate.Database.DataRepo;
 import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.R;
+import edu.uco.schambers.classmate.Services.TeacherRollCallService;
+import edu.uco.schambers.classmate.SocketActions.SocketAction;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,6 +46,7 @@ import edu.uco.schambers.classmate.R;
 public class TeacherRollCall extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    public static final String ARG_TEACHER = "edu.uco.schambers.classmate.arq_teacher";
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -74,7 +78,6 @@ public class TeacherRollCall extends Fragment {
      * @return A new instance of fragment TeacherRollCall.
      */
     // TODO: Rename and change types and number of parameters
-    // TODO: Get Teacher Name from DB
     // TODO: Get Class Name from DB/Dropdown Box
     public static TeacherRollCall newInstance(String param1, String param2) {
         TeacherRollCall fragment = new TeacherRollCall();
@@ -110,8 +113,6 @@ public class TeacherRollCall extends Fragment {
 
     private void initUI(final View rootView)
     {
-
-
         startBtn = (Button) rootView.findViewById(R.id.btn_start_roll_call);
         teacherText = (TextView) rootView.findViewById(R.id.txt_rc_teacher);
 
@@ -129,10 +130,12 @@ public class TeacherRollCall extends Fragment {
             public void onClick(View v) {
                 Activity activity = getActivity();
 
-                /// TODO: Start ServerSocket bidness
+                // TODO: change teacherText over to Teacher object
+                Intent intent = TeacherRollCallService.getNewStartSessionIntent(getActivity(), teacherText.getText().toString());
+                getActivity().startService(intent);
+
                 if(activity instanceof MainActivity) {
-                    ((MainActivity) activity).addLocalService(8081, teacherText.getText().toString(), classText.getText().toString(), true);
-                    //Toast.makeText(getActivity(), String.format("Teacher, %s, started Class, %s", teacherText.getText(), classText.getText()), Toast.LENGTH_SHORT).show();
+                    ((MainActivity) activity).addLocalService(SocketAction.ROLL_CALL_PORT_NUMBER, teacherText.getText().toString(), classText.getText().toString(), true);
                 }
             }
         });

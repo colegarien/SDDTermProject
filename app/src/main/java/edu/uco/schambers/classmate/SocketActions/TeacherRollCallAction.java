@@ -1,3 +1,15 @@
+/* Team 9Lives
+ *
+ * Author: Cole Garien
+ * Purpose:
+ *   Main ServerSocket that will deal with incoming and outgoing
+ *   communications to a students phone (dealing with roll call packets)
+ *
+ * Edit: 10/7/2015
+ *
+ *
+ */
+
 package edu.uco.schambers.classmate.SocketActions;
 
 import android.util.Log;
@@ -8,10 +20,8 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 
 import edu.uco.schambers.classmate.Fragments.TeacherRollCall;
+import edu.uco.schambers.classmate.ListenerInterfaces.OnStudentConnectListener;
 
-/**
- * Created by Cole Garien on 10/7/2015.
- */
 public class TeacherRollCallAction extends SocketAction{
     ObjectInputStream objectInputStream;
     DataOutputStream dataOutputStream;
@@ -19,8 +29,10 @@ public class TeacherRollCallAction extends SocketAction{
 
     boolean listeningForStudents = true;
 
-    public TeacherRollCallAction(){
+    private OnStudentConnectListener studentConnectListener;
 
+    public TeacherRollCallAction(OnStudentConnectListener studentConnectListener){
+        this.studentConnectListener = studentConnectListener;
     }
 
     @Override
@@ -35,7 +47,16 @@ public class TeacherRollCallAction extends SocketAction{
             objectInputStream = new ObjectInputStream(socket.getInputStream());
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
-            // TODO: add code for receiving student check-in
+            try
+            {
+                // TODO: use Student object (check with someone on status, may do myself)
+                String student =(String) objectInputStream.readObject();
+                studentConnectListener.onStudentConnect(student);
+            }
+            catch (ClassNotFoundException e)
+            {
+                Log.d("SocketAction", "There was a problem decoding the serializable student. Exception: " + e.toString());
+            }
         }
     }
 
