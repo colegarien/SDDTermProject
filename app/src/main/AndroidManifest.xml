@@ -32,6 +32,11 @@
             android:enabled="true"
             android:exported="true" >
         </service>
+        <service
+            android:name=".TeacherRollCallService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>
