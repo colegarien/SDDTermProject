@@ -13,6 +13,7 @@ import java.net.UnknownHostException;
 public abstract class SocketAction
 {
    static final int QUESTIONS_PORT_NUMBER = 8080;
+   static final int ROLLCALL_PORT_NUMBER = 8081;
    Socket socket;
 
    abstract void setUpSocket() throws  IOException;

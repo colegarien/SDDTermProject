@@ -33,7 +33,7 @@
             android:exported="true" >
         </service>
         <service
-            android:name=".TeacherRollCallService"
+            android:name=".Services.TeacherRollCallService"
             android:enabled="true"
             android:exported="true" >
         </service>
