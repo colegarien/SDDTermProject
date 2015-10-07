@@ -25,7 +25,7 @@ public class TeacherRollCallAction extends SocketAction{
 
     @Override
     void setUpSocket() throws IOException {
-        serverSocket = new ServerSocket(ROLLCALL_PORT_NUMBER);
+        serverSocket = new ServerSocket(ROLL_CALL_PORT_NUMBER);
     }
 
     @Override
