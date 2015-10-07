@@ -6,7 +6,8 @@
  *   stopping the Roll Call Wifi P2P service
  *
  * Edit: 10/7/2015
- *   added button code for starting service
+ *   added button code for starting service,
+ *    cleaned up default params1 and params2,
  *
  */
 
@@ -35,24 +36,9 @@ import edu.uco.schambers.classmate.R;
 import edu.uco.schambers.classmate.Services.TeacherRollCallService;
 import edu.uco.schambers.classmate.SocketActions.SocketAction;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TeacherRollCall.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link TeacherRollCall#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class TeacherRollCall extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String ARG_TEACHER = "edu.uco.schambers.classmate.arq_teacher";
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String CLASS_OPEN = "edu.uco.schambers.classmate.class_open";
 
     //UI Components
     private Button startBtn;
@@ -69,21 +55,11 @@ public class TeacherRollCall extends Fragment {
     private DataRepo dr;
     public User user;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TeacherRollCall.
-     */
-    // TODO: Rename and change types and number of parameters
+
     // TODO: Get Class Name from DB/Dropdown Box
-    public static TeacherRollCall newInstance(String param1, String param2) {
+    public static TeacherRollCall newInstance() {
         TeacherRollCall fragment = new TeacherRollCall();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -96,8 +72,6 @@ public class TeacherRollCall extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
@@ -121,6 +95,9 @@ public class TeacherRollCall extends Fragment {
         dr = new DataRepo(getActivity());
         user = dr.getUser(user_key);
 
+        // intialize class_open to false
+        sp.edit().putBoolean(CLASS_OPEN,false).apply();
+
         teacherText.setText(user.getName());
 
         classText = (EditText) rootView.findViewById(R.id.txt_rc_class);
@@ -130,12 +107,31 @@ public class TeacherRollCall extends Fragment {
             public void onClick(View v) {
                 Activity activity = getActivity();
 
-                // TODO: change teacherText over to Teacher object
-                Intent intent = TeacherRollCallService.getNewStartSessionIntent(getActivity(), teacherText.getText().toString());
-                getActivity().startService(intent);
+                if (!sp.getBoolean(CLASS_OPEN,false)) {
 
-                if(activity instanceof MainActivity) {
-                    ((MainActivity) activity).addLocalService(SocketAction.ROLL_CALL_PORT_NUMBER, teacherText.getText().toString(), classText.getText().toString(), true);
+                    // TODO: change teacherText over to Teacher object
+                    Intent intent = TeacherRollCallService.getNewStartSessionIntent(activity, teacherText.getText().toString());
+                    activity.startService(intent);
+
+                    if (activity instanceof MainActivity) {
+                        ((MainActivity) activity).addLocalService(SocketAction.ROLL_CALL_PORT_NUMBER, teacherText.getText().toString(), classText.getText().toString(), true);
+                    }
+
+                    // TODO: lock all input (like class)
+                    startBtn.setText(getResources().getString(R.string.btn_roll_call_stop));
+                    sp.edit().putBoolean(CLASS_OPEN,true).apply();
+                }else{
+
+                    Intent intent = TeacherRollCallService.getNewEndSessionIntent(activity);
+                    activity.startService(intent);
+
+                    if (activity instanceof MainActivity) {
+                        ((MainActivity) activity).removeLocalService(SocketAction.ROLL_CALL_PORT_NUMBER, teacherText.getText().toString(), classText.getText().toString(), true);
+                    }
+
+                    // TODO: unlock inputs (like class)
+                    startBtn.setText(getResources().getString(R.string.btn_roll_call_start));
+                    sp.edit().putBoolean(CLASS_OPEN,false).apply();
                 }
             }
         });
