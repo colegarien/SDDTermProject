@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,6 +23,8 @@ import org.json.JSONException;
 
 import java.io.IOException;
 
+import edu.uco.schambers.classmate.Adapter.Callback;
+import edu.uco.schambers.classmate.Adapter.HttpResponse;
 import edu.uco.schambers.classmate.Adapter.UserAdapter;
 import edu.uco.schambers.classmate.Database.DataRepo;
 import edu.uco.schambers.classmate.Database.User;
@@ -54,7 +57,7 @@ public class Login extends Fragment {
     //ui components
     private CheckBox cb;
     private EditText idET;
-    private Button   confirm;
+    private Button confirm;
     private EditText pass;
     private EditText confirmPass;
     private EditText name;
@@ -114,16 +117,16 @@ public class Login extends Fragment {
     private void initUI(final View rootView) {
         cb = (CheckBox) rootView.findViewById(R.id.student_cb);
         idET = (EditText) rootView.findViewById(R.id.student_id_et);
-        confirm = (Button)rootView.findViewById(R.id.signup_btn);
+        confirm = (Button) rootView.findViewById(R.id.signup_btn);
         pass = (EditText) rootView.findViewById(R.id.pass_et);
-        confirmPass = (EditText)rootView.findViewById(R.id.confirm_pass_et);
-        name = (EditText)rootView.findViewById(R.id.username_et);
-        email = (EditText)rootView.findViewById(R.id.email_et);
+        confirmPass = (EditText) rootView.findViewById(R.id.confirm_pass_et);
+        name = (EditText) rootView.findViewById(R.id.username_et);
+        email = (EditText) rootView.findViewById(R.id.email_et);
 
         //sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
         //editor = sp.edit();
         user = new User();
-        dr   = new DataRepo(getActivity());
+        dr = new DataRepo(getActivity());
 
         cbVisibility();
 
@@ -146,7 +149,7 @@ public class Login extends Fragment {
         pass.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
-                if(hasFocus){
+                if (hasFocus) {
                     pass.setError(null);
                 }
             }
@@ -184,79 +187,99 @@ public class Login extends Fragment {
             public void onClick(View v) {
 
                 //check for all appropriate information and toast if missing anything
-                     if(!user.isValidName(name.getText().toString())) {
-                        name.setError("Invalid Name");}
-                else if(!user.isValidPassword(pass.getText().toString())){
-                        pass.setError("password must be less than 4 characters");}
-                else if (!pass.getText().toString().equals(confirmPass.getText().toString())){
-                        confirmPass.setError("password do not match");}
-                else if(!user.isValidEmail(email.getText().toString())){
-                        email.setError("Invalid email");}
-                else if (cb.isChecked() && idET.getText().toString().matches("")){
-                         idET.setError("please fill out all appropriate information");}
-                else if (cb.isChecked() && dr.userExist(Integer.parseInt(idET.getText().toString()))){
-                         idET.setError("User already exist");}
-                else {
-                         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-                         editor = sp.edit();
+                if (!user.isValidName(name.getText().toString())) {
+                    name.requestFocus();
+                    name.setError("Invalid Name");
+                } else if (!user.isValidPassword(pass.getText().toString())) {
+                    pass.requestFocus();
+                    pass.setError("password must be more than 4 characters");
+                } else if (!pass.getText().toString().equals(confirmPass.getText().toString())) {
+                    confirmPass.requestFocus();
+                    confirmPass.setError("password do not match");
+                } else if (!user.isValidEmail(email.getText().toString())) {
+                    email.requestFocus();
+                    email.setError("Invalid email");
+                } else if (cb.isChecked() && idET.getText().toString().matches("")) {
+                    idET.requestFocus();
+                    idET.setError("please fill out all appropriate information");
+                } /*else if (cb.isChecked() && dr.userExist(Integer.parseInt(idET.getText().toString()))) {
+                    idET.setError("User already exist");
+                }*/ else {
+                    sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+                    editor = sp.edit();
 
-                            //set username
-                            user.setName(name.getText().toString());
+                    //set username
+                    user.setName(name.getText().toString());
 
-                            //set email to user.
-                            user.setEmail(email.getText().toString());
-                            user.setPassword(pass.getText().toString());
+                    //set email to user.
+                    user.setEmail(email.getText().toString());
+                    user.setPassword(pass.getText().toString());
 
-                            //add role & id, send to appropriate fragment
-                            if (!cb.isChecked()) {
-                                idET.setId(0);
-                                user.setIsStudent(false);
-                                Log.i("name", user.getName());
-                                Log.i("email", user.getEmail());
-                                editor.putString("USER_KEY", user.getEmail());
-                                editor.commit();
-                                Fragment teacher = TeacherInterface.newInstance("test", "test");
-                                launchFragment(teacher);
-                            } else {
-                                user.setId(Integer.parseInt(idET.getText().toString()));
-                                user.setIsStudent(true);
-                                editor.putString("USER_KEY", user.getEmail());
-                                editor.commit();
-                                Fragment student = StudentInterface.newInstance("test", "test");
-                                launchFragment(student);
+                    //add role & id, send to appropriate fragment
+                    /*if (!cb.isChecked()) {
+                        idET.setId(0);
+                        user.setIsStudent(false);
+                        Log.i("name", user.getName());
+                        Log.i("email", user.getEmail());
+                        editor.putString("USER_KEY", user.getEmail());
+                        editor.commit();
+                        Fragment teacher = TeacherInterface.newInstance("test", "test");
+                        launchFragment(teacher);
+                    } else {
+                        user.setId(Integer.parseInt(idET.getText().toString()));
+                        user.setIsStudent(true);
+                        editor.putString("USER_KEY", user.getEmail());
+                        editor.commit();
+                        Fragment student = StudentInterface.newInstance("test", "test");
+                        launchFragment(student);
+                    }*/
+                    //store user in dataRepo
+                    //dr.createUser(user);
+                    //send to web api
+
+                    //Pls do not delete this try catch i need it to write to the cloud
+                    try {
+                        new UserAdapter().createUser(user, new Callback<HttpResponse>() {
+                            @Override
+                            public void onComplete(HttpResponse result) {
+
+                                if (result.getHttpCode() == 409){
+                                    email.requestFocus();
+                                    email.setError("User already exist");
+                                }
+
+                                else if (result.getHttpCode() >= 300)
+                                    Toast.makeText(null,"Error creating user", Toast.LENGTH_LONG);
+                                else{
+                                    Fragment login = Auth.newInstance("test", "test");
+                                    launchFragment(login);
+                                }
                             }
-                            //store user in dataRepo
-                            dr.createUser(user);
-                            //send to web api
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-                         //Pls do not delete this try catch i need it to write to the cloud
-                           // try {
-                               // new UserAdapter().createUser(user);
-                           // } catch (JSONException e) {
-                           //     e.printStackTrace();
-                           // } catch (IOException e) {
-                           //     e.printStackTrace();
-                           // }
-
-                            //store username in Shared Preferences
-                            sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-                            editor = sp.edit();
-                            editor.putString("USER_KEY", user.getEmail());
-                            editor.commit();
+                    //store username in Shared Preferences
+                    /*sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+                    editor = sp.edit();
+                    editor.putString("USER_KEY", user.getEmail());
+                    editor.commit();*/
                 }
             }
         });
 
     }
 
-    public void cbVisibility(){
+    public void cbVisibility() {
 
-        if (!cb.isChecked())
-        {
+        if (!cb.isChecked()) {
             idET.setText("");
             idET.setVisibility(View.INVISIBLE);
             idET.setText("");
-        }else{
+        } else {
             idET.setVisibility(View.VISIBLE);
         }
     }
@@ -301,10 +324,8 @@ public class Login extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private void launchFragment(Fragment f)
-    {
-        if(f != null)
-        {
+    private void launchFragment(Fragment f) {
+        if (f != null) {
             FragmentTransaction trans = getFragmentManager().beginTransaction();
             trans.replace(R.id.fragment_container, f).addToBackStack("debug");
             trans.commit();
