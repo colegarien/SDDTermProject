@@ -129,9 +129,28 @@ public class Auth extends Fragment {
         email = (EditText) rootView.findViewById(R.id.email_et);
         pass = (EditText) rootView.findViewById(R.id.pass_et);
         signin = (Button) rootView.findViewById(R.id.sign_in_btn);
-        signup = (TextView) rootView.findViewById(R.id.signup_lbl);
+        signup = (TextView)  rootView.findViewById(R.id.signup_lbl);
         resetLink = (TextView) rootView.findViewById(R.id.reset_pw_lbl);
         dr = new DataRepo(getActivity());
+
+
+        email.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    email.setError(null);
+                }
+            }
+        });
+
+        pass.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    pass.setError(null);
+                }
+            }
+        });
 
         signup.setOnClickListener(new View.OnClickListener()
         {
@@ -156,33 +175,49 @@ public class Auth extends Fragment {
             @Override
             public void onClick(View v)
             {
+                if (!user.isValidEmail(email.getText().toString())) {
+                    email.requestFocus();
+                    email.setError("Invalid email");
+                } else if (!user.isValidPassword(pass.getText().toString())) {
+                    pass.requestFocus();
+                    pass.setError("password must be more than 4 characters");
+                }  else {
+                    AuthAdapter auth = new AuthAdapter(getActivity());
 
-                AuthAdapter auth = new AuthAdapter(getActivity());
+                    try {
+                        auth.authenticate(email.getText().toString(), pass.getText().toString(), new Callback<HttpResponse>() {
+                            @Override
+                            public void onComplete(HttpResponse result) {
+                                if (result.getHttpCode() == 401){
+                                    pass.requestFocus();
+                                    pass.setError("Incorrect E-Mail or Password");
+                                }
 
-                try {
-                    auth.authenticate(email.getText().toString(), pass.getText().toString(), new Callback<HttpResponse>() {
-                        @Override
-                        public void onComplete(HttpResponse result) {
-                            sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-                            editor = sp.edit();
-                            editor.putString("AUTH_TOKEN", result.getResponse());
-                            editor.commit();
+                                else if (result.getHttpCode() >= 300)
+                                    Toast.makeText(null,"Error logging in", Toast.LENGTH_LONG);
+                                else {
+                                    sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+                                    editor = sp.edit();
+                                    editor.putString("AUTH_TOKEN", result.getResponse());
+                                    editor.commit();
 
-                            try {
-                                User user = TokenUtility.parseUserToken(result.getResponse());
-                                ChooseInterface(user.isStudent());
-                            } catch (JSONException e) {
-                                Log.d("DEBUG", e.toString());
-                                Toast.makeText(null, "Error parsing token response", Toast.LENGTH_LONG);
+                                    try {
+                                        User user = TokenUtility.parseUserToken(result.getResponse());
+                                        ChooseInterface(user.isStudent());
+                                    } catch (JSONException e) {
+                                        pass.setError("Incorrect E-Mail or Password");
+                                        Log.d("DEBUG", e.toString());
+                                        Toast.makeText(null, "Error parsing token response", Toast.LENGTH_LONG);
+                                    }
+                                }
                             }
+                        });
 
-                        }
-                    });
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        pass.requestFocus();
+                        pass.setError("Incorrect E-Mail or Password");
+                    }
 
                 /*if(!dr.validateUser(email.getText().toString(), pass.getText().toString())) {
                     pass.setError("Incorrect E-Mail or Password");
@@ -198,6 +233,7 @@ public class Auth extends Fragment {
                     editor.commit();
                     ChooseInterface(user);
                 }*/
+                }
             }
         });
 

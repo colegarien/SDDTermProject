@@ -61,14 +61,14 @@ public class User implements Serializable {
 	private static final String NAME = "[a-zA-Z ]+";
 	private static final String EMAIL = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
-	public boolean isValidName(String name) {
+	public static boolean isValidName(String name) {
 
 		Pattern pattern = Pattern.compile(NAME);
 		Matcher matcher = pattern.matcher(name);
 		return matcher.matches();
 	}
 	// validating email id
-	public boolean isValidEmail(String email) {
+	public static boolean isValidEmail(String email) {
 
 		Pattern pattern = Pattern.compile(EMAIL);
 		Matcher matcher = pattern.matcher(email);
@@ -76,7 +76,7 @@ public class User implements Serializable {
 	}
 
 	// validating password with retype password
-	public boolean isValidPassword(String pass) {
+	public static boolean isValidPassword(String pass) {
 		if (!pass.equals("") && pass.length() < 5) {
 			return true;
 		}

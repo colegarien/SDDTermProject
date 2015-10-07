@@ -192,7 +192,7 @@ public class Login extends Fragment {
                     name.setError("Invalid Name");
                 } else if (!user.isValidPassword(pass.getText().toString())) {
                     pass.requestFocus();
-                    pass.setError("password must be less than 4 characters");
+                    pass.setError("password must be more than 4 characters");
                 } else if (!pass.getText().toString().equals(confirmPass.getText().toString())) {
                     confirmPass.requestFocus();
                     confirmPass.setError("password do not match");
