@@ -196,7 +196,6 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
             }
         });
 
-        discoverLocalService();
     }
 
     public void discoverLocalService(){
