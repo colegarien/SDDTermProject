@@ -86,8 +86,8 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                 break;
 
             default:
-                Fragment loginFragment = new Login();
-                trans.replace(R.id.fragment_container, loginFragment);
+                Fragment authFragment = new Auth();
+                trans.replace(R.id.fragment_container, authFragment);
                 break;
 
         }
