@@ -16,6 +16,7 @@ public class TokenUtility {
         JSONObject jsonObject = new JSONObject(json);
 
         User user = new User();
+        user.setpKey(jsonObject.getInt("Id"));
         user.setName(jsonObject.getString("Name"));
         user.setEmail(jsonObject.getString("Email"));
         user.setId(jsonObject.getInt("Student_Id"));
