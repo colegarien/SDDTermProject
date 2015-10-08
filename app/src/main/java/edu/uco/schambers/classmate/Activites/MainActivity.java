@@ -174,7 +174,7 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
             public void onSuccess() {
                 // Command successful! Code isn't necessarily needed here,
                 // Unless you want to update the UI or add logging statements.
-                Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_SHORT).show();
+                Log.d("ServiceCreation", "Service creation successful");
             }
 
             @Override
@@ -192,7 +192,8 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                         errorMessage = "P2P Unsupported";
                         break;
                 }
-                Toast.makeText(getApplicationContext(),errorMessage,Toast.LENGTH_SHORT).show();
+
+                Log.d("ServiceCreation", "Error: " + errorMessage);
             }
         });
 
@@ -297,14 +298,14 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
             public void onSuccess() {
                 // Command successful! Code isn't necessarily needed here,
                 // Unless you want to update the UI or add logging statements.
-                Toast.makeText(getApplicationContext(),"Success",Toast.LENGTH_SHORT).show();
+                Log.d("ServiceRemoval", "Service removal successful");
             }
 
             @Override
             public void onFailure(int reasonCode) {
                 // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
                 String errorMessage = "";
-                switch (reasonCode){
+                switch (reasonCode) {
                     case WifiP2pManager.BUSY:
                         errorMessage = "Busy...";
                         break;
@@ -315,7 +316,7 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                         errorMessage = "P2P Unsupported";
                         break;
                 }
-                Toast.makeText(getApplicationContext(),errorMessage,Toast.LENGTH_SHORT).show();
+                Log.d("ServiceRemoval", "Error: " + errorMessage);
             }
         });
     }
