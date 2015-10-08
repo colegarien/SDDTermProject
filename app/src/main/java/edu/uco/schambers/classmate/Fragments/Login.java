@@ -215,6 +215,14 @@ public class Login extends Fragment {
                     user.setEmail(email.getText().toString());
                     user.setPassword(pass.getText().toString());
 
+                    if(cb.isChecked()){
+                        user.setIsStudent(true);
+                        user.setId(Integer.parseInt(idET.getText().toString()));
+                    }else if(!cb.isChecked()){
+                        user.setIsStudent(false);
+                        user.setId(user.getpKey());
+                    }
+
                     //add role & id, send to appropriate fragment
                     /*if (!cb.isChecked()) {
                         idET.setId(0);
