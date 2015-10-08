@@ -180,7 +180,7 @@ public class Auth extends Fragment {
                     email.setError("Invalid email");
                 } else if (!user.isValidPassword(pass.getText().toString())) {
                     pass.requestFocus();
-                    pass.setError("password must be more than 4 characters");
+                    pass.setError("password must at least 8 characters.");
                 }  else {
                     AuthAdapter auth = new AuthAdapter(getActivity());
 
