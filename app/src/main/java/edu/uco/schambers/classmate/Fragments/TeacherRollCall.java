@@ -29,8 +29,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import edu.uco.schambers.classmate.Activites.MainActivity;
 import edu.uco.schambers.classmate.Database.DataRepo;
+import edu.uco.schambers.classmate.Database.TokenUtility;
 import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.R;
 import edu.uco.schambers.classmate.Services.TeacherRollCallService;
@@ -54,6 +57,7 @@ public class TeacherRollCall extends Fragment {
     public String user_key;
     private DataRepo dr;
     public User user;
+    private String token;
 
 
     // TODO: Get Class Name from DB/Dropdown Box
@@ -80,25 +84,27 @@ public class TeacherRollCall extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_teacher_roll_call, container, false);
-        initUI(rootView);
+        try {
+            initUI(rootView);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return rootView;
     }
 
 
-    private void initUI(final View rootView)
-    {
+    private void initUI(final View rootView) throws JSONException {
         startBtn = (Button) rootView.findViewById(R.id.btn_start_roll_call);
         teacherText = (TextView) rootView.findViewById(R.id.txt_rc_teacher);
 
         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-        user_key = sp.getString("USER_KEY", null);
-        dr = new DataRepo(getActivity());
-        user = dr.getUser(user_key);
+        token = sp.getString("AUTH_TOKEN", null);
+        user = TokenUtility.parseUserToken(token);
 
         // intialize class_open to false
         sp.edit().putBoolean(CLASS_OPEN,false).apply();
 
-        teacherText.setText(user.getName());
+        teacherText.setText(user.getName().toString());
 
         classText = (EditText) rootView.findViewById(R.id.txt_rc_class);
         connectedList = (ListView) rootView.findViewById(R.id.list_connected);
