@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Toast;
 
 import edu.uco.schambers.classmate.Fragments.TeacherRollCall;
@@ -102,6 +103,6 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
     @Override
     public void onStudentConnect(String id) {
         // TODO: add student ID to ArrayList (possibly query from DB)
-        Toast.makeText(getApplicationContext(),"Student ID: " + id,Toast.LENGTH_LONG).show();
+        Log.d("StudentConnect", "Connected ID: " + id);
     }
 }
