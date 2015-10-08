@@ -1,3 +1,17 @@
+/* Team 9Lives
+ *
+ * Author: Steven Chambers
+ * Purpose:
+ *   Abstract Class that outlines methods necessary
+ *   for socket interactions
+ *
+ * Edit: 10/7/2015
+ *   Cole Garien: modified port numbers to follow 4000 scheme
+ *     and made ports public so can be used when starting wifi p2p
+ *
+ *
+ */
+
 package edu.uco.schambers.classmate.SocketActions;
 
 import android.util.Log;
@@ -7,12 +21,11 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-/**
- * Created by Steven Chambers on 10/3/2015.
- */
 public abstract class SocketAction
 {
-   static final int QUESTIONS_PORT_NUMBER = 8080;
+   public static final int ROLL_CALL_PORT_NUMBER = 4001;
+   public static final int QUESTIONS_PORT_NUMBER = 4002;
+
    Socket socket;
 
    abstract void setUpSocket() throws  IOException;
