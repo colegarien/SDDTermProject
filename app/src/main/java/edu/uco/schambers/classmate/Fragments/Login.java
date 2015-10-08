@@ -259,8 +259,7 @@ public class Login extends Fragment {
                                 else if (result.getHttpCode() >= 300)
                                     Toast.makeText(null,"Error creating user", Toast.LENGTH_LONG);
                                 else{
-                                    Fragment login = Auth.newInstance("test", "test");
-                                    launchFragment(login);
+                                    ChooseInterface(user.isStudent());
                                 }
                             }
                         });
@@ -337,6 +336,16 @@ public class Login extends Fragment {
             FragmentTransaction trans = getFragmentManager().beginTransaction();
             trans.replace(R.id.fragment_container, f).addToBackStack("debug");
             trans.commit();
+        }
+    }
+
+    public void ChooseInterface(boolean isStudent) {
+        if (!isStudent) {
+            Fragment teacher = TeacherInterface.newInstance("test", "test");
+            launchFragment(teacher);
+        }else{
+            Fragment student = StudentInterface.newInstance("test", "test");
+            launchFragment(student);
         }
     }
 
