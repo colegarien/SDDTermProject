@@ -28,6 +28,7 @@ public class TeacherRollCallAction extends SocketAction{
     ServerSocket serverSocket;
 
     boolean listeningForStudents = true;
+    boolean receiveSuccess = false;
 
     private OnStudentConnectListener studentConnectListener;
 
@@ -43,6 +44,8 @@ public class TeacherRollCallAction extends SocketAction{
     @Override
     void performAction() throws IOException {
         while(listeningForStudents){
+            receiveSuccess = false;
+
             socket = serverSocket.accept();
             objectInputStream = new ObjectInputStream(socket.getInputStream());
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
@@ -52,11 +55,14 @@ public class TeacherRollCallAction extends SocketAction{
                 // TODO: use Student object (check with someone on status, may do myself)
                 String student =(String) objectInputStream.readObject();
                 studentConnectListener.onStudentConnect(student);
+                receiveSuccess = true;
             }
             catch (ClassNotFoundException e)
             {
                 Log.d("SocketAction", "There was a problem decoding the serializable student. Exception: " + e.toString());
             }
+            // confirmation of reading
+            dataOutputStream.writeBoolean(receiveSuccess);
         }
     }
 
