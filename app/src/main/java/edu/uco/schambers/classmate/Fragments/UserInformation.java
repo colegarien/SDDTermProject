@@ -18,6 +18,11 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 
+import java.io.IOException;
+
+import edu.uco.schambers.classmate.Adapter.Callback;
+import edu.uco.schambers.classmate.Adapter.HttpResponse;
+import edu.uco.schambers.classmate.Adapter.UserAdapter;
 import edu.uco.schambers.classmate.Database.DataRepo;
 import edu.uco.schambers.classmate.Database.TokenUtility;
 import edu.uco.schambers.classmate.Database.User;
@@ -175,7 +180,32 @@ public class UserInformation extends Fragment {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!dr.validateUser(user.getEmail().toString(), currentPass.getText().toString())) {
+                UserAdapter userAdapter = new UserAdapter();
+
+                try {
+                    userAdapter.changePass(user.getEmail(), currentPass.getText().toString(), newPass.getText().toString(), new Callback<HttpResponse>() {
+                        @Override
+                        public void onComplete(HttpResponse response) throws Exception {
+                            if (response.getHttpCode() == 204) {
+                                Toast.makeText(getActivity(), "Your Password has been Updated", Toast.LENGTH_LONG).show();
+                            }
+                            else if (response.getHttpCode() == 401) {
+                                currentPass.requestFocus();
+                                currentPass.setError("Incorrect Current Password");
+                            }
+                            else{
+                                Toast.makeText(getActivity(), "Error communicating with server. Status code: " + response.getHttpCode(), Toast.LENGTH_LONG).show();
+                            }
+
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                /*if (!dr.validateUser(user.getEmail().toString(), currentPass.getText().toString())) {
                     currentPass.setError("Incorrect Current Password");
                 } else if (!user.isValidPassword(newPass.getText().toString())) {
                     newPass.setError("Password must be less than four characters");
@@ -188,7 +218,7 @@ public class UserInformation extends Fragment {
                     ChangePasswordVisibility(toChangePass);
                     Toast.makeText(getActivity(), "Your Password has been Updated", Toast.LENGTH_LONG).show();
 
-                      }
+                      }*/
             }
         });
 

@@ -188,13 +188,11 @@ public class Auth extends Fragment {
                         auth.authenticate(email.getText().toString(), pass.getText().toString(), new Callback<HttpResponse>() {
                             @Override
                             public void onComplete(HttpResponse result) {
-                                if (result.getHttpCode() == 401){
+                                if (result.getHttpCode() == 401) {
                                     pass.requestFocus();
                                     pass.setError("Incorrect E-Mail or Password");
-                                }
-
-                                else if (result.getHttpCode() >= 300)
-                                    Toast.makeText(null,"Error logging in", Toast.LENGTH_LONG);
+                                } else if (result.getHttpCode() >= 300)
+                                    Toast.makeText(getActivity(), "Error logging in", Toast.LENGTH_LONG);
                                 else {
                                     sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
                                     editor = sp.edit();
@@ -207,12 +205,15 @@ public class Auth extends Fragment {
                                     } catch (JSONException e) {
                                         pass.setError("Incorrect E-Mail or Password");
                                         Log.d("DEBUG", e.toString());
-                                        Toast.makeText(null, "Error parsing token response", Toast.LENGTH_LONG);
+                                        Toast.makeText(getActivity(), "Error parsing token response", Toast.LENGTH_LONG);
                                     }
                                 }
                             }
                         });
-
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
                         pass.requestFocus();

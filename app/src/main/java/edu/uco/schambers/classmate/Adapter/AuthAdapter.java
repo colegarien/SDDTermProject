@@ -36,7 +36,7 @@ public class AuthAdapter {
 
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
             @Override
-            public void onComplete(HttpResponse response) {
+            public void onComplete(HttpResponse response) throws Exception {
                 Log.d("WS", response.getResponse());
 
                 callback.onComplete(response);
