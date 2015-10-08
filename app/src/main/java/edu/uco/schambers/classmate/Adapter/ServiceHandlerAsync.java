@@ -14,9 +14,9 @@ import java.net.URL;
 
 public class ServiceHandlerAsync extends AsyncTask<ServiceCall, Integer, HttpResponse> {
 
-    private Callback callback;
+    private Callback<HttpResponse> callback;
 
-    public ServiceHandlerAsync(Callback callback) {
+    public ServiceHandlerAsync(Callback<HttpResponse> callback) {
         this.callback = callback;
     }
 
@@ -33,7 +33,11 @@ public class ServiceHandlerAsync extends AsyncTask<ServiceCall, Integer, HttpRes
 
     @Override
     protected void onPostExecute(HttpResponse response) {
-        callback.onComplete(response);
+        try {
+            callback.onComplete(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static HttpResponse makeServiceCall(String serviceUrl, String method, String body) throws IOException {
