@@ -178,9 +178,9 @@ public class Auth extends Fragment {
                 if (!user.isValidEmail(email.getText().toString())) {
                     email.requestFocus();
                     email.setError("Invalid email");
-                } else if (!user.isValidPassword(pass.getText().toString())) {
+                } else if (pass.getText().toString().equals("")) {
                     pass.requestFocus();
-                    pass.setError("password must be more than 4 characters");
+                    pass.setError("please enter a password.");
                 }  else {
                     AuthAdapter auth = new AuthAdapter(getActivity());
 

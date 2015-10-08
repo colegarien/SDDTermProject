@@ -77,7 +77,7 @@ public class User implements Serializable {
 
 	// validating password with retype password
 	public static boolean isValidPassword(String pass) {
-		if (!pass.equals("") && pass.length() < 5) {
+		if (!pass.equals("") && pass.length() > 7) {
 			return true;
 		}
 		return false;
