@@ -1,0 +1,69 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context="edu.uco.schambers.classmate.Fragments.TeacherClassManagement"
+    android:clickable="true"
+    android:nestedScrollingEnabled="true"
+    >
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/class_add"
+            android:id="@+id/class_add_lbl"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal" />
+
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/classname_et"
+            android:hint="@string/classname"
+            android:layout_gravity="center_horizontal" />
+
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:id="@+id/semester_sp"
+            android:layout_gravity="center_horizontal"
+            android:entries="@array/semester_array"/>
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:id="@+id/year_sp"
+            android:layout_gravity="center_horizontal"
+            android:entries="@array/year_array"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/addclass"
+            android:id="@+id/add_class_btn"
+            android:layout_gravity="center_horizontal" />
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/addclass"
+            android:id="@+id/add_class_lst"
+            android:layout_gravity="center_horizontal" />
+
+    </LinearLayout>
+
+
+</FrameLayout>
