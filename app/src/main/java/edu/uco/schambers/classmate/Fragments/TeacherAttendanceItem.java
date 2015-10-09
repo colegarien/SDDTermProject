@@ -5,6 +5,10 @@
  * Purpose:
  *   UI backend for teacher attendance and class management
  *   module.
+ *      Edit 10/09/2015
+ *      Added this backend code to create a modified, but similar format to
+ *      student attendance module, in order to house individual student records
+ *      for teacher attendance module
  */
 package edu.uco.schambers.classmate.Fragments;
 

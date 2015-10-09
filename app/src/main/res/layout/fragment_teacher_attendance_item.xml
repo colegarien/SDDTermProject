@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Team 9Lives
+    *
+    * Author: Rayan Al-Hammami (Modified version of Student Attendance Module
+    *         with permission of Mossi Al-Obaid)
+    * Purpose: Main layout for individual student attendance
+    * records in teacher attendance module.
+    *
+    * Edit: 10/09/2015
+    *   Added and modified this whole layout
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"

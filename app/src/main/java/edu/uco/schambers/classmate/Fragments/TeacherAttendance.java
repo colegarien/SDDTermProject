@@ -4,11 +4,12 @@
  * Purpose:
  *   UI backend for teacher attendance and class management
  *   module.
+ *      Edit 10/09/2015
+ *      Added selectable functionality for student table rows
  */
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.FragmentTransaction;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
