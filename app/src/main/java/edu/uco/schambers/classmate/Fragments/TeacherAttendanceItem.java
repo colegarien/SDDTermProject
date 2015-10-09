@@ -103,7 +103,7 @@ public class TeacherAttendanceItem extends Fragment {
     }
 
 
-    @TargetApi(Build.VERSION_CODES.M)
+    //@TargetApi(Build.VERSION_CODES.M)
     private void initUI(final View rootView) {
         String[] titles = new String[]{" Attendance ", " Absences "};
         int[] values = new int[]{10, absences};
@@ -111,7 +111,7 @@ public class TeacherAttendanceItem extends Fragment {
         attendance = (TextView) rootView.findViewById(R.id.ra_tvAttendance);
         attendance.setText(10+"");
         missing.setText(absences+"");
-        drawPieChar(rootView, getContext(), titles, values);
+        drawPieChar(rootView, rootView.getContext(), titles, values);
     }
 
 
