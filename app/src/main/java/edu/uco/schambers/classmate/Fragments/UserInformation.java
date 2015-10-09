@@ -135,15 +135,9 @@ public class UserInformation extends Fragment {
         cancel = (Button)rootView.findViewById(R.id.cancel_btn);
         changePass = (CheckBox)rootView.findViewById(R.id.change_pw_cb);
 
-
         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
         token = sp.getString("AUTH_TOKEN", null);
-        Log.i("before", token);
-
         user = TokenUtility.parseUserToken(token);
-
-        Log.i("userEmail", user.getEmail());
-        Log.i("userName", user.getName());
 
         name.setText(user.getName().toString());
         email.setText(user.getEmail().toString());
@@ -213,7 +207,6 @@ public class UserInformation extends Fragment {
                     newPass.setError("New passwords do not match.");
                 } else {
                     user.setPassword(newPass.getText().toString());
-                    Log.i("after", user.getPassword());
                     toChangePass = false;
                     ChangePasswordVisibility(toChangePass);
                     Toast.makeText(getActivity(), "Your Password has been Updated", Toast.LENGTH_LONG).show();

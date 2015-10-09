@@ -5,9 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,17 +14,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 
 import java.io.IOException;
 
+import edu.uco.schambers.classmate.Adapter.AuthAdapter;
 import edu.uco.schambers.classmate.Adapter.Callback;
 import edu.uco.schambers.classmate.Adapter.HttpResponse;
 import edu.uco.schambers.classmate.Adapter.UserAdapter;
 import edu.uco.schambers.classmate.Database.DataRepo;
+import edu.uco.schambers.classmate.Database.TokenUtility;
 import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.R;
 
@@ -53,6 +52,7 @@ public class Login extends Fragment {
     public static final String MyPREFS = "MyPREFS";
     public SharedPreferences sp;
     public SharedPreferences.Editor editor;
+    AuthAdapter aa;
 
     //ui components
     private CheckBox cb;
@@ -103,6 +103,7 @@ public class Login extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+        Logout();
         initUI(rootView);
         return rootView;
     }
@@ -123,10 +124,9 @@ public class Login extends Fragment {
         name = (EditText) rootView.findViewById(R.id.username_et);
         email = (EditText) rootView.findViewById(R.id.email_et);
 
-        //sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-        //editor = sp.edit();
         user = new User();
         dr = new DataRepo(getActivity());
+        aa= new AuthAdapter(getActivity());
 
         cbVisibility();
 
@@ -223,29 +223,6 @@ public class Login extends Fragment {
                         user.setId(user.getpKey());
                     }
 
-                    //add role & id, send to appropriate fragment
-                    /*if (!cb.isChecked()) {
-                        idET.setId(0);
-                        user.setIsStudent(false);
-                        Log.i("name", user.getName());
-                        Log.i("email", user.getEmail());
-                        editor.putString("USER_KEY", user.getEmail());
-                        editor.commit();
-                        Fragment teacher = TeacherInterface.newInstance("test", "test");
-                        launchFragment(teacher);
-                    } else {
-                        user.setId(Integer.parseInt(idET.getText().toString()));
-                        user.setIsStudent(true);
-                        editor.putString("USER_KEY", user.getEmail());
-                        editor.commit();
-                        Fragment student = StudentInterface.newInstance("test", "test");
-                        launchFragment(student);
-                    }*/
-                    //store user in dataRepo
-                    //dr.createUser(user);
-                    //send to web api
-
-                    //Pls do not delete this try catch i need it to write to the cloud
                     try {
                         new UserAdapter().createUser(user, new Callback<HttpResponse>() {
                             @Override
@@ -267,6 +244,39 @@ public class Login extends Fragment {
                         e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
+                    }
+
+                    try {
+                        aa.authenticate(email.getText().toString(), pass.getText().toString(), new Callback<HttpResponse>() {
+                            @Override
+                            public void onComplete(HttpResponse result) {
+                                if (result.getHttpCode() == 401) {
+                                    pass.requestFocus();
+                                    pass.setError("Incorrect E-Mail or Password");
+                                } else if (result.getHttpCode() >= 300)
+                                    Toast.makeText(null, "Error logging in", Toast.LENGTH_LONG);
+                                else {
+                                    sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+                                    editor = sp.edit();
+                                    editor.putString("AUTH_TOKEN", result.getResponse());
+                                    editor.commit();
+
+                                    try {
+                                        User user = TokenUtility.parseUserToken(result.getResponse());
+                                        ChooseInterface(user.isStudent());
+                                    } catch (JSONException e) {
+                                        pass.setError("Incorrect E-Mail or Password");
+                                        Log.d("DEBUG", e.toString());
+                                        Toast.makeText(null, "Error parsing token response", Toast.LENGTH_LONG);
+                                    }
+                                }
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        pass.requestFocus();
+                        pass.setError("Incorrect E-Mail or Password");
                     }
 
                     //store username in Shared Preferences
@@ -347,6 +357,16 @@ public class Login extends Fragment {
             Fragment student = StudentInterface.newInstance("test", "test");
             launchFragment(student);
         }
+    }
+
+    public void Logout(){
+        sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+        editor = sp.edit();
+        editor.remove("AUTH_TOKEN");
+        editor.clear();
+        editor.putString("AUTH_TOKEN", "");
+        editor.commit();
+
     }
 
 }
