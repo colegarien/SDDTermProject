@@ -56,6 +56,7 @@ public class Auth extends Fragment {
     public static final String MyPREFS = "MyPREFS";
     private DataRepo dr;
     public User user;
+    private String token;
     Fragment context = this;
 
 
@@ -133,7 +134,6 @@ public class Auth extends Fragment {
         resetLink = (TextView) rootView.findViewById(R.id.reset_pw_lbl);
         dr = new DataRepo(getActivity());
 
-
         email.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
@@ -183,6 +183,8 @@ public class Auth extends Fragment {
                     pass.setError("password must be more than 4 characters");
                 }  else {
                     AuthAdapter auth = new AuthAdapter(getActivity());
+                    sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+                    token = sp.getString("AUTH_TOKEN", null);
 
                     try {
                         auth.authenticate(email.getText().toString(), pass.getText().toString(), new Callback<HttpResponse>() {
