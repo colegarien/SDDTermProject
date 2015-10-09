@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Team 9Lives
+    *
+    * Author: Rayan Al-Hammami (Modified version of Student Attendance Module
+    *         with permission of Mossi Al-Obaid)
+    * Purpose: Main layout for individual student attendance
+    * records in teacher attendance module.
+    *
+    * Edit: 10/09/2015
+    *   Added and modified this whole layout
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1"
+        android:layout_weight="0.15">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:text="Attendance(s): " />
+
+            <TextView
+                android:id="@+id/ra_tvAttendance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:layout_weight="10"
+                android:text="0                           " />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="14"
+                android:layout_gravity="right"
+                android:layout_weight="0.0"
+                android:text="Absence(s): " />
+
+            <TextView
+                android:id="@+id/ra_tvAbsences"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="15"
+                android:text="0" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_span="15"
+                android:id="@+id/chart"
+                android:orientation="vertical"></LinearLayout>
+
+
+        </TableRow>
+
+    </TableLayout>
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:baselineAligned="false">
+
+        </TableRow>
+
+    </TableLayout>
+</LinearLayout>
