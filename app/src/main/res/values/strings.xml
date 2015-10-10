@@ -47,6 +47,7 @@
     <string name="classmanage">Class Management</string>
     <string name="class_add">Add Class</string>
     <string name="classname">Class Name</string>
+    <string name="schoolname">School Name</string>
     <string-array name="semester_array">
         <item>Select Semester...</item>
         <item>Fall</item>

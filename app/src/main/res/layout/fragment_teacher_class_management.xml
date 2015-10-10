@@ -32,6 +32,14 @@
             android:hint="@string/classname"
             android:layout_gravity="center_horizontal" />
 
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/schoolname_et"
+            android:hint="@string/schoolname"
+            android:layout_gravity="center_horizontal" />
 
         <Spinner
             android:layout_width="match_parent"
