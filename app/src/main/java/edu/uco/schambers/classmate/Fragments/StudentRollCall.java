@@ -42,6 +42,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import edu.uco.schambers.classmate.Activites.MainActivity;
+import edu.uco.schambers.classmate.BroadcastReceivers.StudentRollCallBroadcastReceiver;
 import edu.uco.schambers.classmate.ObservableManagers.ServiceDiscoveryManager;
 import edu.uco.schambers.classmate.R;
 import edu.uco.schambers.classmate.Services.StudentRollCallService;
@@ -108,6 +109,8 @@ public class StudentRollCall extends Fragment {
         prefs = this.getActivity().getSharedPreferences("studentRollCallPrefs", Context.MODE_PRIVATE);
 
         setHasOptionsMenu(true);
+
+        initBroadcast();
 
         observer = new Observer() {
             @Override
@@ -268,6 +271,15 @@ public class StudentRollCall extends Fragment {
         studentServiceIntent.putExtra("wifiInfo", wifiInfo);
 
         getActivity().startService(studentServiceIntent);
+    }
+
+    private void initBroadcast(){
+        Activity activity = getActivity();
+
+        /// Start discovering teacher service
+        if(activity instanceof MainActivity) {
+            ((MainActivity) activity).setupBroadcastReceiver(new StudentRollCallBroadcastReceiver(this));
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
