@@ -3,6 +3,7 @@ package edu.uco.schambers.classmate.BroadcastReceivers;
 import android.app.Fragment;
 import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
@@ -34,7 +35,7 @@ public class StudentRollCallBroadcastReceiver extends WiFiDirectBroadcastReceive
     }
 
     @Override
-    void onPeerListChanged() {
+    void onPeerListChanged(WifiP2pDeviceList wifiP2pDeviceList) {
 
     }
 

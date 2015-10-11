@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
@@ -49,7 +50,7 @@ public abstract class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
     abstract void onWiFiDirectEnabled();
     abstract void onWiFiDirectDisabled();
-    abstract void onPeerListChanged();
+    abstract void onPeerListChanged(WifiP2pDeviceList wifiP2pDeviceList);
     abstract void onPeerConnected(NetworkInfo networkState, WifiP2pInfo wifiInfo, WifiP2pDevice device);
     abstract void onPeerDisconnected();
     abstract void onDeviceConfigChanged();
@@ -69,8 +70,14 @@ public abstract class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             }
 
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
+            manager.requestPeers(channel, new WifiP2pManager.PeerListListener() {
+                @Override
+                public void onPeersAvailable(WifiP2pDeviceList peers) {
 
-            onPeerListChanged();
+                    onPeerListChanged(peers);
+                }
+            });
+
 
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             final NetworkInfo networkState = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
