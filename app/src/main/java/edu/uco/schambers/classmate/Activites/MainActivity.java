@@ -137,13 +137,9 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         {
             sp = this.getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
             editor = sp.edit();
-            Log.i("before remove", sp.getString("AUTH_TOKEN", null));
             editor.remove("AUTH_TOKEN");
-            Log.i("after remove", sp.getString("AUTH_TOKEN", null));
             editor.clear();
-            Log.i("after clear", sp.getString("AUTH_TOKEN", null));
             editor.putString("AUTH_TOKEN", null);
-            Log.i("after putString", sp.getString("AUTH_TOKEN", null));
             editor.commit();
 
             FragmentTransaction trans = getFragmentManager().beginTransaction();
