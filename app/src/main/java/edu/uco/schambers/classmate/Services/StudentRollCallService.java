@@ -24,17 +24,10 @@ public class StudentRollCallService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        socketAction = new StudentRollCallAction();
 
-        InetAddress targetIP = IPAddressManager.getInstance().getGroupOwnerAddress();
-        Log.d("SocketAction", "Handling in Service");
-
-        if(targetIP != null){
-            socketAction = new StudentRollCallAction();
-            socketAction.setTargetIP(targetIP);
-
-            Log.d("SocketAction", "Target is group owner");
-            socketAction.execute();
-        }
+        Log.d("SocketAction", "Target is group owner");
+        socketAction.execute();
     }
 
     @Override
