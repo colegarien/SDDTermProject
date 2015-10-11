@@ -209,6 +209,8 @@ public class StudentRollCall extends Fragment {
                 changeAudioSetting(prefs.getString("CheckedInMode", null));
 
                 lblCheckinStatus.setText(getString(R.string.lbl_status_checked_in));
+
+                connectToGroupOwner();
                 Toast.makeText(getActivity(), "You've checked-in", Toast.LENGTH_SHORT).show();
             }
         });
@@ -247,6 +249,15 @@ public class StudentRollCall extends Fragment {
         /// Start discovering teacher service
         if(activity instanceof MainActivity) {
             ((MainActivity) activity).discoverLocalService();
+        }
+    }
+
+    private void connectToGroupOwner(){
+        Activity activity = getActivity();
+
+        /// Start discovering teacher service
+        if(activity instanceof MainActivity) {
+            ((MainActivity) activity).connectToPeer();
         }
     }
 
