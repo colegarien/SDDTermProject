@@ -179,6 +179,9 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                 // Command successful! Code isn't necessarily needed here,
                 // Unless you want to update the UI or add logging statements.
                 Log.d("ServiceCreation", "Service creation successful");
+
+                // Create group. This method default the host device as group owner
+                mManager.createGroup(mChannel, null);
             }
 
             @Override
