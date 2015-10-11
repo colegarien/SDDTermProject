@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.net.wifi.WpsInfo;
+import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
@@ -59,6 +61,8 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
 
     // Constants
     public static final String SERVICE_FOUND = "edu.uco.schambers.classmate.wifip2p.service_found";
+
+    private WifiP2pDevice targetDevice = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -318,5 +322,44 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                 Log.d("ServiceRemoval", "Error: " + errorMessage);
             }
         });
+    }
+
+    public void connectToPeer() {
+        if (targetDevice == null){
+            Log.d("ServiceDiscovery", "Target not found, make sure this method is called after a service was found");
+        }
+
+        WifiP2pConfig config = new WifiP2pConfig();
+        config.deviceAddress = targetDevice.deviceAddress;
+        config.wps.setup = WpsInfo.PBC;
+
+        if (serviceRequest != null)
+            mManager.removeServiceRequest(mChannel, serviceRequest,
+                    new WifiP2pManager.ActionListener() {
+
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onFailure(int arg0) {
+                        }
+                    });
+
+        mManager.connect(mChannel, config,
+                new WifiP2pManager.ActionListener() {
+
+                    @Override
+                    public void onSuccess() {
+                        Log.d("ServiceDiscovery", "Connecting to service");
+                    }
+
+                    @Override
+                    public void onFailure(int errorCode) {
+                        Log.d("ServiceDiscovery", "Failed connecting to service");
+                    }
+                });
+
     }
 }
