@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
@@ -376,5 +377,36 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         wifiReceiverIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         registerReceiver(wifiReceiver, wifiReceiverIntentFilter);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (wifiReceiver != null) {
+            unregisterReceiver(wifiReceiver);
+        }
+
+        if (mManager != null && mChannel != null){
+            mManager.requestGroupInfo(mChannel, new WifiP2pManager.GroupInfoListener() {
+                @Override
+                public void onGroupInfoAvailable(WifiP2pGroup group) {
+                    if (group != null) {
+                        mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
+                            @Override
+                            public void onSuccess() {
+                                Log.d("ServiceDiscovery", "Removing Wifi p2p group");
+                            }
+
+                            @Override
+                            public void onFailure(int reason) {
+                                Log.d("ServiceDiscovery", "Failed *Removing Wifi p2p group");
+                            }
+                        });
+                    }
+                }
+            });
+
+        }
+
+        super.onDestroy();
     }
 }
