@@ -3,8 +3,10 @@ package edu.uco.schambers.classmate.Activites;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.net.wifi.WpsInfo;
@@ -26,6 +28,7 @@ import java.util.Map;
 
 
 //import edu.uco.schambers.classmate.BroadcastReceivers.CallForStudentQuestionResponseReceiver;
+import edu.uco.schambers.classmate.BroadcastReceivers.WiFiDirectBroadcastReceiver;
 import edu.uco.schambers.classmate.Fragments.Auth;
 
 import edu.uco.schambers.classmate.Fragments.Debug;
@@ -64,6 +67,9 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
     public static final String SERVICE_FOUND = "edu.uco.schambers.classmate.wifip2p.service_found";
 
     private WifiP2pDevice targetDevice = null;
+
+    // BroadcastReceiver
+    private BroadcastReceiver wifiReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -356,5 +362,19 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                     }
                 });
 
+    }
+
+    public void setupBroadcastReceiver(WiFiDirectBroadcastReceiver receiver){
+        receiver.setChannel(mChannel);
+        receiver.setManager(mManager);
+        wifiReceiver = receiver;
+
+        IntentFilter wifiReceiverIntentFilter;wifiReceiverIntentFilter = new IntentFilter();
+        wifiReceiverIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+        wifiReceiverIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
+        wifiReceiverIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        wifiReceiverIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
+        registerReceiver(wifiReceiver, wifiReceiverIntentFilter);
     }
 }
