@@ -266,13 +266,6 @@ public class StudentRollCall extends Fragment {
         }
     }
 
-    public void sendStudentInfoTo(WifiP2pInfo wifiInfo){
-        Intent studentServiceIntent = new Intent(this.getActivity(), StudentRollCallService.class);
-        studentServiceIntent.putExtra("wifiInfo", wifiInfo);
-
-        getActivity().startService(studentServiceIntent);
-    }
-
     private void initBroadcast(){
         Activity activity = getActivity();
 

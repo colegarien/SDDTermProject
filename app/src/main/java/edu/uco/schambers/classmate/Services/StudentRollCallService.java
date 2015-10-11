@@ -7,6 +7,7 @@ import android.util.Log;
 
 import java.net.InetAddress;
 
+import edu.uco.schambers.classmate.ObservableManagers.IPAddressManager;
 import edu.uco.schambers.classmate.SocketActions.SocketAction;
 import edu.uco.schambers.classmate.SocketActions.StudentRollCallAction;
 
@@ -15,7 +16,6 @@ import edu.uco.schambers.classmate.SocketActions.StudentRollCallAction;
  */
 public class StudentRollCallService extends IntentService {
 
-    private WifiP2pInfo wifiInfo;
     private SocketAction socketAction;
 
     public StudentRollCallService() {
@@ -24,14 +24,12 @@ public class StudentRollCallService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        wifiInfo = (WifiP2pInfo) intent.getExtras().get("wifiInfo");
 
+        InetAddress targetIP = IPAddressManager.getInstance().getGroupOwnerAddress();
         Log.d("SocketAction", "Handling in Service");
 
-        if(!wifiInfo.isGroupOwner){
+        if(targetIP != null){
             socketAction = new StudentRollCallAction();
-
-            InetAddress targetIP = wifiInfo.groupOwnerAddress;
             socketAction.setTargetIP(targetIP);
 
             Log.d("SocketAction", "Target is group owner");
