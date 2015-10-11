@@ -23,6 +23,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -43,6 +44,7 @@ import java.util.Observer;
 import edu.uco.schambers.classmate.Activites.MainActivity;
 import edu.uco.schambers.classmate.ObservableManagers.ServiceDiscoveryManager;
 import edu.uco.schambers.classmate.R;
+import edu.uco.schambers.classmate.Services.StudentRollCallService;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -259,6 +261,13 @@ public class StudentRollCall extends Fragment {
         if(activity instanceof MainActivity) {
             ((MainActivity) activity).connectToPeer();
         }
+    }
+
+    public void sendStudentInfoTo(WifiP2pInfo wifiInfo){
+        Intent studentServiceIntent = new Intent(this.getActivity(), StudentRollCallService.class);
+        studentServiceIntent.putExtra("wifiInfo", wifiInfo);
+
+        getActivity().startService(studentServiceIntent);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
