@@ -37,6 +37,7 @@ import edu.uco.schambers.classmate.Fragments.TeacherInterface;
 import edu.uco.schambers.classmate.Fragments.TeacherQuestionResults;
 import edu.uco.schambers.classmate.Fragments.UserInformation;
 import edu.uco.schambers.classmate.Models.Questions.IQuestion;
+import edu.uco.schambers.classmate.ObservableManagers.ServiceDiscoveryManager;
 import edu.uco.schambers.classmate.R;
 import edu.uco.schambers.classmate.Services.StudentQuestionService;
 
@@ -217,21 +218,12 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                         // A service has been discovered. Is this our app?
                         if (instanceName.equalsIgnoreCase(SERVICE_INSTANCE)){
 
-                            Intent intent = new Intent(MainActivity.SERVICE_FOUND);
-
-                            // Traverse all the key-value pair that sent from server
-                            // and put them to intent.
-                            for (Map.Entry<String,String> entry : records.entrySet()) {
-                                String key = entry.getKey();
-                                String value = entry.getValue();
-
-                                intent.putExtra(key, value);
-                            }
-
                             // Notify the observers to update their UI
-                            broadcaster.sendBroadcast(intent);
+                            ServiceDiscoveryManager.getInstance().directNotifyObservers(records);
 
                             Log.d("ServiceDiscovery", "Service found");
+
+                            targetDevice = srcDevice;
                         }
 
                     }
