@@ -1,5 +1,7 @@
 package edu.uco.schambers.classmate.Fragments;
 
+import edu.uco.schambers.classmate.Adapter.Callback;
+import edu.uco.schambers.classmate.Adapter.ClassAdapter;
 import edu.uco.schambers.classmate.Database.Class;
 
 import android.content.Context;
@@ -111,6 +113,15 @@ public class TeacherClassManagement extends Fragment {
         listItems = new ArrayList<String>();
         adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, listItems);
         addedClasses.setAdapter(adapter);
+
+        final User user = TokenUtility.parseUserToken(getActivity());
+        final ClassAdapter classAdapter = new ClassAdapter();
+
+        refreshList();
+        ((EditText) rootView.findViewById(R.id.classname_et)).setText("");
+        rootView.findViewById(R.id.classname_et).requestFocus();
+        ((EditText) rootView.findViewById(R.id.schoolname_et)).setText("");
+
         addButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
@@ -119,22 +130,45 @@ public class TeacherClassManagement extends Fragment {
                 EditText schoolName = ((EditText) rootView.findViewById(R.id.schoolname_et));
                 Spinner semester = (Spinner) rootView.findViewById((R.id.semester_sp));
                 Spinner year = (Spinner) rootView.findViewById((R.id.year_sp));
-                if (classNameTemp.getText().toString().length()==0){
+
+                if (classNameTemp.getText().toString().length() == 0) {
                     classNameTemp.setError("Class Name is Required!");
                     valid = false;
                 }
-                if (schoolName.getText().toString().length()==0){
+                if (schoolName.getText().toString().length() == 0) {
                     schoolName.setError("School Name is Required");
                     valid = false;
                 }
                 if (semester.getSelectedItem().toString().contains("..") ||
-                        year.getSelectedItem().toString().contains("..")){
+                        year.getSelectedItem().toString().contains("..")) {
                     Toast.makeText(getActivity(), "Select Semester/Year!", Toast.LENGTH_LONG)
                             .show();
                     valid = false;
                 }
                 if (valid) {
-                    listItems.add(classNameTemp.getText() + "-" +
+
+                    try {
+
+                        classAdapter.createClass(user.getpKey(), classNameTemp.getText().toString(), schoolName.getText().toString(), semester.getSelectedItem().toString(), Integer.parseInt(year.getSelectedItem().toString()), new Callback<Boolean>() {
+                                    @Override
+                                    public void onComplete(Boolean isAdded) throws Exception {
+                                        if (isAdded) {
+                                            Toast.makeText(getActivity(), "Class Added!", Toast.LENGTH_LONG).show();
+
+                                            refreshList();
+                                            ((EditText) rootView.findViewById(R.id.classname_et)).setText("");
+                                            rootView.findViewById(R.id.classname_et).requestFocus();
+                                            ((EditText) rootView.findViewById(R.id.schoolname_et)).setText("");
+                                        }
+                                    }
+                                }
+                        );
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(getActivity(), "Error creating new class", Toast.LENGTH_LONG).show();
+                    }
+
+                    /*listItems.add(classNameTemp.getText() + "-" +
                             semester.getSelectedItem() + "-" + year.getSelectedItem() + "\n" +
                             schoolName.getText());
                     adapter.notifyDataSetChanged();
@@ -142,11 +176,36 @@ public class TeacherClassManagement extends Fragment {
                     rootView.findViewById(R.id.classname_et).requestFocus();
                     ((EditText) rootView.findViewById(R.id.schoolname_et)).setText("");
                     Toast.makeText(getActivity(), "Class Added!", Toast.LENGTH_LONG)
-                            .show();
+                            .show();*/
                 }
+
+
+            }
+        });
+
+
+    }
+
+    public void refreshList() throws JSONException {
+        final User user = TokenUtility.parseUserToken(getActivity());
+        final ClassAdapter classAdapter = new ClassAdapter();
+
+        classAdapter.professorClasses(user.getpKey(), new Callback<ArrayList<Class>>() {
+            @Override
+            public void onComplete(ArrayList<Class> result) throws Exception {
+                listItems.clear();
+                for (Class classItem : result) {
+                    listItems.add(
+                            classItem.getClass_name() + "-" +
+                                    classItem.getSemester() + "-" +
+                                    Integer.toString(classItem.getYear()) + "\n" +
+                                    classItem.getSchool());
+                }
+                adapter.notifyDataSetChanged();
             }
         });
     }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
