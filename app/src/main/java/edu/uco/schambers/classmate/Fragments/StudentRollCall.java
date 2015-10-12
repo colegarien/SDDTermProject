@@ -23,6 +23,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -36,8 +37,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+
 import edu.uco.schambers.classmate.Activites.MainActivity;
+import edu.uco.schambers.classmate.BroadcastReceivers.StudentRollCallBroadcastReceiver;
+import edu.uco.schambers.classmate.ObservableManagers.ServiceDiscoveryManager;
 import edu.uco.schambers.classmate.R;
+import edu.uco.schambers.classmate.Services.StudentRollCallService;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,7 +71,7 @@ public class StudentRollCall extends Fragment {
 
     private SharedPreferences prefs;
 
-    private BroadcastReceiver receiver;
+    private Observer observer;
 
     private OnFragmentInteractionListener mListener;
 
@@ -102,21 +110,19 @@ public class StudentRollCall extends Fragment {
 
         setHasOptionsMenu(true);
 
-        // Our handler for received Intents. This will be called whenever an Intent
-        // with an action named "service_found" is broadcasted.
-        receiver = new BroadcastReceiver() {
+        initBroadcast();
+
+        observer = new Observer() {
             @Override
-            public void onReceive(Context context, Intent intent) {
+            public void update(Observable observable, Object data) {
+                Map<String, String> record = (Map<String, String>)data;
+
                 btnCheckin.setEnabled(true);
-                lblCheckinStatus.setText("Professor " + intent.getStringExtra("buddyname") + "'s class has been found");
+                lblCheckinStatus.setText("Professor " + record.get("buddyname") + "'s class has been found");
             }
         };
 
-        // Register to receive messages.
-        // We are registering an observer (receiver) to receive Intents
-        // with actions named "service_found".
-        LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver(receiver,
-                new IntentFilter(MainActivity.SERVICE_FOUND));
+        ServiceDiscoveryManager.getInstance().addObserver(observer);
 
         // Discover teacher coll roll service
         discoverService();
@@ -208,6 +214,8 @@ public class StudentRollCall extends Fragment {
                 changeAudioSetting(prefs.getString("CheckedInMode", null));
 
                 lblCheckinStatus.setText(getString(R.string.lbl_status_checked_in));
+
+                connectToGroupOwner();
                 Toast.makeText(getActivity(), "You've checked-in", Toast.LENGTH_SHORT).show();
             }
         });
@@ -249,6 +257,24 @@ public class StudentRollCall extends Fragment {
         }
     }
 
+    private void connectToGroupOwner(){
+        Activity activity = getActivity();
+
+        /// Start discovering teacher service
+        if(activity instanceof MainActivity) {
+            ((MainActivity) activity).connectToPeer();
+        }
+    }
+
+    private void initBroadcast(){
+        Activity activity = getActivity();
+
+        /// Start discovering teacher service
+        if(activity instanceof MainActivity) {
+            ((MainActivity) activity).setupBroadcastReceiver(new StudentRollCallBroadcastReceiver(this));
+        }
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -259,7 +285,7 @@ public class StudentRollCall extends Fragment {
     @Override
     public void onDestroy() {
         // Unregister since the fragment is about to be closed.
-        LocalBroadcastManager.getInstance(this.getActivity()).unregisterReceiver(receiver);
+        ServiceDiscoveryManager.getInstance().deleteObserver(observer);
         super.onDestroy();
     }
 

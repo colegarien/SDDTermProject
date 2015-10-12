@@ -131,7 +131,7 @@ public class Debug extends Fragment
             @Override
             public void onClick(View v)
             {
-                Fragment teacherQuestion = TeacherQuestion.newInstance("test", "test");
+                Fragment teacherQuestion = TeacherQuestion.newInstance(null);
                 launchFragment(teacherQuestion);
             }
         });
@@ -141,7 +141,7 @@ public class Debug extends Fragment
             @Override
             public void onClick(View v)
             {
-                Fragment teacherRollCall = TeacherRollCall.newInstance("test","test");
+                Fragment teacherRollCall = TeacherRollCall.newInstance();
                 launchFragment(teacherRollCall);
             }
         });

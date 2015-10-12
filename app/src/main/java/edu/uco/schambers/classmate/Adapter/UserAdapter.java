@@ -10,11 +10,8 @@ import java.io.IOException;
 
 import edu.uco.schambers.classmate.Database.User;
 
-/**
- * Created by calitova on 9/22/2015.
- */
 public class UserAdapter {
-    private final static String Url = "http://classmateapi.azurewebsites.net/api/Users";
+    private final static String Url = "http://classmateapi.azurewebsites.net/api/";
 
     public void createUser(User user, final Callback<HttpResponse> callback) throws JSONException, IOException {
         JSONObject json = new JSONObject();
@@ -29,11 +26,22 @@ public class UserAdapter {
 
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
             @Override
-            public void onComplete(HttpResponse response) {
+            public void onComplete(HttpResponse response) throws Exception {
                 callback.onComplete(response);
             }
         });
 
-        call.execute(new ServiceCall(Url, "POST", json.toString()));
+        call.execute(new ServiceCall(Url + "Users", "POST", json.toString()));
+    }
+
+    public void changePass(String email, String oldPass, String newPass, final Callback<HttpResponse> callback) throws JSONException, IOException {
+        ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
+            @Override
+            public void onComplete(HttpResponse response) throws Exception {
+                callback.onComplete(response);
+            }
+        });
+
+        call.execute(new ServiceCall(Url + "changePass" + "?email=" + email + "&oldPass=" + oldPass + "&newPass=" + newPass, "POST", ""));
     }
 }

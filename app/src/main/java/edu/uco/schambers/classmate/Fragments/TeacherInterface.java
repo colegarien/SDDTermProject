@@ -103,7 +103,7 @@ public class TeacherInterface extends Fragment {
             public void onClick(View v)
             {
 
-                Fragment roll = TeacherRollCall.newInstance("test", "test");
+                Fragment roll = TeacherRollCall.newInstance();
                 launchFragment(roll);
 
             }
@@ -115,7 +115,7 @@ public class TeacherInterface extends Fragment {
             public void onClick(View v)
             {
 
-                Fragment teacherQuestion = TeacherQuestion.newInstance("test", "test");
+                Fragment teacherQuestion = TeacherQuestion.newInstance(null);
                 launchFragment(teacherQuestion);
 
             }

@@ -63,7 +63,8 @@
     <string name="login_btn">LOGIN</string>
 
 <!--Roll Call UI Strings-->
-    <string name="btn_roll_call">Call Roll</string>
+    <string name="btn_roll_call_start">Start Class</string>
+    <string name="btn_roll_call_stop">Stop Class</string>
     <string name="lbl_rc_teacher">Teacher:</string>
     <string name="lbl_rc_class">Class:</string>
     <string name="lbl_rc_connected">Connected Students</string>
