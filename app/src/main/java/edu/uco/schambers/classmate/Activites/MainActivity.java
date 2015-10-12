@@ -139,7 +139,6 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
             editor = sp.edit();
             editor.remove("AUTH_TOKEN");
             editor.clear();
-            editor.putString("AUTH_TOKEN", null);
             editor.commit();
 
             FragmentTransaction trans = getFragmentManager().beginTransaction();
