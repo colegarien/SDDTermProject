@@ -7,8 +7,8 @@
  *   with the TeacherRollCallService and inform it that a student has
  *   connected
  *
- * Edit: 10/7/2015
- *   Created onStudentConnect method
+ * Edit: 10/12/2015
+ *   Updated onStudentConnect method to gather student IP
  *
  */
 

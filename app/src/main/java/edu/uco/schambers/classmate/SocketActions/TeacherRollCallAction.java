@@ -5,8 +5,8 @@
  *   Main ServerSocket that will deal with incoming and outgoing
  *   communications to a students phone (dealing with roll call packets)
  *
- * Edit: 10/7/2015
- *
+ * Edit: 10/12/2015
+ *   Student IP is now collected from the ServerSocket
  *
  */
 
