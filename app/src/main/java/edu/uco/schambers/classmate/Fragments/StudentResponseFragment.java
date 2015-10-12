@@ -20,6 +20,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import edu.uco.schambers.classmate.Models.Questions.DefaultMultiChoiceQuestion;
 import edu.uco.schambers.classmate.Models.Questions.IQuestion;
 import edu.uco.schambers.classmate.R;
 import edu.uco.schambers.classmate.Services.StudentQuestionService;
@@ -77,6 +78,14 @@ public class StudentResponseFragment extends Fragment
             initUI(questionCardView);
             populateQuestionCardFromQuestion();
 
+        }
+        //inserting a question for testing
+        else
+        {
+            question = new DefaultMultiChoiceQuestion();
+            questionCardView = inflater.inflate(R.layout.question_response_card, (ViewGroup) rootView);
+            initUI(questionCardView);
+            populateQuestionCardFromQuestion();
         }
         return rootView;
     }

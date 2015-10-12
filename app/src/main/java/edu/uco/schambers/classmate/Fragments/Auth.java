@@ -135,7 +135,7 @@ public class Auth extends Fragment {
         dr = new DataRepo(getActivity());
         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
 
-        if(sp.contains("AUTH_TOKEN") && (!sp.getString("AUTH_TOKEN", null).equals(""))) {
+        if(sp.contains("AUTH_TOKEN") && (!sp.getString("AUTH_TOKEN", "").equals(""))) {
             token = sp.getString("AUTH_TOKEN", null);
             try {
                 User user = TokenUtility.parseUserToken(token);
