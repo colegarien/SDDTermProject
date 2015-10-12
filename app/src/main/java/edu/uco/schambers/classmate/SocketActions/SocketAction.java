@@ -18,6 +18,7 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -25,7 +26,7 @@ public abstract class SocketAction
 {
    public static final int ROLL_CALL_PORT_NUMBER = 4001;
    public static final int QUESTIONS_PORT_NUMBER = 4002;
-
+   
    Socket socket;
 
    abstract void setUpSocket() throws  IOException;

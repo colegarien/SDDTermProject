@@ -3,11 +3,16 @@ package edu.uco.schambers.classmate.Activites;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.net.wifi.WpsInfo;
+import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
@@ -24,6 +29,7 @@ import java.util.Map;
 
 
 //import edu.uco.schambers.classmate.BroadcastReceivers.CallForStudentQuestionResponseReceiver;
+import edu.uco.schambers.classmate.BroadcastReceivers.WiFiDirectBroadcastReceiver;
 import edu.uco.schambers.classmate.Fragments.Auth;
 
 import edu.uco.schambers.classmate.Fragments.Debug;
@@ -35,6 +41,7 @@ import edu.uco.schambers.classmate.Fragments.TeacherInterface;
 import edu.uco.schambers.classmate.Fragments.TeacherQuestionResults;
 import edu.uco.schambers.classmate.Fragments.UserInformation;
 import edu.uco.schambers.classmate.Models.Questions.IQuestion;
+import edu.uco.schambers.classmate.ObservableManagers.ServiceDiscoveryManager;
 import edu.uco.schambers.classmate.R;
 import edu.uco.schambers.classmate.Services.StudentQuestionService;
 
@@ -59,6 +66,11 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
 
     // Constants
     public static final String SERVICE_FOUND = "edu.uco.schambers.classmate.wifip2p.service_found";
+
+    private WifiP2pDevice targetDevice = null;
+
+    // BroadcastReceiver
+    private BroadcastReceiver wifiReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,6 +186,9 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                 // Command successful! Code isn't necessarily needed here,
                 // Unless you want to update the UI or add logging statements.
                 Log.d("ServiceCreation", "Service creation successful");
+
+                // Create group. This method default the host device as group owner
+                mManager.createGroup(mChannel, null);
             }
 
             @Override
@@ -213,21 +228,12 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                         // A service has been discovered. Is this our app?
                         if (instanceName.equalsIgnoreCase(SERVICE_INSTANCE)){
 
-                            Intent intent = new Intent(MainActivity.SERVICE_FOUND);
-
-                            // Traverse all the key-value pair that sent from server
-                            // and put them to intent.
-                            for (Map.Entry<String,String> entry : records.entrySet()) {
-                                String key = entry.getKey();
-                                String value = entry.getValue();
-
-                                intent.putExtra(key, value);
-                            }
-
                             // Notify the observers to update their UI
-                            broadcaster.sendBroadcast(intent);
+                            ServiceDiscoveryManager.getInstance().directNotifyObservers(records);
 
                             Log.d("ServiceDiscovery", "Service found");
+
+                            targetDevice = srcDevice;
                         }
 
                     }
@@ -318,5 +324,89 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                 Log.d("ServiceRemoval", "Error: " + errorMessage);
             }
         });
+    }
+
+    public void connectToPeer() {
+        if (targetDevice == null){
+            Log.d("ServiceDiscovery", "Target not found, make sure this method is called after a service was found");
+        }
+
+        WifiP2pConfig config = new WifiP2pConfig();
+        config.deviceAddress = targetDevice.deviceAddress;
+        config.wps.setup = WpsInfo.PBC;
+
+        if (serviceRequest != null)
+            mManager.removeServiceRequest(mChannel, serviceRequest,
+                    new WifiP2pManager.ActionListener() {
+
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onFailure(int arg0) {
+                        }
+                    });
+
+        mManager.connect(mChannel, config,
+                new WifiP2pManager.ActionListener() {
+
+                    @Override
+                    public void onSuccess() {
+                        Log.d("ServiceDiscovery", "Connecting to service");
+                    }
+
+                    @Override
+                    public void onFailure(int errorCode) {
+                        Log.d("ServiceDiscovery", "Failed connecting to service");
+                    }
+                });
+
+    }
+
+    public void setupBroadcastReceiver(WiFiDirectBroadcastReceiver receiver){
+        receiver.setChannel(mChannel);
+        receiver.setManager(mManager);
+        wifiReceiver = receiver;
+
+        IntentFilter wifiReceiverIntentFilter;wifiReceiverIntentFilter = new IntentFilter();
+        wifiReceiverIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+        wifiReceiverIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
+        wifiReceiverIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        wifiReceiverIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
+        registerReceiver(wifiReceiver, wifiReceiverIntentFilter);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (wifiReceiver != null) {
+            unregisterReceiver(wifiReceiver);
+        }
+
+        if (mManager != null && mChannel != null){
+            mManager.requestGroupInfo(mChannel, new WifiP2pManager.GroupInfoListener() {
+                @Override
+                public void onGroupInfoAvailable(WifiP2pGroup group) {
+                    if (group != null) {
+                        mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
+                            @Override
+                            public void onSuccess() {
+                                Log.d("ServiceDiscovery", "Removing Wifi p2p group");
+                            }
+
+                            @Override
+                            public void onFailure(int reason) {
+                                Log.d("ServiceDiscovery", "Failed *Removing Wifi p2p group");
+                            }
+                        });
+                    }
+                }
+            });
+
+        }
+
+        super.onDestroy();
     }
 }
