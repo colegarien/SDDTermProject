@@ -23,6 +23,9 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.net.InetAddress;
+import java.util.ArrayList;
+
 import edu.uco.schambers.classmate.Fragments.TeacherRollCall;
 import edu.uco.schambers.classmate.ListenerInterfaces.OnStudentConnectListener;
 import edu.uco.schambers.classmate.SocketActions.SocketAction;
@@ -32,8 +35,12 @@ import edu.uco.schambers.classmate.SocketActions.TeacherRollCallAction;
 public class TeacherRollCallService extends Service implements OnStudentConnectListener{
     public static final String ACTION_END_ROLL_CALL_SESSION = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_END_ROLL_CALL_SESSION";
     public static final String ACTION_START_ROLL_CALL_SESSION = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_START_ROLL_CALL_SESSION";
+    public static final String ACTION_GET_STUDENT_IPS = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_GET_STUDENT_IPS";
+
 
     private SocketAction listenForStudents;
+
+    private ArrayList<InetAddress> studentIPs = new ArrayList<InetAddress>();
 
     Handler handler;
 
@@ -64,6 +71,10 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
         return baseRollCallIntent;
     }
 
+    public ArrayList<InetAddress> getStudentIPs(){
+        return studentIPs;
+    }
+
     @Override
     public void onCreate()
     {
@@ -90,6 +101,9 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
                 currentTeacher = (String) intent.getExtras().getSerializable(TeacherRollCall.ARG_TEACHER);
                 Toast.makeText(getApplicationContext(),"Class Session Started",Toast.LENGTH_LONG).show();
                 break;
+            //case ACTION_GET_STUDENT_IPS:
+            //
+            //    break;
         }
         return START_STICKY;
     }
@@ -101,8 +115,12 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
     }
 
     @Override
-    public void onStudentConnect(String id) {
+    public void onStudentConnect(String id, InetAddress ip) {
         // TODO: add student ID to ArrayList (possibly query from DB)
         Log.d("StudentConnect", "Connected ID: " + id);
+        if (ip!=null){
+            studentIPs.add(ip);
+            Log.d("StudentConnect", "IP Added: "+ip.toString());
+        }
     }
 }

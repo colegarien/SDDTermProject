@@ -14,7 +14,9 @@
 
 package edu.uco.schambers.classmate.ListenerInterfaces;
 
+import java.net.InetAddress;
+
 public interface OnStudentConnectListener {
     // TODO: use Student object (check with someone on status, may do myself)
-    void onStudentConnect(String id);
+    void onStudentConnect(String id, InetAddress ip);
 }
