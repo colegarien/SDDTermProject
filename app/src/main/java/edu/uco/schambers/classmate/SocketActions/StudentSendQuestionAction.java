@@ -12,6 +12,7 @@ import java.net.UnknownHostException;
 
 import edu.uco.schambers.classmate.ListenerInterfaces.OnQuestionReceivedListener;
 import edu.uco.schambers.classmate.Models.Questions.IQuestion;
+import edu.uco.schambers.classmate.ObservableManagers.IPAddressManager;
 
 /**
  * Created by Steven Chambers on 10/3/2015.
@@ -20,7 +21,7 @@ public class StudentSendQuestionAction extends SocketAction
 {
     ObjectOutputStream objectOutputStream;
     DataInputStream dataInputStream;
-    private String domain = "localhost";
+    private String domain = IPAddressManager.getInstance().getGroupOwnerAddress().getHostAddress();
 
     IQuestion questionToSend;
     OnQuestionReceivedListener questionReceivedListener;
