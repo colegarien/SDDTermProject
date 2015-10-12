@@ -64,9 +64,6 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
     // For creating service request, and initiate discovery
     private WifiP2pDnsSdServiceRequest serviceRequest;
 
-    // Constants
-    public static final String SERVICE_FOUND = "edu.uco.schambers.classmate.wifip2p.service_found";
-
     private WifiP2pDevice targetDevice = null;
 
     // BroadcastReceiver
