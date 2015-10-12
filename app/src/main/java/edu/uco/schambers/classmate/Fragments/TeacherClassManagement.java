@@ -8,7 +8,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -48,12 +51,6 @@ public class TeacherClassManagement extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private Class newClass;
-    public SharedPreferences sharedPref;
-    public String token;
-    public User user;
-    public static final String MyPREFS = "MyPREFS";
-    SharedPreferences.Editor editor;
     ListView addedClasses;
     ArrayList<String> listItems;
     ArrayAdapter<String> adapter;
@@ -117,39 +114,38 @@ public class TeacherClassManagement extends Fragment {
         addButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                String classNameTemp = ((EditText)rootView.findViewById(R.id.classname_et)).getText().toString();
-                String schoolName = ((EditText)rootView.findViewById(R.id.schoolname_et)).getText().toString();
-                sharedPref = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-                token = sharedPref.getString("AUTH_TOKEN", null);
-                try {
-                    user = TokenUtility.parseUserToken(token);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                boolean valid = true;
+                EditText classNameTemp = ((EditText) rootView.findViewById(R.id.classname_et));
+                EditText schoolName = ((EditText) rootView.findViewById(R.id.schoolname_et));
+                Spinner semester = (Spinner) rootView.findViewById((R.id.semester_sp));
+                Spinner year = (Spinner) rootView.findViewById((R.id.year_sp));
+                if (classNameTemp.getText().toString().length()==0){
+                    classNameTemp.setError("Class Name is Required!");
+                    valid = false;
                 }
-                newClass = new Class();
-                newClass.setId(user.getId());
-                newClass.setClass_name(classNameTemp);
-                newClass.setSchool(schoolName);
-                Log.d("LOOOK!!!", classNameTemp);
-                listItems.add(classNameTemp + "-" +
-                        semester.getSelectedItem() + "-" + year.getSelectedItem());
-                adapter.notifyDataSetChanged();
-                ((EditText)rootView.findViewById(R.id.classname_et)).setText("");
-                ((EditText)rootView.findViewById(R.id.classname_et)).requestFocus();
-                ((EditText)rootView.findViewById(R.id.schoolname_et)).setText("");
-                editor = sharedPref.edit();
-                editor.putStringSet("courseList", (Set<String>) listItems);
+                if (schoolName.getText().toString().length()==0){
+                    schoolName.setError("School Name is Required");
+                    valid = false;
+                }
+                if (semester.getSelectedItem().toString().contains("..") ||
+                        year.getSelectedItem().toString().contains("..")){
+                    Toast.makeText(getActivity(), "Select Semester/Year!", Toast.LENGTH_LONG)
+                            .show();
+                    valid = false;
+                }
+                if (valid) {
+                    listItems.add(classNameTemp.getText() + "-" +
+                            semester.getSelectedItem() + "-" + year.getSelectedItem() + "\n" +
+                            schoolName.getText());
+                    adapter.notifyDataSetChanged();
+                    ((EditText) rootView.findViewById(R.id.classname_et)).setText("");
+                    rootView.findViewById(R.id.classname_et).requestFocus();
+                    ((EditText) rootView.findViewById(R.id.schoolname_et)).setText("");
+                    Toast.makeText(getActivity(), "Class Added!", Toast.LENGTH_LONG)
+                            .show();
+                }
             }
         });
-        addedClasses.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> a, View v, int position,
-                                    long id) {
-                Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_LONG)
-                        .show();
-            }
-        });
-
     }
     /**
      * This interface must be implemented by activities that contain this

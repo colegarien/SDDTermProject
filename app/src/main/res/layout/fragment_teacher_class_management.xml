@@ -69,7 +69,8 @@
             android:layout_height="wrap_content"
             android:text="@string/addclass"
             android:id="@+id/add_class_lst"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:background="#d8dcdc" />
 
     </LinearLayout>
 
