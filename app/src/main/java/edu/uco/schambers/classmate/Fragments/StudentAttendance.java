@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,9 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import org.achartengine.ChartFactory;
@@ -25,28 +30,41 @@ import org.achartengine.model.CategorySeries;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import edu.uco.schambers.classmate.R;
 //import edu.uco.schambers.classmate.model.ClassMate;
 //import edu.uco.schambers.classmate.sqlite.DatabaseHelper;
 
 class AttendanceRecord{
+    int number;
     String className;
     int attendances;
     int absences;
-    AttendanceRecord(String className, int attendances, int absences){
+    String date;
+    public int getNumber(){return number;}
+    public String getClassName(){return className;}
+    public int getAttendances(){return attendances;}
+    public int getAbsences(){return absences;}
+    public String getDate(){return date;}
+    AttendanceRecord(int number,String className, int attendances, int absences,String date){
+        this.number=number;
         this.className = className;
         this.attendances = attendances;
         this.absences = absences;
+        this.date=date;
     }
 }
 
 public class StudentAttendance extends Fragment {
     private Spinner s;
-
-    private String[] arraySpinner;
-    private AttendanceRecord [] attrecords = new AttendanceRecord[5];
+    private int[] snumber;
+    private AttendanceRecord [] attendanceRecords = new AttendanceRecord[47];
     private int[] sattendance;
     private int[] sabsences;
+    private String[] sdate;
 
     private TextView missing, attendance;
    // private DatabaseHelper databaseHelper;
@@ -54,14 +72,6 @@ public class StudentAttendance extends Fragment {
     private View mChart;
 
     // TODO: Rename and change types and number of parameters
-   /* public static StudentAttendance newInstance(String param1, String param2, DatabaseHelper databaseHelper) {
-        StudentAttendance fragment = new StudentAttendance();
-        fragment.databaseHelper = databaseHelper;
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    } */
-
     public static StudentAttendance newInstance(String param1, String param2) {
         StudentAttendance fragment = new StudentAttendance();
         Bundle args = new Bundle();
@@ -76,12 +86,54 @@ public class StudentAttendance extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        attrecords[0] = new AttendanceRecord("Data Structures",15,4);
-        attrecords[1] = new AttendanceRecord("Programming I",10,0);
-        attrecords[2] = new AttendanceRecord("Programming II",9,7);
-        attrecords[3] = new AttendanceRecord("Mobile Apps",12,2);
-        attrecords[4] = new AttendanceRecord("Web Server",11,3);
-        //  missing=(TextView) missing.findViewById(R.id.textView3);
+        attendanceRecords[0] = new AttendanceRecord(1,"Data Structures",1,0,"09/10/2015");
+        attendanceRecords[1] = new AttendanceRecord(2,"Data Structures",1,0,"09/13/2015");
+        attendanceRecords[2] = new AttendanceRecord(3,"Data Structures",1,0,"09/16/2015");
+        attendanceRecords[3] = new AttendanceRecord(4,"Data Structures",1,0,"09/19/2015");
+        attendanceRecords[4] = new AttendanceRecord(5,"Data Structures",0,1,"09/22/2015");
+        attendanceRecords[5] = new AttendanceRecord(6,"Data Structures",1,0,"09/25/2015");
+        attendanceRecords[6] = new AttendanceRecord(7,"Data Structures",0,1,"09/28/2015");
+        attendanceRecords[7] = new AttendanceRecord(1,"Programming I",1,0,"09/10/2015");
+        attendanceRecords[8] = new AttendanceRecord(2,"Programming I",1,0,"09/13/2015");
+        attendanceRecords[9] = new AttendanceRecord(3,"Programming I",1,0,"09/16/2015");
+        attendanceRecords[10] = new AttendanceRecord(4,"Programming I",1,0,"09/19/2015");
+        attendanceRecords[11] = new AttendanceRecord(5,"Programming I",1,0,"09/22/2015");
+        attendanceRecords[12] = new AttendanceRecord(6,"Programming I",1,0,"09/25/2015");
+        attendanceRecords[13] = new AttendanceRecord(7,"Programming I",1,0,"09/28/2015");
+        attendanceRecords[14] = new AttendanceRecord(1,"Programming II",1,0,"09/09/2015");
+        attendanceRecords[15] = new AttendanceRecord(2,"Programming II",0,1,"09/12/2015");
+        attendanceRecords[16] = new AttendanceRecord(3,"Programming II",1,0,"09/15/2015");
+        attendanceRecords[17] = new AttendanceRecord(4,"Programming II",0,1,"09/18/2015");
+        attendanceRecords[18] = new AttendanceRecord(5,"Programming II",0,1,"09/20/2015");
+        attendanceRecords[19] = new AttendanceRecord(6,"Programming II",0,1,"09/22/2015");
+        attendanceRecords[20] = new AttendanceRecord(7,"Programming II",1,0,"09/24/2015");
+        attendanceRecords[21] = new AttendanceRecord(8,"Programming II",1,0,"09/26/2015");
+        attendanceRecords[22] = new AttendanceRecord(9,"Programming II",1,0,"09/29/2015");
+        attendanceRecords[23] = new AttendanceRecord(10,"Programming II",1,0,"09/31/2015");
+        attendanceRecords[24] = new AttendanceRecord(1,"Mobile Apps",1,0,"09/09/2015");
+        attendanceRecords[25] = new AttendanceRecord(2,"Mobile Apps",1,0,"09/11/2015");
+        attendanceRecords[26] = new AttendanceRecord(3,"Mobile Apps",1,0,"09/13/2015");
+        attendanceRecords[27] = new AttendanceRecord(4,"Mobile Apps",1,0,"09/15/2015");
+        attendanceRecords[28] = new AttendanceRecord(5,"Mobile Apps",1,0,"09/17/2015");
+        attendanceRecords[29] = new AttendanceRecord(6,"Mobile Apps",1,0,"09/19/2015");
+        attendanceRecords[30] = new AttendanceRecord(7,"Mobile Apps",0,1,"09/21/2015");
+        attendanceRecords[31] = new AttendanceRecord(8,"Mobile Apps",0,1,"09/23/2015");
+        attendanceRecords[32] = new AttendanceRecord(9,"Mobile Apps",0,1,"09/25/2015");
+        attendanceRecords[33] = new AttendanceRecord(10,"Mobile Apps",1,0,"09/27/2015");
+        attendanceRecords[34] = new AttendanceRecord(11,"Mobile Apps",1,0,"09/29/2015");
+        attendanceRecords[35] = new AttendanceRecord(12,"Mobile Apps",0,1,"09/31/2015");
+        attendanceRecords[36] = new AttendanceRecord(13,"Mobile Apps",1,0,"10/02/2015");
+        attendanceRecords[37] = new AttendanceRecord(1,"Web Server",1,0,"09/10/2015");
+        attendanceRecords[38] = new AttendanceRecord(2,"Web Server",1,0,"09/13/2015");
+        attendanceRecords[39] = new AttendanceRecord(3,"Web Server",1,0,"09/16/2015");
+        attendanceRecords[40] = new AttendanceRecord(4,"Web Server",0,1,"09/19/2015");
+        attendanceRecords[41] = new AttendanceRecord(5,"Web Server",0,1,"09/22/2015");
+        attendanceRecords[42] = new AttendanceRecord(6,"Web Server",0,1,"09/25/2015");
+        attendanceRecords[43] = new AttendanceRecord(7,"Web Server",0,1,"09/28/2015");
+        attendanceRecords[44] = new AttendanceRecord(8,"Web Server",1,0,"09/31/2015");
+        attendanceRecords[45] = new AttendanceRecord(9,"Web Server",0,1,"10/03/2015");
+        attendanceRecords[46] = new AttendanceRecord(10,"Web Server",1,0,"10/06/2015");
+
     }
 
 
@@ -132,23 +184,17 @@ public class StudentAttendance extends Fragment {
 
     @TargetApi(Build.VERSION_CODES.M)
     private void initUI(final View rootView) {
-        // this.arraySpinner = new String[] {
-        //        "Software Design and Development", "Web Server Programming", "Mobile Application Programming", "Programming II", "Programming Languages"
-        //};
-      //  List<ClassMate> lstClassMate = databaseHelper.getAllClassMate();
 
-        arraySpinner = new String[5];
-        sattendance = new int[5];
-        sabsences = new int[5];
-        sabsences = new int[5];
-        for (int i = 0; i < attrecords.length; i++) {
-            arraySpinner[i] = attrecords[i].className;
-            sattendance[i] = attrecords[i].attendances;
-            sabsences[i] = attrecords[i].absences;
-        }
+       // List<ClassMate> lstClassMate = databaseHelper.getAllClassMate();
+
+        final List<String> arraySpinner =  new ArrayList<String>();
+        arraySpinner.add("Data Structures");
+        arraySpinner.add("Programming I");
+        arraySpinner.add("Programming II");
+        arraySpinner.add("Mobile Apps");
+        arraySpinner.add("Web Server");
+
         s = (Spinner) rootView.findViewById(R.id.classlist);
-        final TextView att = (TextView) rootView.findViewById(R.id.tvattendance);
-        final TextView miss = (TextView) rootView.findViewById(R.id.tvabsences);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_spinner_item, arraySpinner);
         s.setAdapter(adapter);
@@ -158,15 +204,35 @@ public class StudentAttendance extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
 
-
-                attendance.setText(String.valueOf(attrecords[position].attendances));
-                missing.setText(String.valueOf(attrecords[position].absences));
                 String[] titles = new String[]{"attendance", "absences"};
-                int[] values = new int[]{attrecords[position].attendances, attrecords[position].absences};
+                int attendances = 0;
+                int absences = 0;
+
+                TableLayout teacherAttendanceTable = (TableLayout) rootView.findViewById(R.id.studentAttendanceTable);
+                teacherAttendanceTable.setStretchAllColumns(true);
+                teacherAttendanceTable.bringToFront();
+                teacherAttendanceTable.removeAllViews();
+                for (int i = 0; i < attendanceRecords.length; i++) {
+                    if (attendanceRecords[i].absences == 1 && attendanceRecords[i].className.equals(parent.getItemAtPosition(position))) { //Here where I change "parent.getItemAtPosition(position)"
+                        TableRow tr = new TableRow(getActivity());
+                        TextView c0 = new TextView(getActivity());
+                        c0.setText(attendanceRecords[i].number + "");
+                        TextView c1 = new TextView(getActivity());
+                        c1.setText(attendanceRecords[i].date + "");
+                        tr.addView(c0);
+                        tr.addView(c1);
+                        teacherAttendanceTable.addView(tr);
+                        absences++;
+                    }
+                    else if (attendanceRecords[i].attendances == 1 && attendanceRecords[i].className.equals(parent.getItemAtPosition(position))){
+                        attendances++;
+                    }
+                }
+                attendance.setText(attendances+"");
+                missing.setText(absences+"");
+                int[] values = new int[]{attendances, absences};
                 drawPieChar(rootView, getActivity(), titles, values);
-                //att.set
-                //att.setText(sattendance(
-                // s.getSelectedItemPosition(), -1));
+
             }
 
             @Override
@@ -180,8 +246,6 @@ public class StudentAttendance extends Fragment {
     public void drawPieChar(View rootView, Context context, String[] title, int[] value) {
         // Color of each Pie Chart Sections
         int[] colors = {Color.BLUE, Color.MAGENTA, Color.GREEN, Color.CYAN, Color.RED, Color.TRANSPARENT};
-        // sattendance = getResources().getStringArray(R.array.attendance_list);
-        // sabsences = getResources().getStringArray(R.array.missing_list);
 
         CategorySeries categorySeries = new CategorySeries("Draw Pie");
         double sum=0;
@@ -189,21 +253,24 @@ public class StudentAttendance extends Fragment {
             sum+=value[i];
         }
         for (int i = 0; i < title.length; i++) {
-            categorySeries.add(title[i]+" ("+(((double)value[i]/sum)*100)+"%)", value[i]);
+            categorySeries.add(title[i]+" ("+(Math.round(value[i]/sum*100))+"%)", value[i]);
         }
+        Log.d("LOOK!!!!",Math.round(value[1]/sum*100)+"");
         DefaultRenderer defaultRenderer = new DefaultRenderer();
         defaultRenderer.setShowLegend(true);
-        defaultRenderer.setFitLegend(true);
         defaultRenderer.setLabelsColor(Color.BLACK);
         for (int i = 0; i < title.length; i++) {
             SimpleSeriesRenderer seriesRenderer = new SimpleSeriesRenderer();
             seriesRenderer.setColor(colors[i]);
             seriesRenderer.setDisplayChartValues(true);
-            seriesRenderer.setShowLegendItem(false);
+            seriesRenderer.setShowLegendItem(true);
             defaultRenderer.setBackgroundColor(Color.TRANSPARENT);
             defaultRenderer.setApplyBackgroundColor(true);
             defaultRenderer.setLabelsTextSize(40);
+            defaultRenderer.setLegendTextSize(40);
+            defaultRenderer.setShowLabels(false);
             defaultRenderer.addSeriesRenderer(seriesRenderer);
+            defaultRenderer.setPanEnabled(false);
         }
 
         defaultRenderer.setChartTitle("ClassMate");
