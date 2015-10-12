@@ -195,7 +195,7 @@ public class StudentAttendance extends Fragment {
         arraySpinner.add("Web Server");
 
         s = (Spinner) rootView.findViewById(R.id.classlist);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getContext(),
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_spinner_item, arraySpinner);
         s.setAdapter(adapter);
         s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -214,10 +214,10 @@ public class StudentAttendance extends Fragment {
                 teacherAttendanceTable.removeAllViews();
                 for (int i = 0; i < attendanceRecords.length; i++) {
                     if (attendanceRecords[i].absences == 1 && attendanceRecords[i].className.equals(parent.getItemAtPosition(position))) { //Here where I change "parent.getItemAtPosition(position)"
-                        TableRow tr = new TableRow(rootView.getContext());
-                        TextView c0 = new TextView(rootView.getContext());
+                        TableRow tr = new TableRow(getActivity());
+                        TextView c0 = new TextView(getActivity());
                         c0.setText(attendanceRecords[i].number + "");
-                        TextView c1 = new TextView(rootView.getContext());
+                        TextView c1 = new TextView(getActivity());
                         c1.setText(attendanceRecords[i].date + "");
                         tr.addView(c0);
                         tr.addView(c1);
@@ -231,7 +231,7 @@ public class StudentAttendance extends Fragment {
                 attendance.setText(attendances+"");
                 missing.setText(absences+"");
                 int[] values = new int[]{attendances, absences};
-                drawPieChar(rootView, getContext(), titles, values);
+                drawPieChar(rootView, getActivity(), titles, values);
 
             }
 
