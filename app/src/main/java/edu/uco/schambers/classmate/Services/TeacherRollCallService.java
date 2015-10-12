@@ -5,9 +5,8 @@
  *   Background Service for managing the classroom session
  *   Main function is to monitor Students attendance during class
  *
- * Edit: 10/7/2015
- *   Setup Class with Start and End intents for
- *    starting service and stopping SocketAction
+ * Edit: 10/12/2015
+ *   Updated onStudentConnect method to gather student IP
  *
  */
 
@@ -23,8 +22,12 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.net.InetAddress;
+import java.util.ArrayList;
+
 import edu.uco.schambers.classmate.Fragments.TeacherRollCall;
 import edu.uco.schambers.classmate.ListenerInterfaces.OnStudentConnectListener;
+import edu.uco.schambers.classmate.ObservableManagers.IPAddressManager;
 import edu.uco.schambers.classmate.SocketActions.SocketAction;
 import edu.uco.schambers.classmate.SocketActions.StudentReceiveQuestionsAction;
 import edu.uco.schambers.classmate.SocketActions.TeacherRollCallAction;
@@ -32,6 +35,7 @@ import edu.uco.schambers.classmate.SocketActions.TeacherRollCallAction;
 public class TeacherRollCallService extends Service implements OnStudentConnectListener{
     public static final String ACTION_END_ROLL_CALL_SESSION = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_END_ROLL_CALL_SESSION";
     public static final String ACTION_START_ROLL_CALL_SESSION = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_START_ROLL_CALL_SESSION";
+
 
     private SocketAction listenForStudents;
 
@@ -101,8 +105,12 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
     }
 
     @Override
-    public void onStudentConnect(String id) {
+    public void onStudentConnect(String id, InetAddress ip) {
         // TODO: add student ID to ArrayList (possibly query from DB)
         Log.d("StudentConnect", "Connected ID: " + id);
+        if (ip!=null){
+            IPAddressManager.getInstance().addStudentAddress(ip);
+            Log.d("StudentConnect", "IP Added: "+ip.toString());
+        }
     }
 }
