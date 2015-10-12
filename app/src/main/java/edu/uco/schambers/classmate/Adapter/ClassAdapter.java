@@ -16,12 +16,12 @@ import edu.uco.schambers.classmate.Database.Class;
 public class ClassAdapter {
     private final static String Url = "http://classmateapi.azurewebsites.net/api/";
 
-    public void createClass(int professorId, String school, String className, final Callback<Boolean> callback) throws JSONException {
+    public void createClass(int professorId, String school, String className, String semester, int year, final Callback<Boolean> callback) throws JSONException {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
 
             @Override
             public void onComplete(HttpResponse result) throws Exception {
-                if (result.getHttpCode() == 200)
+                if (result.getHttpCode() == 204)
                     callback.onComplete(true);
                 else
                     throw new Exception("Failed with HTTP status code " + result.getHttpCode());
@@ -32,6 +32,8 @@ public class ClassAdapter {
         jsonObject.put("School", school);
         jsonObject.put("Class_Name", className);
         jsonObject.put("Professor", professorId);
+        jsonObject.put("Semester", semester);
+        jsonObject.put("Year", year);
 
         call.execute(new ServiceCall(Url + "classes/", "POST", jsonObject.toString()));
     }
@@ -53,6 +55,8 @@ public class ClassAdapter {
                     newClass.setId(jsonObject.getInt("Id"));
                     newClass.setSchool(jsonObject.getString("School"));
                     newClass.setClass_name(jsonObject.getString("Class_Name"));
+                    newClass.setSemester(jsonObject.getString("Semester"));
+                    newClass.setYear(jsonObject.getInt("Year"));
                     classes.add(newClass);
                 }
 
