@@ -133,6 +133,18 @@ public class Auth extends Fragment {
         signup = (TextView)  rootView.findViewById(R.id.signup_lbl);
         resetLink = (TextView) rootView.findViewById(R.id.reset_pw_lbl);
         dr = new DataRepo(getActivity());
+        sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+
+        if(sp.contains("AUTH_TOKEN") && (!sp.getString("AUTH_TOKEN", null).equals(""))) {
+            token = sp.getString("AUTH_TOKEN", null);
+            try {
+                User user = TokenUtility.parseUserToken(token);
+                ChooseInterface(user.isStudent());
+            } catch (JSONException e) {
+
+            }
+        }
+
 
         email.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
