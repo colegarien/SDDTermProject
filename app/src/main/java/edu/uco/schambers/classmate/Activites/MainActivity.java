@@ -37,6 +37,7 @@ import edu.uco.schambers.classmate.Fragments.Login;
 import edu.uco.schambers.classmate.Fragments.ResetPassword;
 import edu.uco.schambers.classmate.Fragments.StudentInterface;
 import edu.uco.schambers.classmate.Fragments.StudentResponseFragment;
+import edu.uco.schambers.classmate.Fragments.StudentRollCall;
 import edu.uco.schambers.classmate.Fragments.TeacherInterface;
 import edu.uco.schambers.classmate.Fragments.TeacherQuestionResults;
 import edu.uco.schambers.classmate.Fragments.UserInformation;
@@ -404,5 +405,17 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         }
 
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed(){
+        Fragment f = getFragmentManager().findFragmentById(R.id.fragment_container);
+
+        // Back button is disabled if student roll call fragment is processing check-in
+        if (f instanceof StudentRollCall && !((StudentRollCall) f).allowBackPressed()){
+            return;
+        }
+
+        super.onBackPressed();
     }
 }

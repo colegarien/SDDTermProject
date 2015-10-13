@@ -90,6 +90,9 @@ public class StudentRollCall extends Fragment {
     private User user;
     private String token;
 
+    // for indicate check in status
+    private boolean isCheckingIn = false;
+
     public User getUser() {
         return user;
     }
@@ -150,6 +153,7 @@ public class StudentRollCall extends Fragment {
                     @Override
                     public void run() {
                         updateCheckinStatus((boolean)data);
+                        isCheckingIn = false;
                     }
                 });
             }
@@ -255,6 +259,7 @@ public class StudentRollCall extends Fragment {
 
                 lblCheckinStatus.setText(getString(R.string.lbl_status_checking_in));
                 btnCheckin.setEnabled(false);
+                isCheckingIn = true;
 
                 connectToGroupOwner();
             }
@@ -324,6 +329,14 @@ public class StudentRollCall extends Fragment {
             lblCheckinStatus.setText(getString(R.string.lbl_status_failed));
             Toast.makeText(getActivity(), "Failed. Please try later", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public boolean allowBackPressed(){
+        if (isCheckingIn){
+            Toast.makeText(getActivity(), "You can't leave while checking-in", Toast.LENGTH_SHORT).show();
+        }
+
+        return  !isCheckingIn;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
