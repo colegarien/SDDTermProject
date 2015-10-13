@@ -145,15 +145,13 @@ public class StudentRollCall extends Fragment {
 
         socketResultObserver = new Observer() {
             @Override
-            public void update(Observable observable, Object data) {
-                boolean result = (boolean) data;
-
-                if (result){
-
-                }
-                else {
-
-                }
+            public void update(Observable observable, final Object data) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateCheckinStatus((boolean)data);
+                    }
+                });
             }
         };
 
@@ -255,10 +253,10 @@ public class StudentRollCall extends Fragment {
                 // Mute or vibrate user's devices
                 changeAudioSetting(prefs.getString("CheckedInMode", null));
 
-                lblCheckinStatus.setText(getString(R.string.lbl_status_checked_in));
+                lblCheckinStatus.setText(getString(R.string.lbl_status_checking_in));
+                btnCheckin.setEnabled(false);
 
                 connectToGroupOwner();
-                Toast.makeText(getActivity(), "You've checked-in", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -314,6 +312,17 @@ public class StudentRollCall extends Fragment {
         /// Start discovering teacher service
         if(activity instanceof MainActivity) {
             ((MainActivity) activity).setupBroadcastReceiver(new StudentRollCallBroadcastReceiver(this));
+        }
+    }
+
+    private void updateCheckinStatus(boolean result){
+        if (result){
+            lblCheckinStatus.setText(getString(R.string.lbl_status_checked_in));
+            Toast.makeText(getActivity(), "You've checked-in", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            lblCheckinStatus.setText(getString(R.string.lbl_status_failed));
+            Toast.makeText(getActivity(), "Failed. Please try later", Toast.LENGTH_SHORT).show();
         }
     }
 
