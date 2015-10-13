@@ -386,7 +386,7 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
             mManager.requestGroupInfo(mChannel, new WifiP2pManager.GroupInfoListener() {
                 @Override
                 public void onGroupInfoAvailable(WifiP2pGroup group) {
-                    if (group != null) {
+                    if (group != null && group.isGroupOwner()) {
                         mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
                             @Override
                             public void onSuccess() {
