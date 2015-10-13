@@ -16,17 +16,12 @@
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
+import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,7 +46,6 @@ import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.ObservableManagers.ServiceDiscoveryManager;
 import edu.uco.schambers.classmate.ObservableManagers.SocketResultManager;
 import edu.uco.schambers.classmate.R;
-import edu.uco.schambers.classmate.Services.StudentRollCallService;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -131,8 +125,6 @@ public class StudentRollCall extends Fragment {
         prefs = this.getActivity().getSharedPreferences("studentRollCallPrefs", Context.MODE_PRIVATE);
 
         setHasOptionsMenu(true);
-
-        initBroadcast();
 
         observer = new Observer() {
             @Override
@@ -261,6 +253,7 @@ public class StudentRollCall extends Fragment {
                 btnCheckin.setEnabled(false);
                 isCheckingIn = true;
 
+                initBroadcast();
                 connectToGroupOwner();
             }
         });
