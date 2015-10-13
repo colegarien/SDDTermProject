@@ -104,7 +104,6 @@ public class TeacherQuestion extends Fragment {
         //TODO create teacherQuestion service and initialize for communication w/ steven
         getActivity().startService(intent);
         //stub toast
-        Toast.makeText(getActivity(), "Question sent to class!", Toast.LENGTH_SHORT).show();
     }
 
     private void sendCollection(){
