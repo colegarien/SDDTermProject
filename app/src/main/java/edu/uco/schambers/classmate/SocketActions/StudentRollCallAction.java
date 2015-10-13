@@ -20,6 +20,11 @@ public class StudentRollCallAction extends SocketAction {
     DataInputStream dataInputStream;
 
     private boolean result = false;
+    private  String studentId;
+
+    public StudentRollCallAction(String studentId){
+        this.studentId = studentId;
+    }
 
     @Override
     void setUpSocket() throws IOException {
@@ -39,7 +44,7 @@ public class StudentRollCallAction extends SocketAction {
     void performAction() throws IOException {
         Log.d("SocketAction", "Sending message to server");
 
-        objectOutputStream.writeObject("Test message for student roll call");
+        objectOutputStream.writeObject(studentId);
         result = dataInputStream.readBoolean();
 
         Log.d("SocketAction", String.valueOf(result));
