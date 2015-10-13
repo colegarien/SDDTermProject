@@ -49,6 +49,7 @@ import edu.uco.schambers.classmate.Database.DataRepo;
 import edu.uco.schambers.classmate.Database.TokenUtility;
 import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.ObservableManagers.ServiceDiscoveryManager;
+import edu.uco.schambers.classmate.ObservableManagers.SocketResultManager;
 import edu.uco.schambers.classmate.R;
 import edu.uco.schambers.classmate.Services.StudentRollCallService;
 
@@ -77,6 +78,7 @@ public class StudentRollCall extends Fragment {
     private SharedPreferences prefs;
 
     private Observer observer;
+    private Observer socketResultObserver;
 
     private OnFragmentInteractionListener mListener;
 
@@ -140,6 +142,22 @@ public class StudentRollCall extends Fragment {
         };
 
         ServiceDiscoveryManager.getInstance().addObserver(observer);
+
+        socketResultObserver = new Observer() {
+            @Override
+            public void update(Observable observable, Object data) {
+                boolean result = (boolean) data;
+
+                if (result){
+
+                }
+                else {
+
+                }
+            }
+        };
+
+        SocketResultManager.getInstance().addObserver(socketResultObserver);
 
         // Discover teacher coll roll service
         discoverService();
@@ -310,6 +328,7 @@ public class StudentRollCall extends Fragment {
     public void onDestroy() {
         // Unregister since the fragment is about to be closed.
         ServiceDiscoveryManager.getInstance().deleteObserver(observer);
+        SocketResultManager.getInstance().deleteObserver(socketResultObserver);
         super.onDestroy();
     }
 
