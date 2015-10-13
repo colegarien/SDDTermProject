@@ -37,12 +37,17 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
 import edu.uco.schambers.classmate.Activites.MainActivity;
 import edu.uco.schambers.classmate.BroadcastReceivers.StudentRollCallBroadcastReceiver;
+import edu.uco.schambers.classmate.Database.DataRepo;
+import edu.uco.schambers.classmate.Database.TokenUtility;
+import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.ObservableManagers.ServiceDiscoveryManager;
 import edu.uco.schambers.classmate.R;
 import edu.uco.schambers.classmate.Services.StudentRollCallService;
@@ -74,6 +79,18 @@ public class StudentRollCall extends Fragment {
     private Observer observer;
 
     private OnFragmentInteractionListener mListener;
+
+    // for retrieving student name
+    private SharedPreferences sp;
+    public static final String MyPREFS = "MyPREFS";
+    private String user_key;
+    private DataRepo dr;
+    private User user;
+    private String token;
+
+    public User getUser() {
+        return user;
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -197,14 +214,21 @@ public class StudentRollCall extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_student_roll_call, container, false);
-        initUI(rootView);
+        try {
+            initUI(rootView);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         return rootView;
     }
 
 
-    private void initUI(final View rootView)
-    {
+    private void initUI(final View rootView) throws JSONException {
+        sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+        token = sp.getString("AUTH_TOKEN", null);
+        user = TokenUtility.parseUserToken(token);
+
         btnCheckin = (Button) rootView.findViewById(R.id.btn_check_in);
         lblCheckinStatus = (TextView) rootView.findViewById(R.id.lbl_checkin_status);
         btnCheckin.setOnClickListener(new View.OnClickListener() {
