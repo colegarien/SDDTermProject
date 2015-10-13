@@ -8,6 +8,8 @@ public class Class {
     private int id;
     private String school;
     private String class_name;
+    private String semester;
+    private int year;
 
     public int getId() {
         return id;
@@ -33,4 +35,19 @@ public class Class {
         this.class_name = class_name;
     }
 
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public String getSemester() {
+        return semester;
+    }
+
+    public void setSemester(String semester) {
+        this.semester = semester;
+    }
 }

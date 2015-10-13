@@ -1,11 +1,26 @@
 package edu.uco.schambers.classmate.Database;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.InputStreamReader;
 
 public class TokenUtility {
+
+    public static String getSharedPreferences(Activity activity) {
+        SharedPreferences sp;
+        final String MyPREFS = "MyPREFS";
+        sp = activity.getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+        return sp.getString("AUTH_TOKEN", null);
+    }
+
+    public static User parseUserToken(Activity activity) throws JSONException {
+        return parseUserToken(getSharedPreferences(activity));
+    }
 
     public static User parseUserToken(String token) throws JSONException {
         String[] split = token.substring(1, token.length() - 1).replace("\\","").split("\\|");

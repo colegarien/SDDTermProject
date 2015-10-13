@@ -45,6 +45,23 @@
     <string name="response">In Class Response</string>
     <string name="responseres">Response Results</string>
     <string name="classmanage">Class Management</string>
+    <string name="class_add">Add Class</string>
+    <string name="classname">Class Name</string>
+    <string name="schoolname">School Name</string>
+    <string-array name="semester_array">
+        <item>Select Semester...</item>
+        <item>Fall</item>
+        <item>Spring</item>
+        <item>Summer</item>
+    </string-array>
+    <string-array name="year_array">
+        <item>Select Year...</item>
+        <item>2015</item>
+        <item>2016</item>
+        <item>2017</item>
+    </string-array>
+    <string name="addclass">Add Class</string>
+    <string name="teachattend">Attendance</string>
     <string name="pass">Password </string>
     <string name="confirm_pass">Confirm Password </string>
     <string name="email">E-mail </string>
