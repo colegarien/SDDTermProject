@@ -1,6 +1,5 @@
 package edu.uco.schambers.classmate.Fragments;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -9,7 +8,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.text.Layout;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,15 +20,12 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
-import edu.uco.schambers.classmate.Models.Questions.Choice;
-import edu.uco.schambers.classmate.Models.Questions.TestIQuestion;
-import edu.uco.schambers.classmate.Models.Questions.TestIQuestion2;
+import edu.uco.schambers.classmate.Models.Questions.IQuestion;
+import edu.uco.schambers.classmate.Models.Questions.IQuestionWoodchuck5choices;
 import edu.uco.schambers.classmate.R;
 
 /**
@@ -95,9 +90,9 @@ public class TeacherQuestionResults extends Fragment {
         return root;
     }
 
-    private int getHighestAnswer(List<TestIQuestion2> l) {
+    private int getHighestAnswer(List<IQuestion> l) {
         ArrayList<String> arrayList = new ArrayList<>();
-        for (TestIQuestion2 tq : l) {
+        for (IQuestion tq : l) {
             arrayList.add(tq.getAnswer());
         }
         ArrayList<Integer> totals = new ArrayList<>();
@@ -110,10 +105,10 @@ public class TeacherQuestionResults extends Fragment {
 
     }
 
-    private ArrayList<Integer> getTotals(List<TestIQuestion2> l) {
+    private ArrayList<Integer> getTotals(List<IQuestion> l) {
 
         ArrayList<String> arrayList = new ArrayList<>();
-        for (TestIQuestion2 tq : l) {
+        for (IQuestion tq : l) {
             arrayList.add(tq.getAnswer());
         }
         ArrayList<Integer> totals = new ArrayList<>();
@@ -126,12 +121,12 @@ public class TeacherQuestionResults extends Fragment {
 
     }
 
-    private int getHeightInPixels(ArrayList<TestIQuestion2> list, int answerIndex) {
+    private int getHeightInPixels(List<IQuestion> list, int answerIndex) {
 //        System.out.println("answer index" + answerIndex);
         int highest = getHighestAnswer(list);
         int totalAnswers = list.size();
         ArrayList<String> arrayList = new ArrayList<>();
-        for (TestIQuestion2 tq : list) {
+        for (IQuestion tq : list) {
             arrayList.add(tq.getAnswer());
         }
         int answers = Collections.frequency(arrayList,list.get(0).getQuestionChoices().get(answerIndex));
@@ -162,39 +157,67 @@ public class TeacherQuestionResults extends Fragment {
         displayResultsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<TestIQuestion2> testIQuestion = new ArrayList<>();
+
+                List<IQuestion> inputList = new ArrayList<>();
+
+                ArrayList<IQuestionWoodchuck5choices> testIQuestion = new ArrayList<>();
                 for (int i = 0; i < 12; i++) {
-                    TestIQuestion2 tq = new TestIQuestion2();
-                    tq.answerQuestion(tq.getQuestionChoices().get(0));
-                    testIQuestion.add(tq);
+                    IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(0));
+                    inputList.add(mockQuestion);
                 }
                 for (int i = 0; i < 8; i++) {
-                    TestIQuestion2 tq = new TestIQuestion2();
-                    tq.answerQuestion(tq.getQuestionChoices().get(1));
-                    testIQuestion.add(tq);
+                    IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(1));
+                    inputList.add(mockQuestion);
                 }
                 for (int i = 0; i < 5; i++) {
-                    TestIQuestion2 tq = new TestIQuestion2();
-                    tq.answerQuestion(tq.getQuestionChoices().get(2));
-                    testIQuestion.add(tq);
+                    IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(2));
+                    inputList.add(mockQuestion);
                 }
                 for (int i = 0; i < 10; i++) {
-                    TestIQuestion2 tq = new TestIQuestion2();
-                    tq.answerQuestion(tq.getQuestionChoices().get(3));
-                    testIQuestion.add(tq);
+                    IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(3));
+                    inputList.add(mockQuestion);
                 }
                 for (int i = 0; i < 3; i++) {
-                    TestIQuestion2 tq = new TestIQuestion2();
-                    tq.answerQuestion(tq.getQuestionChoices().get(4));
-                    testIQuestion.add(tq);
+                    IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(4));
+                    inputList.add(mockQuestion);
                 }
+
+                List<String> choices = inputList.get(0).getQuestionChoices();
+
+//
+//
+//                for (int i = 0; i < 8; i++) {
+//                    IQuestionWoodchuck5choices tq = new IQuestionWoodchuck5choices();
+//                    tq.answerQuestion(tq.getQuestionChoices().get(1));
+//                    testIQuestion.add(tq);
+//                }
+//                for (int i = 0; i < 5; i++) {
+//                    IQuestionWoodchuck5choices tq = new IQuestionWoodchuck5choices();
+//                    tq.answerQuestion(tq.getQuestionChoices().get(2));
+//                    testIQuestion.add(tq);
+//                }
+//                for (int i = 0; i < 10; i++) {
+//                    IQuestionWoodchuck5choices tq = new IQuestionWoodchuck5choices();
+//                    tq.answerQuestion(tq.getQuestionChoices().get(3));
+//                    testIQuestion.add(tq);
+//                }
+//                for (int i = 0; i < 3; i++) {
+//                    IQuestionWoodchuck5choices tq = new IQuestionWoodchuck5choices();
+//                    tq.answerQuestion(tq.getQuestionChoices().get(4));
+//                    testIQuestion.add(tq);
+//                }
 
                 v = getView();
                 View choiceLayout = v.findViewById(R.id.choicesLayout);
                 View barLayout = v.findViewById(R.id.lin02);
                 RelativeLayout r2 = (RelativeLayout) barLayout;
                 TextView questionTv = new TextView(v.getContext());
-                questionTv.setText(testIQuestion.get(0).getQuestionText());
+                questionTv.setText(inputList.get(0).getQuestionText());
                 questionTv.setTextSize(23);
                 questionTv.setId('A' - 1);
                 RelativeLayout rl = (RelativeLayout) choiceLayout;
@@ -205,16 +228,16 @@ public class TeacherQuestionResults extends Fragment {
                 displayResultsButton.setVisibility(View.GONE);
 
                 char letters = 'A';
-                ArrayList<TextView> choices = new ArrayList<>();
-                for (String tq : testIQuestion.get(0).getQuestionChoices()) {
+                ArrayList<TextView> choiceTextViews = new ArrayList<>();
+                for (String tq : choices) {
                     TextView tv = new TextView(v.getContext());
                     tv.setId(letters);
                     tv.setText(letters + ": " + tq);
                     letters++;
-                    choices.add(tv);
+                    choiceTextViews.add(tv);
                 }
 
-                for (TextView tv : choices) {
+                for (TextView tv : choiceTextViews) {
                     RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                     params1.addRule(RelativeLayout.BELOW, tv.getId() -1);
                     rl.addView(tv, params1);
@@ -226,7 +249,7 @@ public class TeacherQuestionResults extends Fragment {
                 Point size = new Point();
                 display.getSize(size);
                 RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
-                int width = size.x / testIQuestion.get(0).getQuestionChoices().size() - 55;
+                int width = size.x / choices.size() - 55;
                 holder.setHeight(0);
                 holder.setWidth(0);
                 params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
@@ -237,6 +260,8 @@ public class TeacherQuestionResults extends Fragment {
 
                 r2.addView(holder, params1);
 
+
+                //todo make colors random
                 int[] colors = new int[20];
                 colors[0]= Color.BLUE;
                 colors[1]= Color.RED;
@@ -249,9 +274,9 @@ public class TeacherQuestionResults extends Fragment {
 
                 letters = 'A';
                 ArrayList<TextView> bars = new ArrayList<>();
-                for (String cc : testIQuestion.get(0).getQuestionChoices()) {
+                for (String cc : choices) {
                     TextView bar = new TextView(v.getContext());
-                    bar.setHeight(getHeightInPixels(testIQuestion, testIQuestion.get(0).getQuestionChoices().indexOf(cc)));
+                    bar.setHeight(getHeightInPixels(inputList, choices.indexOf(cc)));
                     //     System.out.println(getHeightInPixels(testIQuestion, testIQuestion.get(0).getQuestionChoices().indexOf(cc)) + "Height");
                     bar.setWidth(width);
                     //      System.out.println(width + " width");
@@ -270,11 +295,14 @@ public class TeacherQuestionResults extends Fragment {
                     r2.addView(tv, params1);
                 }
 
-                ArrayList<Integer> totals = getTotals(testIQuestion);
+                ArrayList<Integer> totals = getTotals(inputList);
+//                for (int t : totals) {
+//                    System.out.println(t);
+//                }
                 ArrayList<TextView> percentages = new ArrayList<>();
                 for (Integer i: totals) {
                     TextView tv = new TextView(v.getContext());
-                    String s = String.format("%.1f", (double) i / (double) testIQuestion.size() * 100.0);
+                    String s = String.format("%.1f", (double) i / (double) inputList.size() * 100.0);
                     tv.setText(s + "%");
 
                     percentages.add(tv);
