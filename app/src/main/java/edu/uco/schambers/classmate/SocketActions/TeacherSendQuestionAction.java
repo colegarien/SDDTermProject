@@ -59,11 +59,10 @@ public class TeacherSendQuestionAction extends SocketAction
         ArrayList<InetAddress> classIPList = IPAddressManager.getInstance().getStudentAddresses();
         //Iterator
 
-        Socket ts;
         Iterator<InetAddress> ipIterator = classIPList.iterator();
         while (ipIterator.hasNext()){
             InetAddress ip = ipIterator.next();
-            ts = new Socket(ip, QUESTIONS_PORT_NUMBER);
+            Socket ts = new Socket(ip, QUESTIONS_PORT_NUMBER);
             classSocketList.add(ts);
             objectOutputStreams.add(new ObjectOutputStream(ts.getOutputStream()));
             dataInputStreams.add(new DataInputStream(ts.getInputStream()));
@@ -130,7 +129,7 @@ public class TeacherSendQuestionAction extends SocketAction
                 }
 
             }
-            socket.close();
+            //socket.close();
         }
         if(dataInputStreams != null)
         {
