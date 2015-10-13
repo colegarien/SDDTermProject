@@ -1,25 +1,36 @@
 package edu.uco.schambers.classmate.Fragments;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.text.Layout;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import edu.uco.schambers.classmate.Models.Questions.Choice;
 import edu.uco.schambers.classmate.Models.Questions.TestIQuestion;
+import edu.uco.schambers.classmate.Models.Questions.TestIQuestion2;
 import edu.uco.schambers.classmate.R;
 
 /**
@@ -43,7 +54,6 @@ public class TeacherQuestionResults extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     Button displayResultsButton;
-    TestIQuestion testQuestion;
 
     /**
      * Use this factory method to create a new instance of
@@ -85,18 +95,47 @@ public class TeacherQuestionResults extends Fragment {
         return root;
     }
 
-    private int getHighestAnswer(List<Choice> l) {
-        int highest = l.get(0).getChoiceAnswers();
-        for (Choice c : l) {
-            if (c.getChoiceAnswers() > highest){
-                highest=c.getChoiceAnswers();
-            }
+    private int getHighestAnswer(List<TestIQuestion2> l) {
+        ArrayList<String> arrayList = new ArrayList<>();
+        for (TestIQuestion2 tq : l) {
+            arrayList.add(tq.getAnswer());
         }
-        System.out.println("highest: " + highest);
-        return highest;
+        ArrayList<Integer> totals = new ArrayList<>();
+        for (String key : arrayList) {
+            totals.add(Collections.frequency(arrayList, key));
+        }
+        Collections.sort(totals);
+//        System.out.println("GETHIGHESTANSWER: " + totals.get(totals.size() - 1));
+        return totals.get(totals.size() - 1);
+
     }
 
-    private int getHeightInPixels(int answers, int totalAnswers,int highest) {
+    private ArrayList<Integer> getTotals(List<TestIQuestion2> l) {
+
+        ArrayList<String> arrayList = new ArrayList<>();
+        for (TestIQuestion2 tq : l) {
+            arrayList.add(tq.getAnswer());
+        }
+        ArrayList<Integer> totals = new ArrayList<>();
+        for (String key : l.get(0).getQuestionChoices()) {
+            totals.add(Collections.frequency(arrayList, key));
+            //   System.out.println(Collections.frequency(arrayList,key));
+        }
+
+        return totals;
+
+    }
+
+    private int getHeightInPixels(ArrayList<TestIQuestion2> list, int answerIndex) {
+//        System.out.println("answer index" + answerIndex);
+        int highest = getHighestAnswer(list);
+        int totalAnswers = list.size();
+        ArrayList<String> arrayList = new ArrayList<>();
+        for (TestIQuestion2 tq : list) {
+            arrayList.add(tq.getAnswer());
+        }
+        int answers = Collections.frequency(arrayList,list.get(0).getQuestionChoices().get(answerIndex));
+//        System.out.println("answers " + answers);
         WindowManager wm = (WindowManager) getView().getContext().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
@@ -107,12 +146,13 @@ public class TeacherQuestionResults extends Fragment {
         double dblTotalAnswers = totalAnswers;
         double percentage = dblAnswers/dblTotalAnswers;
         double percentageOfHighest = dblHighest / dblTotalAnswers;
-       // System.out.println("percentageOfHighest: " + percentageOfHighest);
+        // System.out.println("percentageOfHighest: " + percentageOfHighest);
         double numberToMultiplyByAtEnd = height / percentageOfHighest;
 //        System.out.println("numbertobemultipliedatend:" + numberToMultiplyByAtEnd);
 //        System.out.println("Percentage: " + percentage);
 //        System.out.println("Height: " + height);
 //        System.out.println("Percentage * height: " + (int) (percentage * numberToMultiplyByAtEnd));
+//            System.out.println(percentage * numberToMultiplyByAtEnd + " getheightinpixels");
         return (int) (percentage * numberToMultiplyByAtEnd);
     }
 
@@ -122,63 +162,139 @@ public class TeacherQuestionResults extends Fragment {
         displayResultsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TestIQuestion testIQuestion = new TestIQuestion();
+                ArrayList<TestIQuestion2> testIQuestion = new ArrayList<>();
+                for (int i = 0; i < 12; i++) {
+                    TestIQuestion2 tq = new TestIQuestion2();
+                    tq.answerQuestion(tq.getQuestionChoices().get(0));
+                    testIQuestion.add(tq);
+                }
+                for (int i = 0; i < 8; i++) {
+                    TestIQuestion2 tq = new TestIQuestion2();
+                    tq.answerQuestion(tq.getQuestionChoices().get(1));
+                    testIQuestion.add(tq);
+                }
+                for (int i = 0; i < 5; i++) {
+                    TestIQuestion2 tq = new TestIQuestion2();
+                    tq.answerQuestion(tq.getQuestionChoices().get(2));
+                    testIQuestion.add(tq);
+                }
+                for (int i = 0; i < 10; i++) {
+                    TestIQuestion2 tq = new TestIQuestion2();
+                    tq.answerQuestion(tq.getQuestionChoices().get(3));
+                    testIQuestion.add(tq);
+                }
+                for (int i = 0; i < 3; i++) {
+                    TestIQuestion2 tq = new TestIQuestion2();
+                    tq.answerQuestion(tq.getQuestionChoices().get(4));
+                    testIQuestion.add(tq);
+                }
+
                 v = getView();
+                View choiceLayout = v.findViewById(R.id.choicesLayout);
+                View barLayout = v.findViewById(R.id.lin02);
+                RelativeLayout r2 = (RelativeLayout) barLayout;
+                TextView questionTv = new TextView(v.getContext());
+                questionTv.setText(testIQuestion.get(0).getQuestionText());
+                questionTv.setTextSize(23);
+                questionTv.setId('A' - 1);
+                RelativeLayout rl = (RelativeLayout) choiceLayout;
+                rl.addView(questionTv);
+
+
+
                 displayResultsButton.setVisibility(View.GONE);
-                //todo programmatically add textViews for any number of choices
-                List<Choice> c = testIQuestion.getQuestionChoicesChoiceClass();
 
-                TextView question = (TextView) v.findViewById(R.id.question);
+                char letters = 'A';
+                ArrayList<TextView> choices = new ArrayList<>();
+                for (String tq : testIQuestion.get(0).getQuestionChoices()) {
+                    TextView tv = new TextView(v.getContext());
+                    tv.setId(letters);
+                    tv.setText(letters + ": " + tq);
+                    letters++;
+                    choices.add(tv);
+                }
 
-                TextView c1 = (TextView) v.findViewById(R.id.choice01);
-                TextView c2 = (TextView) v.findViewById(R.id.choice02);
-                TextView c3 = (TextView) v.findViewById(R.id.choice03);
-                TextView c4 = (TextView) v.findViewById(R.id.choice04);
+                for (TextView tv : choices) {
+                    RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    params1.addRule(RelativeLayout.BELOW, tv.getId() -1);
+                    rl.addView(tv, params1);
+                }
 
-                c1.setText("A: " + c.get(0).getChoiceText());
-                c2.setText("B: " + c.get(1).getChoiceText());
-                c3.setText("C: " + c.get(2).getChoiceText());
-                c4.setText("D: " + c.get(3).getChoiceText());
+                TextView holder = new TextView(v.getContext());
+                WindowManager wm = (WindowManager) getView().getContext().getSystemService(Context.WINDOW_SERVICE);
+                Display display = wm.getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+                RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+                int width = size.x / testIQuestion.get(0).getQuestionChoices().size() - 55;
+                holder.setHeight(0);
+                holder.setWidth(0);
+                params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                params1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                holder.setGravity(RelativeLayout.ALIGN_BOTTOM);
+                holder.setId('A' - 61);
+                holder.setBackground(new ColorDrawable(Color.BLUE));
 
-                TextView p1 = (TextView) v.findViewById(R.id.colortext01Text);
-                TextView p2 = (TextView) v.findViewById(R.id.colortext02Text);
-                TextView p3 = (TextView) v.findViewById(R.id.colortext03Text);
-                TextView p4 = (TextView) v.findViewById(R.id.colortext04Text);
+                r2.addView(holder, params1);
 
-                TextView bottomText1 = (TextView) v.findViewById(R.id.bottomText01);
-                TextView bottomText2 = (TextView) v.findViewById(R.id.bottomText02);
-                TextView bottomText3 = (TextView) v.findViewById(R.id.bottomText03);
-                TextView bottomText4 = (TextView) v.findViewById(R.id.bottomText04);
-
-                bottomText1.setText("A");
-                bottomText2.setText("B");
-                bottomText3.setText("C");
-                bottomText4.setText("D");
-
-
-
-                question.setText(testIQuestion.getQuestionText());
-
-                int totalAnswers = testIQuestion.getTotalAnswers();
-                int highest = getHighestAnswer(testIQuestion.getQuestionChoicesChoiceClass());
-
-                TextView bar1 = (TextView) v.findViewById(R.id.colortext01);
-                bar1.setHeight(getHeightInPixels(c.get(0).getChoiceAnswers(), totalAnswers, highest));
-                p1.setText(String.format("%.1f",((double)c.get(0).getChoiceAnswers() / (double) totalAnswers * 100.0)) + "%");
-
-                TextView bar2 = (TextView) v.findViewById(R.id.colortext02);
-                bar2.setHeight(getHeightInPixels(c.get(1).getChoiceAnswers(), totalAnswers,highest));
-                p2.setText(String.format("%.1f", ((double) c.get(1).getChoiceAnswers() / (double) totalAnswers * 100.0)) + "%");
-
-                TextView bar3 = (TextView) v.findViewById(R.id.colortext03);
-                bar3.setHeight(getHeightInPixels(c.get(2).getChoiceAnswers(), totalAnswers,highest));
-                p3.setText(String.format("%.1f", ((double) c.get(2).getChoiceAnswers() / (double) totalAnswers * 100.0)) + "%");
-
-                TextView bar4 = (TextView) v.findViewById(R.id.colortext04);
-                bar4.setHeight(getHeightInPixels(c.get(3).getChoiceAnswers(),totalAnswers, highest));
-                p4.setText(String.format("%.1f", ((double) c.get(3).getChoiceAnswers() / (double) totalAnswers * 100.0)) + "%");
+                int[] colors = new int[20];
+                colors[0]= Color.BLUE;
+                colors[1]= Color.RED;
+                colors[2]= Color.GREEN;
+                colors[3]= Color.YELLOW;
+                colors[4]= Color.CYAN;
+                colors[6]= Color.RED;
 
 
+
+                letters = 'A';
+                ArrayList<TextView> bars = new ArrayList<>();
+                for (String cc : testIQuestion.get(0).getQuestionChoices()) {
+                    TextView bar = new TextView(v.getContext());
+                    bar.setHeight(getHeightInPixels(testIQuestion, testIQuestion.get(0).getQuestionChoices().indexOf(cc)));
+                    //     System.out.println(getHeightInPixels(testIQuestion, testIQuestion.get(0).getQuestionChoices().indexOf(cc)) + "Height");
+                    bar.setWidth(width);
+                    //      System.out.println(width + " width");
+                    bar.setId(letters - 60);
+                    bar.setBackground(new ColorDrawable(colors[letters - 65]));
+                    letters++;
+
+                    bars.add(bar);
+
+                }
+                //      System.out.println("num of bars: " + bars.size());
+                for (TextView tv : bars) {
+                    params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    params1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                    params1.addRule(RelativeLayout.RIGHT_OF, tv.getId() - 1);
+                    r2.addView(tv, params1);
+                }
+
+                ArrayList<Integer> totals = getTotals(testIQuestion);
+                ArrayList<TextView> percentages = new ArrayList<>();
+                for (Integer i: totals) {
+                    TextView tv = new TextView(v.getContext());
+                    String s = String.format("%.1f", (double) i / (double) testIQuestion.size() * 100.0);
+                    tv.setText(s + "%");
+
+                    percentages.add(tv);
+                }
+                letters = 'A';
+
+                for (TextView tv : percentages) {
+                    params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    params1.addRule(RelativeLayout.ABOVE, letters - 60);
+                    params1.addRule(RelativeLayout.RIGHT_OF, letters - 61);
+                    r2.addView(tv, params1);
+                    params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    params1.addRule(RelativeLayout.ALIGN_BOTTOM, letters - 60);
+                    params1.addRule(RelativeLayout.RIGHT_OF, letters - 61);
+                    TextView pct = new TextView(v.getContext());
+                    pct.setText(letters + "");
+                    r2.addView(pct,params1);
+
+                    letters++;
+                }
 
             }
         });
