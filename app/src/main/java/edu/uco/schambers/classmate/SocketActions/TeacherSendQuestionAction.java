@@ -95,8 +95,8 @@ public class TeacherSendQuestionAction extends SocketAction
 
         if(questionSentSuccessfully)
         {
-            questionReceivedListener.onQuestionSentSuccessfully("student x, " +
-                    "could be modified to display if neccesary",QUESTIONS_PORT_NUMBER);
+            questionReceivedListener.onQuestionSentSuccessfully("student"
+                    ,QUESTIONS_PORT_NUMBER);
         }
     }
 
