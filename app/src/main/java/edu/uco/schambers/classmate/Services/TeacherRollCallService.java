@@ -43,6 +43,7 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
 
     // TODO: change to Teacher object
     String currentTeacher = "";
+    String student_id = "";
 
     public TeacherRollCallService() {
     }
@@ -108,9 +109,16 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
     public void onStudentConnect(String id, InetAddress ip) {
         // TODO: add student ID to ArrayList (possibly query from DB)
         Log.d("StudentConnect", "Connected ID: " + id);
+        student_id = id;
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(TeacherRollCallService.this.getApplicationContext(), "Student ID: " + student_id, Toast.LENGTH_SHORT).show();
+            }
+        });
         if (ip!=null){
             IPAddressManager.getInstance().addStudentAddress(ip);
-            Log.d("StudentConnect", "IP Added: "+ip.toString());
+            Log.d("StudentConnect", "IP Added: " + ip.toString());
         }
     }
 }
