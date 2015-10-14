@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Team 9Lives
+    *
+    * Author: Rayan Al-Hammami (Modified version of Student Attendance Module
+    *         with permission of Mossi Al-Obaid)
+    * Purpose: Main layout for individual student attendance
+    * records in teacher attendance module.
+    *
+    * Edit: 10/09/2015
+    *   Added and modified this whole layout
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="1">
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Please select your class" />
-
-    <Spinner
-        android:id="@+id/classlist"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:spinnerMode="dropdown" />
 
     <TableLayout
         android:layout_width="match_parent"
@@ -36,7 +33,7 @@
                 android:text="Attendance(s): " />
 
             <TextView
-                android:id="@+id/tvattendance"
+                android:id="@+id/ra_tvAttendance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="1"
@@ -53,7 +50,7 @@
                 android:text="Absence(s): " />
 
             <TextView
-                android:id="@+id/tvabsences"
+                android:id="@+id/ra_tvAbsences"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="15"
@@ -67,7 +64,7 @@
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="300dp"
+                android:layout_height="match_parent"
                 android:layout_span="15"
                 android:id="@+id/chart"
                 android:orientation="vertical"></LinearLayout>
@@ -89,36 +86,4 @@
         </TableRow>
 
     </TableLayout>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="#"
-            android:id="@+id/textView4"
-            android:layout_weight=".85" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Date"
-            android:id="@+id/textView6"
-            android:layout_weight="0.7" />
-
-    </TableRow>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:id="@+id/scrollView"
-        android:layout_gravity="center_horizontal">
-
-        <TableLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/studentAttendanceTable"></TableLayout>
-    </ScrollView>
 </LinearLayout>

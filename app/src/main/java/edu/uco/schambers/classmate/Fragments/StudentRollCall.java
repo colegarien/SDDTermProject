@@ -16,16 +16,12 @@
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
+import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,7 +32,19 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+
 import edu.uco.schambers.classmate.Activites.MainActivity;
+import edu.uco.schambers.classmate.BroadcastReceivers.StudentRollCallBroadcastReceiver;
+import edu.uco.schambers.classmate.Database.DataRepo;
+import edu.uco.schambers.classmate.Database.TokenUtility;
+import edu.uco.schambers.classmate.Database.User;
+import edu.uco.schambers.classmate.ObservableManagers.ServiceDiscoveryManager;
+import edu.uco.schambers.classmate.ObservableManagers.SocketResultManager;
 import edu.uco.schambers.classmate.R;
 
 /**
@@ -63,9 +71,25 @@ public class StudentRollCall extends Fragment {
 
     private SharedPreferences prefs;
 
-    private BroadcastReceiver receiver;
+    private Observer observer;
+    private Observer socketResultObserver;
 
     private OnFragmentInteractionListener mListener;
+
+    // for retrieving student name
+    private SharedPreferences sp;
+    public static final String MyPREFS = "MyPREFS";
+    private String user_key;
+    private DataRepo dr;
+    private User user;
+    private String token;
+
+    // for indicate check in status
+    private boolean isCheckingIn = false;
+
+    public User getUser() {
+        return user;
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -102,21 +126,32 @@ public class StudentRollCall extends Fragment {
 
         setHasOptionsMenu(true);
 
-        // Our handler for received Intents. This will be called whenever an Intent
-        // with an action named "service_found" is broadcasted.
-        receiver = new BroadcastReceiver() {
+        observer = new Observer() {
             @Override
-            public void onReceive(Context context, Intent intent) {
+            public void update(Observable observable, Object data) {
+                Map<String, String> record = (Map<String, String>)data;
+
                 btnCheckin.setEnabled(true);
-                lblCheckinStatus.setText("Professor " + intent.getStringExtra("buddyname") + "'s class has been found");
+                lblCheckinStatus.setText("Professor " + record.get("buddyname") + "'s class has been found");
             }
         };
 
-        // Register to receive messages.
-        // We are registering an observer (receiver) to receive Intents
-        // with actions named "service_found".
-        LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver(receiver,
-                new IntentFilter(MainActivity.SERVICE_FOUND));
+        ServiceDiscoveryManager.getInstance().addObserver(observer);
+
+        socketResultObserver = new Observer() {
+            @Override
+            public void update(Observable observable, final Object data) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateCheckinStatus((boolean)data);
+                        isCheckingIn = false;
+                    }
+                });
+            }
+        };
+
+        SocketResultManager.getInstance().addObserver(socketResultObserver);
 
         // Discover teacher coll roll service
         discoverService();
@@ -191,14 +226,21 @@ public class StudentRollCall extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_student_roll_call, container, false);
-        initUI(rootView);
+        try {
+            initUI(rootView);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         return rootView;
     }
 
 
-    private void initUI(final View rootView)
-    {
+    private void initUI(final View rootView) throws JSONException {
+        sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+        token = sp.getString("AUTH_TOKEN", null);
+        user = TokenUtility.parseUserToken(token);
+
         btnCheckin = (Button) rootView.findViewById(R.id.btn_check_in);
         lblCheckinStatus = (TextView) rootView.findViewById(R.id.lbl_checkin_status);
         btnCheckin.setOnClickListener(new View.OnClickListener() {
@@ -207,8 +249,12 @@ public class StudentRollCall extends Fragment {
                 // Mute or vibrate user's devices
                 changeAudioSetting(prefs.getString("CheckedInMode", null));
 
-                lblCheckinStatus.setText(getString(R.string.lbl_status_checked_in));
-                Toast.makeText(getActivity(), "You've checked-in", Toast.LENGTH_SHORT).show();
+                lblCheckinStatus.setText(getString(R.string.lbl_status_checking_in));
+                btnCheckin.setEnabled(false);
+                isCheckingIn = true;
+
+                initBroadcast();
+                connectToGroupOwner();
             }
         });
 
@@ -249,6 +295,43 @@ public class StudentRollCall extends Fragment {
         }
     }
 
+    private void connectToGroupOwner(){
+        Activity activity = getActivity();
+
+        /// Start discovering teacher service
+        if(activity instanceof MainActivity) {
+            ((MainActivity) activity).connectToPeer();
+        }
+    }
+
+    private void initBroadcast(){
+        Activity activity = getActivity();
+
+        /// Start discovering teacher service
+        if(activity instanceof MainActivity) {
+            ((MainActivity) activity).setupBroadcastReceiver(new StudentRollCallBroadcastReceiver(this));
+        }
+    }
+
+    private void updateCheckinStatus(boolean result){
+        if (result){
+            lblCheckinStatus.setText(getString(R.string.lbl_status_checked_in));
+            Toast.makeText(getActivity(), "You've checked-in", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            lblCheckinStatus.setText(getString(R.string.lbl_status_failed));
+            Toast.makeText(getActivity(), "Failed. Please try later", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public boolean allowBackPressed(){
+        if (isCheckingIn){
+            Toast.makeText(getActivity(), "You can't leave while checking-in", Toast.LENGTH_SHORT).show();
+        }
+
+        return  !isCheckingIn;
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -259,7 +342,8 @@ public class StudentRollCall extends Fragment {
     @Override
     public void onDestroy() {
         // Unregister since the fragment is about to be closed.
-        LocalBroadcastManager.getInstance(this.getActivity()).unregisterReceiver(receiver);
+        ServiceDiscoveryManager.getInstance().deleteObserver(observer);
+        SocketResultManager.getInstance().deleteObserver(socketResultObserver);
         super.onDestroy();
     }
 

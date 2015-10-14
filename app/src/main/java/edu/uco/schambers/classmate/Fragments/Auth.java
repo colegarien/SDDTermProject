@@ -7,14 +7,24 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.json.JSONException;
+
+import java.io.IOException;
+
+import edu.uco.schambers.classmate.Adapter.AuthAdapter;
+import edu.uco.schambers.classmate.Adapter.Callback;
+import edu.uco.schambers.classmate.Adapter.HttpResponse;
 import edu.uco.schambers.classmate.Database.DataRepo;
+import edu.uco.schambers.classmate.Database.TokenUtility;
 import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.R;
 
@@ -46,6 +56,7 @@ public class Auth extends Fragment {
     public static final String MyPREFS = "MyPREFS";
     private DataRepo dr;
     public User user;
+    private String token;
     Fragment context = this;
 
 
@@ -119,9 +130,39 @@ public class Auth extends Fragment {
         email = (EditText) rootView.findViewById(R.id.email_et);
         pass = (EditText) rootView.findViewById(R.id.pass_et);
         signin = (Button) rootView.findViewById(R.id.sign_in_btn);
-        signup = (TextView) rootView.findViewById(R.id.signup_lbl);
+        signup = (TextView)  rootView.findViewById(R.id.signup_lbl);
         resetLink = (TextView) rootView.findViewById(R.id.reset_pw_lbl);
         dr = new DataRepo(getActivity());
+        sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+
+        if(sp.contains("AUTH_TOKEN") && (!sp.getString("AUTH_TOKEN", "").equals(""))) {
+            token = sp.getString("AUTH_TOKEN", null);
+            try {
+                User user = TokenUtility.parseUserToken(token);
+                ChooseInterface(user.isStudent());
+            } catch (JSONException e) {
+
+            }
+        }
+
+
+        email.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    email.setError(null);
+                }
+            }
+        });
+
+        pass.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    pass.setError(null);
+                }
+            }
+        });
 
         signup.setOnClickListener(new View.OnClickListener()
         {
@@ -146,9 +187,59 @@ public class Auth extends Fragment {
             @Override
             public void onClick(View v)
             {
-                if(!dr.validateUser(email.getText().toString(), pass.getText().toString())) {
+                if (!user.isValidEmail(email.getText().toString())) {
+                    email.requestFocus();
+                    email.setError("Invalid email");
+                } else if (pass.getText().toString().equals("")) {
+                    pass.requestFocus();
+                    pass.setError("please enter a password.");
+                }  else {
+                    AuthAdapter auth = new AuthAdapter(getActivity());
+                    sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+                    token = sp.getString("AUTH_TOKEN", null);
+
+                    try {
+                        auth.authenticate(email.getText().toString(), pass.getText().toString(), new Callback<HttpResponse>() {
+                            @Override
+                            public void onComplete(HttpResponse result) {
+                                if (result.getHttpCode() == 401) {
+                                    pass.requestFocus();
+                                    pass.setError("Incorrect E-Mail or Password");
+                                } else if (result.getHttpCode() >= 300)
+                                    Toast.makeText(getActivity(), "Error logging in", Toast.LENGTH_LONG);
+                                else {
+                                    sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+                                    editor = sp.edit();
+                                    editor.putString("AUTH_TOKEN", result.getResponse());
+                                    editor.commit();
+
+                                    try {
+                                        User user = TokenUtility.parseUserToken(result.getResponse());
+                                        ChooseInterface(user.isStudent());
+                                    } catch (JSONException e) {
+                                        pass.setError("Incorrect E-Mail or Password");
+                                        Log.d("DEBUG", e.toString());
+                                        Toast.makeText(getActivity(), "Error parsing token response", Toast.LENGTH_LONG);
+                                    }
+                                }
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        pass.requestFocus();
+                        pass.setError("Incorrect E-Mail or Password");
+                    }
+
+                /*if(!dr.validateUser(email.getText().toString(), pass.getText().toString())) {
                     pass.setError("Incorrect E-Mail or Password");
                 }else{
+
+
+
                     dr = new DataRepo(getActivity());
                     user = dr.getUser(email.getText().toString());
                     sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
@@ -156,6 +247,7 @@ public class Auth extends Fragment {
                     editor.putString("USER_KEY", user.getEmail());
                     editor.commit();
                     ChooseInterface(user);
+                }*/
                 }
             }
         });
@@ -163,8 +255,8 @@ public class Auth extends Fragment {
 
     }
 
-    public void ChooseInterface(User u) {
-        if (!u.isStudent()) {
+    public void ChooseInterface(boolean isStudent) {
+        if (!isStudent) {
             Fragment teacher = TeacherInterface.newInstance("test", "test");
             launchFragment(teacher);
         }else{

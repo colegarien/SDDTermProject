@@ -15,24 +15,27 @@ import android.widget.Toast;
 
 import edu.uco.schambers.classmate.Activites.MainActivity;
 import edu.uco.schambers.classmate.Fragments.StudentResponseFragment;
+import edu.uco.schambers.classmate.Fragments.TeacherQuestion;
 import edu.uco.schambers.classmate.ListenerInterfaces.OnQuestionReceivedListener;
 import edu.uco.schambers.classmate.Models.Questions.IQuestion;
 import edu.uco.schambers.classmate.R;
 import edu.uco.schambers.classmate.SocketActions.SocketAction;
 import edu.uco.schambers.classmate.SocketActions.StudentReceiveQuestionsAction;
 import edu.uco.schambers.classmate.SocketActions.StudentSendQuestionAction;
+import edu.uco.schambers.classmate.SocketActions.TeacherReceiveQuestionsAction;
+import edu.uco.schambers.classmate.SocketActions.TeacherSendQuestionAction;
 
-public class StudentQuestionService extends Service implements OnQuestionReceivedListener
+public class TeacherQuestionService extends Service implements OnQuestionReceivedListener
 {
-    public static final String ACTION_NOTIFY_QUESTION_RECEIVED = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_NOTIFY_QUESTION_RECEIVED";
-    public static final String ACTION_REQUEST_QUESTION_RESPONSE = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_REQUEST_QUESTION_RESPONSE";
-    public static final String ACTION_SEND_QUESTION_RESPONSE = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_SEND_QUESTION_RESPONSE";
+    public static final String ACTION_NOTIFY_QUESTION_RECEIVED = "edu.uco.schambers.classmate.Services.TeacherQuestionService.ACTION_NOTIFY_QUESTION_RECEIVED";
+    public static final String ACTION_REQUEST_QUESTION_RESPONSE = "edu.uco.schambers.classmate.Services.TeacherQuestionService.ACTION_REQUEST_QUESTION_RESPONSE";
+    public static final String ACTION_SEND_QUESTION_RESPONSE = "edu.uco.schambers.classmate.Services.TeacherQuestionService.ACTION_SEND_QUESTION_RESPONSE";
 
     private SocketAction listenForQuestions;
 
     Handler handler;
 
-    public StudentQuestionService()
+    public TeacherQuestionService()
     {
     }
 
@@ -52,9 +55,9 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
 
     private static Intent getBaseIntent(Context context, IQuestion question)
     {
-        Intent baseQuestionIntent= new Intent(context, StudentQuestionService.class);
+        Intent baseQuestionIntent= new Intent(context, TeacherQuestionService.class);
         Bundle bundle = new Bundle();
-        bundle.putSerializable(StudentResponseFragment.ARG_QUESTION, question);
+        bundle.putSerializable(TeacherQuestion.ARG_QUESTION, question);
         baseQuestionIntent.putExtras(bundle);
         return baseQuestionIntent;
     }
@@ -64,7 +67,8 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
     {
         super.onCreate();
         handler = new Handler(Looper.getMainLooper());
-        listenForQuestions = new StudentReceiveQuestionsAction(this);
+        //Todo CARCHER TQS.onCreate() -> SRQA Listener
+        listenForQuestions = new TeacherReceiveQuestionsAction(this);
         listenForQuestions.execute();
     }
 
@@ -76,11 +80,11 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
         switch (action)
         {
             case ACTION_NOTIFY_QUESTION_RECEIVED:
-                question = (IQuestion) intent.getExtras().getSerializable(StudentResponseFragment.ARG_QUESTION);
+                question = (IQuestion) intent.getExtras().getSerializable(TeacherQuestion.ARG_QUESTION);
                 notifyQuestionReceived(question);
                 break;
             case ACTION_SEND_QUESTION_RESPONSE:
-                question = (IQuestion) intent.getExtras().getSerializable(StudentResponseFragment.ARG_QUESTION);
+                question = (IQuestion) intent.getExtras().getSerializable(TeacherQuestion.ARG_QUESTION);
                 sendQuestionResponse(question);
                 break;
         }
@@ -89,7 +93,8 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
 
     private void sendQuestionResponse(IQuestion question)
     {
-        SocketAction sendQuestion = new StudentSendQuestionAction(question, this);
+        //Todo CARCHER TQS.sendQuestionResponse() -> SocketAction StudentSQA
+        SocketAction sendQuestion = new TeacherSendQuestionAction(question, this);
         sendQuestion.execute();
     }
 
@@ -99,14 +104,14 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
         notificationBuilder.setSmallIcon(R.drawable.ic_stat_question_broadcast_recieved)
                 .setContentTitle("Question Received")
-                .setContentText("Click here to respond");
+                .setContentText("Questions Received! Press here to see class aggregate answers!");
         notificationBuilder.setAutoCancel(true);
         notificationBuilder.setPriority(Notification.PRIORITY_HIGH);
 
         Intent notifyIntent = new Intent(this, MainActivity.class);
         notifyIntent.setAction(ACTION_REQUEST_QUESTION_RESPONSE);
         Bundle bundle = new Bundle();
-        bundle.putSerializable(StudentResponseFragment.ARG_QUESTION, question);
+        bundle.putSerializable(TeacherQuestion.ARG_QUESTION, question);
         notifyIntent.putExtras(bundle);
         PendingIntent notifyPendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         notificationBuilder.setContentIntent(notifyPendingIntent);
@@ -140,7 +145,7 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
 
             public void run()
             {
-                Toast.makeText(getBaseContext(),String.format("The question was sent successfully to domain: %s port %d ", domainFinal, portFinal), Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(),String.format("The question was sent successfully to %s port %d ", domainFinal, portFinal), Toast.LENGTH_LONG).show();
             }
         });
     }

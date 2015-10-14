@@ -5,8 +5,9 @@
  *   UI backend for teacher roll call module, used for starting and
  *   stopping the Roll Call Wifi P2P service
  *
- * Edit: 9/21/2015
- *   added button code for adding local wifi P2P service
+ * Edit: 10/7/2015
+ *   added button code for starting service,
+ *    cleaned up default params1 and params2,
  *
  */
 
@@ -14,6 +15,7 @@ package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,28 +29,19 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import edu.uco.schambers.classmate.Activites.MainActivity;
 import edu.uco.schambers.classmate.Database.DataRepo;
+import edu.uco.schambers.classmate.Database.TokenUtility;
 import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.R;
+import edu.uco.schambers.classmate.Services.TeacherRollCallService;
+import edu.uco.schambers.classmate.SocketActions.SocketAction;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TeacherRollCall.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link TeacherRollCall#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class TeacherRollCall extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    public static final String ARG_TEACHER = "edu.uco.schambers.classmate.arq_teacher";
+    private static final String CLASS_OPEN = "edu.uco.schambers.classmate.class_open";
 
     //UI Components
     private Button startBtn;
@@ -64,23 +57,13 @@ public class TeacherRollCall extends Fragment {
     public String user_key;
     private DataRepo dr;
     public User user;
+    private String token;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TeacherRollCall.
-     */
-    // TODO: Rename and change types and number of parameters
-    // TODO: Get Teacher Name from DB
+
     // TODO: Get Class Name from DB/Dropdown Box
-    public static TeacherRollCall newInstance(String param1, String param2) {
+    public static TeacherRollCall newInstance() {
         TeacherRollCall fragment = new TeacherRollCall();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -93,8 +76,6 @@ public class TeacherRollCall extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
@@ -103,24 +84,27 @@ public class TeacherRollCall extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_teacher_roll_call, container, false);
-        initUI(rootView);
+        try {
+            initUI(rootView);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return rootView;
     }
 
 
-    private void initUI(final View rootView)
-    {
-
-
+    private void initUI(final View rootView) throws JSONException {
         startBtn = (Button) rootView.findViewById(R.id.btn_start_roll_call);
         teacherText = (TextView) rootView.findViewById(R.id.txt_rc_teacher);
 
         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-        user_key = sp.getString("USER_KEY", null);
-        dr = new DataRepo(getActivity());
-        user = dr.getUser(user_key);
+        token = sp.getString("AUTH_TOKEN", null);
+        user = TokenUtility.parseUserToken(token);
 
-        teacherText.setText(user.getName());
+        // intialize class_open to false
+        sp.edit().putBoolean(CLASS_OPEN,false).apply();
+
+        teacherText.setText(user.getName().toString());
 
         classText = (EditText) rootView.findViewById(R.id.txt_rc_class);
         connectedList = (ListView) rootView.findViewById(R.id.list_connected);
@@ -129,10 +113,31 @@ public class TeacherRollCall extends Fragment {
             public void onClick(View v) {
                 Activity activity = getActivity();
 
-                /// TODO: Start ServerSocket bidness
-                if(activity instanceof MainActivity) {
-                    ((MainActivity) activity).addLocalService(8081, teacherText.getText().toString(), classText.getText().toString(), true);
-                    //Toast.makeText(getActivity(), String.format("Teacher, %s, started Class, %s", teacherText.getText(), classText.getText()), Toast.LENGTH_SHORT).show();
+                if (!sp.getBoolean(CLASS_OPEN,false)) {
+
+                    // TODO: change teacherText over to Teacher object
+                    Intent intent = TeacherRollCallService.getNewStartSessionIntent(activity, teacherText.getText().toString());
+                    activity.startService(intent);
+
+                    if (activity instanceof MainActivity) {
+                        ((MainActivity) activity).addLocalService(SocketAction.ROLL_CALL_PORT_NUMBER, teacherText.getText().toString(), classText.getText().toString(), true);
+                    }
+
+                    // TODO: lock all input (like class)
+                    startBtn.setText(getResources().getString(R.string.btn_roll_call_stop));
+                    sp.edit().putBoolean(CLASS_OPEN,true).apply();
+                }else{
+
+                    Intent intent = TeacherRollCallService.getNewEndSessionIntent(activity);
+                    activity.startService(intent);
+
+                    if (activity instanceof MainActivity) {
+                        ((MainActivity) activity).removeLocalService(SocketAction.ROLL_CALL_PORT_NUMBER, teacherText.getText().toString(), classText.getText().toString(), true);
+                    }
+
+                    // TODO: unlock inputs (like class)
+                    startBtn.setText(getResources().getString(R.string.btn_roll_call_start));
+                    sp.edit().putBoolean(CLASS_OPEN,false).apply();
                 }
             }
         });

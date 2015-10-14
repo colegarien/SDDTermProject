@@ -1,6 +1,7 @@
 package edu.uco.schambers.classmate.Adapter;
 
 
+import android.content.res.Resources;
 import android.os.AsyncTask;
 
 import java.io.BufferedReader;
@@ -11,16 +12,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 
-public class ServiceHandlerAsync extends AsyncTask<ServiceCall, Integer, String> {
+public class ServiceHandlerAsync extends AsyncTask<ServiceCall, Integer, HttpResponse> {
 
-    private Callback callback;
+    private Callback<HttpResponse> callback;
 
-    public ServiceHandlerAsync(Callback callback) {
+    public ServiceHandlerAsync(Callback<HttpResponse> callback) {
         this.callback = callback;
     }
 
     @Override
-    protected String doInBackground(ServiceCall... serviceCalls) {
+    protected HttpResponse doInBackground(ServiceCall... serviceCalls) {
         ServiceCall serviceCall = serviceCalls[0];
         try {
             return makeServiceCall(serviceCall.getUrl(), serviceCall.getMethod(), serviceCall.getBody());
@@ -31,11 +32,15 @@ public class ServiceHandlerAsync extends AsyncTask<ServiceCall, Integer, String>
     }
 
     @Override
-    protected void onPostExecute(String json) {
-        callback.onComplete(json);
+    protected void onPostExecute(HttpResponse response) {
+        try {
+            callback.onComplete(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private static String makeServiceCall(String serviceUrl, String method, String body) throws IOException {
+    private static HttpResponse makeServiceCall(String serviceUrl, String method, String body) throws IOException {
         URL url = new URL(serviceUrl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod(method);
@@ -53,25 +58,30 @@ public class ServiceHandlerAsync extends AsyncTask<ServiceCall, Integer, String>
             wr.close();
         }
 
-        if (conn.getResponseCode() >= 300) {
-            throw new RuntimeException("Failed : HTTP error code : "
-                    + conn.getResponseCode());
+        if (conn.getResponseCode() >= 300)
+        {
+            HttpResponse response = new HttpResponse("", conn.getResponseCode());
+            conn.disconnect();
+            return response;
         }
 
         BufferedReader br = new BufferedReader(new InputStreamReader(
                 (conn.getInputStream())));
 
-        String response = "";
+        String responseText = "";
         String output;
 
         while ((output = br.readLine()) != null) {
-            response += output;
+            responseText += output;
         }
+
+        HttpResponse response = new HttpResponse(responseText, conn.getResponseCode());
 
         conn.disconnect();
 
         System.out.println("Response from Server .... \n");
-        System.out.println(response);
+        System.out.println(responseText);
+
         return response;
     }
 }

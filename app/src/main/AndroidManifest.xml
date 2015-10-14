@@ -32,6 +32,20 @@
             android:enabled="true"
             android:exported="true" >
         </service>
+        <service
+            android:name=".Services.TeacherRollCallService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+        <service
+            android:name=".Services.StudentRollCallService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+        <service android:name=".Services.TeacherQuestionService"
+                 android:enabled="true"
+                 android:exported="true"
+                 />
     </application>
 
 </manifest>

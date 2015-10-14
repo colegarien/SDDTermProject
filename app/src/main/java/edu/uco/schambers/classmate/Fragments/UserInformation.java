@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
+import java.io.IOException;
+
+import edu.uco.schambers.classmate.Adapter.Callback;
+import edu.uco.schambers.classmate.Adapter.HttpResponse;
+import edu.uco.schambers.classmate.Adapter.UserAdapter;
 import edu.uco.schambers.classmate.Database.DataRepo;
+import edu.uco.schambers.classmate.Database.TokenUtility;
 import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.R;
 
@@ -58,7 +65,7 @@ public class UserInformation extends Fragment {
     public SharedPreferences sp;
     public SharedPreferences.Editor editor;
     public static final String MyPREFS = "MyPREFS";
-    public String user_key;
+    public String token;
     private DataRepo dr;
     public User user;
     Fragment context = this;
@@ -100,7 +107,11 @@ public class UserInformation extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_user_information, container, false);
-        initUI(rootView);
+        try {
+            initUI(rootView);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return rootView;
     }
 
@@ -111,7 +122,7 @@ public class UserInformation extends Fragment {
         }
     }
 
-    private void initUI(final View rootView) {
+    private void initUI(final View rootView) throws JSONException {
 
         name  = (TextView)rootView.findViewById(R.id.stored_name_lbl);
         email = (TextView)rootView.findViewById(R.id.stored_email_lbl);
@@ -124,15 +135,9 @@ public class UserInformation extends Fragment {
         cancel = (Button)rootView.findViewById(R.id.cancel_btn);
         changePass = (CheckBox)rootView.findViewById(R.id.change_pw_cb);
 
-
         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-        user_key = sp.getString("USER_KEY", null);
-        Log.i("before",user_key);
-        dr = new DataRepo(getActivity());
-        user = dr.getUser(user_key);
-        Log.i("userEmail", user.getEmail());
-        Log.i("userName", user.getName());
-        Log.i("userPass", user.getPassword());
+        token = sp.getString("AUTH_TOKEN", null);
+        user = TokenUtility.parseUserToken(token);
 
         name.setText(user.getName().toString());
         email.setText(user.getEmail().toString());
@@ -169,7 +174,32 @@ public class UserInformation extends Fragment {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!dr.validateUser(user.getEmail().toString(), currentPass.getText().toString())) {
+                UserAdapter userAdapter = new UserAdapter();
+
+                try {
+                    userAdapter.changePass(user.getEmail(), currentPass.getText().toString(), newPass.getText().toString(), new Callback<HttpResponse>() {
+                        @Override
+                        public void onComplete(HttpResponse response) throws Exception {
+                            if (response.getHttpCode() == 204) {
+                                Toast.makeText(getActivity(), "Your Password has been Updated", Toast.LENGTH_LONG).show();
+                            }
+                            else if (response.getHttpCode() == 401) {
+                                currentPass.requestFocus();
+                                currentPass.setError("Incorrect Current Password");
+                            }
+                            else{
+                                Toast.makeText(getActivity(), "Error communicating with server. Status code: " + response.getHttpCode(), Toast.LENGTH_LONG).show();
+                            }
+
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                /*if (!dr.validateUser(user.getEmail().toString(), currentPass.getText().toString())) {
                     currentPass.setError("Incorrect Current Password");
                 } else if (!user.isValidPassword(newPass.getText().toString())) {
                     newPass.setError("Password must be less than four characters");
@@ -177,12 +207,11 @@ public class UserInformation extends Fragment {
                     newPass.setError("New passwords do not match.");
                 } else {
                     user.setPassword(newPass.getText().toString());
-                    Log.i("after", user.getPassword());
                     toChangePass = false;
                     ChangePasswordVisibility(toChangePass);
                     Toast.makeText(getActivity(), "Your Password has been Updated", Toast.LENGTH_LONG).show();
 
-                      }
+                      }*/
             }
         });
 
