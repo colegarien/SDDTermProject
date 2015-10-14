@@ -2,7 +2,9 @@ package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -12,14 +14,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import edu.uco.schambers.classmate.Models.Questions.Choice;
-import edu.uco.schambers.classmate.Models.Questions.TestIQuestion;
+import edu.uco.schambers.classmate.Models.Questions.DefaultMultiChoiceQuestion;
+import edu.uco.schambers.classmate.Models.Questions.IQuestion;
+import edu.uco.schambers.classmate.Models.Questions.IQuestion3Choices;
+import edu.uco.schambers.classmate.Models.Questions.IQuestionWoodchuck5choices;
 import edu.uco.schambers.classmate.R;
 
 /**
@@ -42,8 +50,9 @@ public class TeacherQuestionResults extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    Button displayResultsButton;
-    TestIQuestion testQuestion;
+    Button display3Choice;
+    Button display4Choice;
+    Button display5Choice;
 
     /**
      * Use this factory method to create a new instance of
@@ -85,18 +94,47 @@ public class TeacherQuestionResults extends Fragment {
         return root;
     }
 
-    private int getHighestAnswer(List<Choice> l) {
-        int highest = l.get(0).getChoiceAnswers();
-        for (Choice c : l) {
-            if (c.getChoiceAnswers() > highest){
-                highest=c.getChoiceAnswers();
-            }
+    private int getHighestAnswer(List<IQuestion> l) {
+        ArrayList<String> arrayList = new ArrayList<>();
+        for (IQuestion tq : l) {
+            arrayList.add(tq.getAnswer());
         }
-        System.out.println("highest: " + highest);
-        return highest;
+        ArrayList<Integer> totals = new ArrayList<>();
+        for (String key : arrayList) {
+            totals.add(Collections.frequency(arrayList, key));
+        }
+        Collections.sort(totals);
+//        System.out.println("GETHIGHESTANSWER: " + totals.get(totals.size() - 1));
+        return totals.get(totals.size() - 1);
+
     }
 
-    private int getHeightInPixels(int answers, int totalAnswers,int highest) {
+    private ArrayList<Integer> getTotals(List<IQuestion> l) {
+
+        ArrayList<String> arrayList = new ArrayList<>();
+        for (IQuestion tq : l) {
+            arrayList.add(tq.getAnswer());
+        }
+        ArrayList<Integer> totals = new ArrayList<>();
+        for (String key : l.get(0).getQuestionChoices()) {
+            totals.add(Collections.frequency(arrayList, key));
+            //   System.out.println(Collections.frequency(arrayList,key));
+        }
+
+        return totals;
+
+    }
+
+    private int getHeightInPixels(List<IQuestion> list, int answerIndex) {
+//        System.out.println("answer index" + answerIndex);
+        int highest = getHighestAnswer(list);
+        int totalAnswers = list.size();
+        ArrayList<String> arrayList = new ArrayList<>();
+        for (IQuestion tq : list) {
+            arrayList.add(tq.getAnswer());
+        }
+        int answers = Collections.frequency(arrayList,list.get(0).getQuestionChoices().get(answerIndex));
+//        System.out.println("answers " + answers);
         WindowManager wm = (WindowManager) getView().getContext().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
@@ -107,83 +145,237 @@ public class TeacherQuestionResults extends Fragment {
         double dblTotalAnswers = totalAnswers;
         double percentage = dblAnswers/dblTotalAnswers;
         double percentageOfHighest = dblHighest / dblTotalAnswers;
-       // System.out.println("percentageOfHighest: " + percentageOfHighest);
+        // System.out.println("percentageOfHighest: " + percentageOfHighest);
         double numberToMultiplyByAtEnd = height / percentageOfHighest;
 //        System.out.println("numbertobemultipliedatend:" + numberToMultiplyByAtEnd);
 //        System.out.println("Percentage: " + percentage);
 //        System.out.println("Height: " + height);
 //        System.out.println("Percentage * height: " + (int) (percentage * numberToMultiplyByAtEnd));
+//            System.out.println(percentage * numberToMultiplyByAtEnd + " getheightinpixels");
         return (int) (percentage * numberToMultiplyByAtEnd);
     }
 
     private void InitUI(View root) {
-        displayResultsButton = (Button) root.findViewById(R.id.displayResultsButton);
-
-        displayResultsButton.setOnClickListener(new View.OnClickListener() {
+        display3Choice = (Button) root.findViewById(R.id.display3Choice);
+        display4Choice = (Button) root.findViewById(R.id.display4Choice);
+        display5Choice = (Button) root.findViewById(R.id.display5Choice);
+        display5Choice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TestIQuestion testIQuestion = new TestIQuestion();
-                v = getView();
-                displayResultsButton.setVisibility(View.GONE);
-                //todo programmatically add textViews for any number of choices
-                List<Choice> c = testIQuestion.getQuestionChoicesChoiceClass();
+                List<IQuestion> inputList = new ArrayList<>();
 
-                TextView question = (TextView) v.findViewById(R.id.question);
-
-                TextView c1 = (TextView) v.findViewById(R.id.choice01);
-                TextView c2 = (TextView) v.findViewById(R.id.choice02);
-                TextView c3 = (TextView) v.findViewById(R.id.choice03);
-                TextView c4 = (TextView) v.findViewById(R.id.choice04);
-
-                c1.setText("A: " + c.get(0).getChoiceText());
-                c2.setText("B: " + c.get(1).getChoiceText());
-                c3.setText("C: " + c.get(2).getChoiceText());
-                c4.setText("D: " + c.get(3).getChoiceText());
-
-                TextView p1 = (TextView) v.findViewById(R.id.colortext01Text);
-                TextView p2 = (TextView) v.findViewById(R.id.colortext02Text);
-                TextView p3 = (TextView) v.findViewById(R.id.colortext03Text);
-                TextView p4 = (TextView) v.findViewById(R.id.colortext04Text);
-
-                TextView bottomText1 = (TextView) v.findViewById(R.id.bottomText01);
-                TextView bottomText2 = (TextView) v.findViewById(R.id.bottomText02);
-                TextView bottomText3 = (TextView) v.findViewById(R.id.bottomText03);
-                TextView bottomText4 = (TextView) v.findViewById(R.id.bottomText04);
-
-                bottomText1.setText("A");
-                bottomText2.setText("B");
-                bottomText3.setText("C");
-                bottomText4.setText("D");
+                for (int i = 0; i < 12; i++) {
+                    IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(0));
+                    inputList.add(mockQuestion);
+                }
+                for (int i = 0; i < 8; i++) {
+                    IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(1));
+                    inputList.add(mockQuestion);
+                }
+                for (int i = 0; i < 5; i++) {
+                    IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(2));
+                    inputList.add(mockQuestion);
+                }
+                for (int i = 0; i < 10; i++) {
+                    IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(3));
+                    inputList.add(mockQuestion);
+                }
+                for (int i = 0; i < 3; i++) {
+                    IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(4));
+                    inputList.add(mockQuestion);
+                }
+            DisplayResults(v,inputList);
 
 
+            }
+        });
 
-                question.setText(testIQuestion.getQuestionText());
+        display4Choice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<IQuestion> inputList = new ArrayList<>();
 
-                int totalAnswers = testIQuestion.getTotalAnswers();
-                int highest = getHighestAnswer(testIQuestion.getQuestionChoicesChoiceClass());
 
-                TextView bar1 = (TextView) v.findViewById(R.id.colortext01);
-                bar1.setHeight(getHeightInPixels(c.get(0).getChoiceAnswers(), totalAnswers, highest));
-                p1.setText(String.format("%.1f",((double)c.get(0).getChoiceAnswers() / (double) totalAnswers * 100.0)) + "%");
+                for (int i = 0; i < 4; i++) {
+                    IQuestion mockQuestion = new DefaultMultiChoiceQuestion();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(0));
+                    inputList.add(mockQuestion);
+                }
+                for (int i = 0; i < 10; i++) {
+                    IQuestion mockQuestion = new DefaultMultiChoiceQuestion();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(1));
+                    inputList.add(mockQuestion);
+                }
+                for (int i = 0; i < 36; i++) {
+                    IQuestion mockQuestion = new DefaultMultiChoiceQuestion();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(2));
+                    inputList.add(mockQuestion);
+                }
+                for (int i = 0; i < 20; i++) {
+                    IQuestion mockQuestion = new DefaultMultiChoiceQuestion();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(3));
+                    inputList.add(mockQuestion);
+                }
 
-                TextView bar2 = (TextView) v.findViewById(R.id.colortext02);
-                bar2.setHeight(getHeightInPixels(c.get(1).getChoiceAnswers(), totalAnswers,highest));
-                p2.setText(String.format("%.1f", ((double) c.get(1).getChoiceAnswers() / (double) totalAnswers * 100.0)) + "%");
+                DisplayResults(v,inputList);
 
-                TextView bar3 = (TextView) v.findViewById(R.id.colortext03);
-                bar3.setHeight(getHeightInPixels(c.get(2).getChoiceAnswers(), totalAnswers,highest));
-                p3.setText(String.format("%.1f", ((double) c.get(2).getChoiceAnswers() / (double) totalAnswers * 100.0)) + "%");
 
-                TextView bar4 = (TextView) v.findViewById(R.id.colortext04);
-                bar4.setHeight(getHeightInPixels(c.get(3).getChoiceAnswers(),totalAnswers, highest));
-                p4.setText(String.format("%.1f", ((double) c.get(3).getChoiceAnswers() / (double) totalAnswers * 100.0)) + "%");
+            }
+        });
 
+        display3Choice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<IQuestion> inputList = new ArrayList<>();
+
+
+                for (int i = 0; i < 10; i++) {
+                    IQuestion mockQuestion = new IQuestion3Choices();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(0));
+                    inputList.add(mockQuestion);
+                }
+                for (int i = 0; i < 4; i++) {
+                    IQuestion mockQuestion = new IQuestion3Choices();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(1));
+                    inputList.add(mockQuestion);
+                }
+                for (int i = 0; i < 5; i++) {
+                    IQuestion mockQuestion = new IQuestion3Choices();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(2));
+                    inputList.add(mockQuestion);
+                }
+
+
+                DisplayResults(v,inputList);
 
 
             }
         });
     }
 
+    private void DisplayResults(View v,List<IQuestion> inputList) {
+
+
+        List<String> choices = inputList.get(0).getQuestionChoices();
+        v = getView();
+        View choiceLayout = v.findViewById(R.id.choicesLayout);
+        View barLayout = v.findViewById(R.id.lin02);
+        RelativeLayout r2 = (RelativeLayout) barLayout;
+        TextView questionTv = new TextView(v.getContext());
+        questionTv.setText(inputList.get(0).getQuestionText());
+        questionTv.setTextSize(23);
+        questionTv.setId('A' - 1);
+        RelativeLayout rl = (RelativeLayout) choiceLayout;
+        rl.addView(questionTv);
+
+
+
+        display3Choice.setVisibility(View.GONE);
+        display4Choice.setVisibility(View.GONE);
+        display5Choice.setVisibility(View.GONE);
+
+        char letters = 'A';
+        ArrayList<TextView> choiceTextViews = new ArrayList<>();
+        for (String tq : choices) {
+            TextView tv = new TextView(v.getContext());
+            tv.setId(letters);
+            tv.setText(letters + ": " + tq);
+            letters++;
+            choiceTextViews.add(tv);
+        }
+
+        for (TextView tv : choiceTextViews) {
+            RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params1.addRule(RelativeLayout.BELOW, tv.getId() -1);
+            rl.addView(tv, params1);
+        }
+
+        TextView holder = new TextView(v.getContext());
+        WindowManager wm = (WindowManager) getView().getContext().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+        int width = size.x / choices.size() - 55;
+        holder.setHeight(0);
+        holder.setWidth(0);
+        params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        params1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        holder.setGravity(RelativeLayout.ALIGN_BOTTOM);
+        holder.setId('A' - 61);
+        holder.setBackground(new ColorDrawable(Color.BLUE));
+
+        r2.addView(holder, params1);
+
+
+        //todo make colors random
+        int[] colors = new int[20];
+        colors[0]= Color.BLUE;
+        colors[1]= Color.RED;
+        colors[2]= Color.GREEN;
+        colors[3]= Color.YELLOW;
+        colors[4]= Color.CYAN;
+        colors[6]= Color.RED;
+
+
+
+        letters = 'A';
+        ArrayList<TextView> bars = new ArrayList<>();
+        for (String cc : choices) {
+            TextView bar = new TextView(v.getContext());
+            bar.setHeight(getHeightInPixels(inputList, choices.indexOf(cc)));
+            //     System.out.println(getHeightInPixels(testIQuestion, testIQuestion.get(0).getQuestionChoices().indexOf(cc)) + "Height");
+            bar.setWidth(width);
+            //      System.out.println(width + " width");
+            bar.setId(letters - 60);
+            bar.setBackground(new ColorDrawable(colors[letters - 65]));
+            letters++;
+
+            bars.add(bar);
+
+        }
+        //      System.out.println("num of bars: " + bars.size());
+        for (TextView tv : bars) {
+            params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            params1.addRule(RelativeLayout.RIGHT_OF, tv.getId() - 1);
+            r2.addView(tv, params1);
+        }
+
+        ArrayList<Integer> totals = getTotals(inputList);
+//                for (int t : totals) {
+//                    System.out.println(t);
+//                }
+        ArrayList<TextView> percentages = new ArrayList<>();
+        for (Integer i: totals) {
+            TextView tv = new TextView(v.getContext());
+            String s = String.format("%.1f", (double) i / (double) inputList.size() * 100.0);
+            tv.setText(s + "%");
+
+            percentages.add(tv);
+        }
+        letters = 'A';
+
+        for (TextView tv : percentages) {
+            params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params1.addRule(RelativeLayout.ABOVE, letters - 60);
+            params1.addRule(RelativeLayout.RIGHT_OF, letters - 61);
+            r2.addView(tv, params1);
+            params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params1.addRule(RelativeLayout.ALIGN_BOTTOM, letters - 60);
+            params1.addRule(RelativeLayout.RIGHT_OF, letters - 61);
+            TextView pct = new TextView(v.getContext());
+            pct.setText(letters + "");
+            r2.addView(pct,params1);
+
+            letters++;
+        }
+    }
 
 
     // TODO: Rename method, update argument and hook method into UI event
