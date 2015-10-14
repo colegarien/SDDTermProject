@@ -14,10 +14,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:id="@+id/displayResultsButton"
-            android:text="Display Results"
+            android:id="@+id/display3Choice"
+            android:text="Display 3 Choice Question"
             />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:id="@+id/display4Choice"
+            android:layout_below="@+id/display3Choice"
+            android:text="Display 4 Choice Question"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:id="@+id/display5Choice"
+            android:text="Display 5 Choice Question"
+            android:layout_below="@+id/display4Choice"
+            />
 
 
 

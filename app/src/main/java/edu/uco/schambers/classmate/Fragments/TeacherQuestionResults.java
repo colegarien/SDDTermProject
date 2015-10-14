@@ -24,7 +24,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import edu.uco.schambers.classmate.Models.Questions.DefaultMultiChoiceQuestion;
 import edu.uco.schambers.classmate.Models.Questions.IQuestion;
+import edu.uco.schambers.classmate.Models.Questions.IQuestion3Choices;
 import edu.uco.schambers.classmate.Models.Questions.IQuestionWoodchuck5choices;
 import edu.uco.schambers.classmate.R;
 
@@ -48,7 +50,9 @@ public class TeacherQuestionResults extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    Button displayResultsButton;
+    Button display3Choice;
+    Button display4Choice;
+    Button display5Choice;
 
     /**
      * Use this factory method to create a new instance of
@@ -152,15 +156,14 @@ public class TeacherQuestionResults extends Fragment {
     }
 
     private void InitUI(View root) {
-        displayResultsButton = (Button) root.findViewById(R.id.displayResultsButton);
-
-        displayResultsButton.setOnClickListener(new View.OnClickListener() {
+        display3Choice = (Button) root.findViewById(R.id.display3Choice);
+        display4Choice = (Button) root.findViewById(R.id.display4Choice);
+        display5Choice = (Button) root.findViewById(R.id.display5Choice);
+        display5Choice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 List<IQuestion> inputList = new ArrayList<>();
 
-                ArrayList<IQuestionWoodchuck5choices> testIQuestion = new ArrayList<>();
                 for (int i = 0; i < 12; i++) {
                     IQuestion mockQuestion = new IQuestionWoodchuck5choices();
                     mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(0));
@@ -186,148 +189,193 @@ public class TeacherQuestionResults extends Fragment {
                     mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(4));
                     inputList.add(mockQuestion);
                 }
-
-                List<String> choices = inputList.get(0).getQuestionChoices();
-
-//
-//
-//                for (int i = 0; i < 8; i++) {
-//                    IQuestionWoodchuck5choices tq = new IQuestionWoodchuck5choices();
-//                    tq.answerQuestion(tq.getQuestionChoices().get(1));
-//                    testIQuestion.add(tq);
-//                }
-//                for (int i = 0; i < 5; i++) {
-//                    IQuestionWoodchuck5choices tq = new IQuestionWoodchuck5choices();
-//                    tq.answerQuestion(tq.getQuestionChoices().get(2));
-//                    testIQuestion.add(tq);
-//                }
-//                for (int i = 0; i < 10; i++) {
-//                    IQuestionWoodchuck5choices tq = new IQuestionWoodchuck5choices();
-//                    tq.answerQuestion(tq.getQuestionChoices().get(3));
-//                    testIQuestion.add(tq);
-//                }
-//                for (int i = 0; i < 3; i++) {
-//                    IQuestionWoodchuck5choices tq = new IQuestionWoodchuck5choices();
-//                    tq.answerQuestion(tq.getQuestionChoices().get(4));
-//                    testIQuestion.add(tq);
-//                }
-
-                v = getView();
-                View choiceLayout = v.findViewById(R.id.choicesLayout);
-                View barLayout = v.findViewById(R.id.lin02);
-                RelativeLayout r2 = (RelativeLayout) barLayout;
-                TextView questionTv = new TextView(v.getContext());
-                questionTv.setText(inputList.get(0).getQuestionText());
-                questionTv.setTextSize(23);
-                questionTv.setId('A' - 1);
-                RelativeLayout rl = (RelativeLayout) choiceLayout;
-                rl.addView(questionTv);
+            DisplayResults(v,inputList);
 
 
+            }
+        });
 
-                displayResultsButton.setVisibility(View.GONE);
+        display4Choice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<IQuestion> inputList = new ArrayList<>();
 
-                char letters = 'A';
-                ArrayList<TextView> choiceTextViews = new ArrayList<>();
-                for (String tq : choices) {
-                    TextView tv = new TextView(v.getContext());
-                    tv.setId(letters);
-                    tv.setText(letters + ": " + tq);
-                    letters++;
-                    choiceTextViews.add(tv);
+
+                for (int i = 0; i < 4; i++) {
+                    IQuestion mockQuestion = new DefaultMultiChoiceQuestion();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(0));
+                    inputList.add(mockQuestion);
+                }
+                for (int i = 0; i < 10; i++) {
+                    IQuestion mockQuestion = new DefaultMultiChoiceQuestion();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(1));
+                    inputList.add(mockQuestion);
+                }
+                for (int i = 0; i < 36; i++) {
+                    IQuestion mockQuestion = new DefaultMultiChoiceQuestion();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(2));
+                    inputList.add(mockQuestion);
+                }
+                for (int i = 0; i < 20; i++) {
+                    IQuestion mockQuestion = new DefaultMultiChoiceQuestion();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(3));
+                    inputList.add(mockQuestion);
                 }
 
-                for (TextView tv : choiceTextViews) {
-                    RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    params1.addRule(RelativeLayout.BELOW, tv.getId() -1);
-                    rl.addView(tv, params1);
+                DisplayResults(v,inputList);
+
+
+            }
+        });
+
+        display3Choice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<IQuestion> inputList = new ArrayList<>();
+
+
+                for (int i = 0; i < 10; i++) {
+                    IQuestion mockQuestion = new IQuestion3Choices();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(0));
+                    inputList.add(mockQuestion);
+                }
+                for (int i = 0; i < 4; i++) {
+                    IQuestion mockQuestion = new IQuestion3Choices();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(1));
+                    inputList.add(mockQuestion);
+                }
+                for (int i = 0; i < 5; i++) {
+                    IQuestion mockQuestion = new IQuestion3Choices();
+                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(2));
+                    inputList.add(mockQuestion);
                 }
 
-                TextView holder = new TextView(v.getContext());
-                WindowManager wm = (WindowManager) getView().getContext().getSystemService(Context.WINDOW_SERVICE);
-                Display display = wm.getDefaultDisplay();
-                Point size = new Point();
-                display.getSize(size);
-                RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
-                int width = size.x / choices.size() - 55;
-                holder.setHeight(0);
-                holder.setWidth(0);
-                params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                params1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                holder.setGravity(RelativeLayout.ALIGN_BOTTOM);
-                holder.setId('A' - 61);
-                holder.setBackground(new ColorDrawable(Color.BLUE));
 
-                r2.addView(holder, params1);
+                DisplayResults(v,inputList);
 
-
-                //todo make colors random
-                int[] colors = new int[20];
-                colors[0]= Color.BLUE;
-                colors[1]= Color.RED;
-                colors[2]= Color.GREEN;
-                colors[3]= Color.YELLOW;
-                colors[4]= Color.CYAN;
-                colors[6]= Color.RED;
-
-
-
-                letters = 'A';
-                ArrayList<TextView> bars = new ArrayList<>();
-                for (String cc : choices) {
-                    TextView bar = new TextView(v.getContext());
-                    bar.setHeight(getHeightInPixels(inputList, choices.indexOf(cc)));
-                    //     System.out.println(getHeightInPixels(testIQuestion, testIQuestion.get(0).getQuestionChoices().indexOf(cc)) + "Height");
-                    bar.setWidth(width);
-                    //      System.out.println(width + " width");
-                    bar.setId(letters - 60);
-                    bar.setBackground(new ColorDrawable(colors[letters - 65]));
-                    letters++;
-
-                    bars.add(bar);
-
-                }
-                //      System.out.println("num of bars: " + bars.size());
-                for (TextView tv : bars) {
-                    params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    params1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                    params1.addRule(RelativeLayout.RIGHT_OF, tv.getId() - 1);
-                    r2.addView(tv, params1);
-                }
-
-                ArrayList<Integer> totals = getTotals(inputList);
-//                for (int t : totals) {
-//                    System.out.println(t);
-//                }
-                ArrayList<TextView> percentages = new ArrayList<>();
-                for (Integer i: totals) {
-                    TextView tv = new TextView(v.getContext());
-                    String s = String.format("%.1f", (double) i / (double) inputList.size() * 100.0);
-                    tv.setText(s + "%");
-
-                    percentages.add(tv);
-                }
-                letters = 'A';
-
-                for (TextView tv : percentages) {
-                    params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    params1.addRule(RelativeLayout.ABOVE, letters - 60);
-                    params1.addRule(RelativeLayout.RIGHT_OF, letters - 61);
-                    r2.addView(tv, params1);
-                    params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    params1.addRule(RelativeLayout.ALIGN_BOTTOM, letters - 60);
-                    params1.addRule(RelativeLayout.RIGHT_OF, letters - 61);
-                    TextView pct = new TextView(v.getContext());
-                    pct.setText(letters + "");
-                    r2.addView(pct,params1);
-
-                    letters++;
-                }
 
             }
         });
     }
 
+    private void DisplayResults(View v,List<IQuestion> inputList) {
+
+
+        List<String> choices = inputList.get(0).getQuestionChoices();
+        v = getView();
+        View choiceLayout = v.findViewById(R.id.choicesLayout);
+        View barLayout = v.findViewById(R.id.lin02);
+        RelativeLayout r2 = (RelativeLayout) barLayout;
+        TextView questionTv = new TextView(v.getContext());
+        questionTv.setText(inputList.get(0).getQuestionText());
+        questionTv.setTextSize(23);
+        questionTv.setId('A' - 1);
+        RelativeLayout rl = (RelativeLayout) choiceLayout;
+        rl.addView(questionTv);
+
+
+
+        display3Choice.setVisibility(View.GONE);
+        display4Choice.setVisibility(View.GONE);
+        display5Choice.setVisibility(View.GONE);
+
+        char letters = 'A';
+        ArrayList<TextView> choiceTextViews = new ArrayList<>();
+        for (String tq : choices) {
+            TextView tv = new TextView(v.getContext());
+            tv.setId(letters);
+            tv.setText(letters + ": " + tq);
+            letters++;
+            choiceTextViews.add(tv);
+        }
+
+        for (TextView tv : choiceTextViews) {
+            RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params1.addRule(RelativeLayout.BELOW, tv.getId() -1);
+            rl.addView(tv, params1);
+        }
+
+        TextView holder = new TextView(v.getContext());
+        WindowManager wm = (WindowManager) getView().getContext().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+        int width = size.x / choices.size() - 55;
+        holder.setHeight(0);
+        holder.setWidth(0);
+        params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        params1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        holder.setGravity(RelativeLayout.ALIGN_BOTTOM);
+        holder.setId('A' - 61);
+        holder.setBackground(new ColorDrawable(Color.BLUE));
+
+        r2.addView(holder, params1);
+
+
+        //todo make colors random
+        int[] colors = new int[20];
+        colors[0]= Color.BLUE;
+        colors[1]= Color.RED;
+        colors[2]= Color.GREEN;
+        colors[3]= Color.YELLOW;
+        colors[4]= Color.CYAN;
+        colors[6]= Color.RED;
+
+
+
+        letters = 'A';
+        ArrayList<TextView> bars = new ArrayList<>();
+        for (String cc : choices) {
+            TextView bar = new TextView(v.getContext());
+            bar.setHeight(getHeightInPixels(inputList, choices.indexOf(cc)));
+            //     System.out.println(getHeightInPixels(testIQuestion, testIQuestion.get(0).getQuestionChoices().indexOf(cc)) + "Height");
+            bar.setWidth(width);
+            //      System.out.println(width + " width");
+            bar.setId(letters - 60);
+            bar.setBackground(new ColorDrawable(colors[letters - 65]));
+            letters++;
+
+            bars.add(bar);
+
+        }
+        //      System.out.println("num of bars: " + bars.size());
+        for (TextView tv : bars) {
+            params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            params1.addRule(RelativeLayout.RIGHT_OF, tv.getId() - 1);
+            r2.addView(tv, params1);
+        }
+
+        ArrayList<Integer> totals = getTotals(inputList);
+//                for (int t : totals) {
+//                    System.out.println(t);
+//                }
+        ArrayList<TextView> percentages = new ArrayList<>();
+        for (Integer i: totals) {
+            TextView tv = new TextView(v.getContext());
+            String s = String.format("%.1f", (double) i / (double) inputList.size() * 100.0);
+            tv.setText(s + "%");
+
+            percentages.add(tv);
+        }
+        letters = 'A';
+
+        for (TextView tv : percentages) {
+            params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params1.addRule(RelativeLayout.ABOVE, letters - 60);
+            params1.addRule(RelativeLayout.RIGHT_OF, letters - 61);
+            r2.addView(tv, params1);
+            params1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params1.addRule(RelativeLayout.ALIGN_BOTTOM, letters - 60);
+            params1.addRule(RelativeLayout.RIGHT_OF, letters - 61);
+            TextView pct = new TextView(v.getContext());
+            pct.setText(letters + "");
+            r2.addView(pct,params1);
+
+            letters++;
+        }
+    }
 
 
     // TODO: Rename method, update argument and hook method into UI event
