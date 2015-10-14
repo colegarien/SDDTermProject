@@ -24,7 +24,8 @@ public class StudentRollCallService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        socketAction = new StudentRollCallAction();
+        String studentId = intent.getStringExtra("id");
+        socketAction = new StudentRollCallAction(studentId);
 
         Log.d("SocketAction", "Target is group owner");
         socketAction.execute();

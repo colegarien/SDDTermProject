@@ -37,6 +37,7 @@ import edu.uco.schambers.classmate.Fragments.Login;
 import edu.uco.schambers.classmate.Fragments.ResetPassword;
 import edu.uco.schambers.classmate.Fragments.StudentInterface;
 import edu.uco.schambers.classmate.Fragments.StudentResponseFragment;
+import edu.uco.schambers.classmate.Fragments.StudentRollCall;
 import edu.uco.schambers.classmate.Fragments.TeacherInterface;
 import edu.uco.schambers.classmate.Fragments.TeacherQuestionResults;
 import edu.uco.schambers.classmate.Fragments.UserInformation;
@@ -63,9 +64,6 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
     public static final String SERVICE_INSTANCE = "_test";
     // For creating service request, and initiate discovery
     private WifiP2pDnsSdServiceRequest serviceRequest;
-
-    // Constants
-    public static final String SERVICE_FOUND = "edu.uco.schambers.classmate.wifip2p.service_found";
 
     private WifiP2pDevice targetDevice = null;
 
@@ -388,7 +386,7 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
             mManager.requestGroupInfo(mChannel, new WifiP2pManager.GroupInfoListener() {
                 @Override
                 public void onGroupInfoAvailable(WifiP2pGroup group) {
-                    if (group != null) {
+                    if (group != null && group.isGroupOwner()) {
                         mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
                             @Override
                             public void onSuccess() {
@@ -407,5 +405,17 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         }
 
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed(){
+        Fragment f = getFragmentManager().findFragmentById(R.id.fragment_container);
+
+        // Back button is disabled if student roll call fragment is processing check-in
+        if (f instanceof StudentRollCall && !((StudentRollCall) f).allowBackPressed()){
+            return;
+        }
+
+        super.onBackPressed();
     }
 }
