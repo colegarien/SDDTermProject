@@ -125,6 +125,11 @@ public class StudentResponseFragment extends Fragment
     public void onResume()
     {
         super.onResume();
+        bindToService();
+    }
+
+    private void bindToService()
+    {
         Intent i = new Intent(getActivity(), StudentQuestionService.class);
         i.setAction(StudentQuestionService.ACTION_START_SERVICE_STICKY);
         getActivity().startService(i);
