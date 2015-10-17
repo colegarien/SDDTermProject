@@ -31,7 +31,6 @@ import edu.uco.schambers.classmate.Services.StudentQuestionService;
 
 public class StudentResponseFragment extends Fragment
 {
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String ARG_QUESTION = "edu.uco.schambers.classmate.arq_question";
 
     private IQuestion question;
@@ -41,6 +40,7 @@ public class StudentResponseFragment extends Fragment
     private Button sendBtn;
     private TextView questionText;
     private View questionCardView;
+    private View rootView;
 
     private StudentQuestionService questionService;
     private boolean questionServiceIsBound;
@@ -53,6 +53,14 @@ public class StudentResponseFragment extends Fragment
             StudentQuestionService.LocalBinder binder = (StudentQuestionService.LocalBinder) service;
             questionService = binder.getService();
             questionServiceIsBound = true;
+            question = questionService.getQuestion();
+            if (question != null)
+            {
+                questionCardView = getActivity().getLayoutInflater().inflate(R.layout.question_response_card, (ViewGroup) rootView);
+                initUI(questionCardView);
+                populateQuestionCardFromQuestion();
+
+            }
         }
 
         @Override
@@ -82,6 +90,10 @@ public class StudentResponseFragment extends Fragment
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        Intent i = new Intent(getActivity(), StudentQuestionService.class);
+        i.setAction(StudentQuestionService.ACTION_START_SERVICE_STICKY);
+        getActivity().startService(i);
+        getActivity().bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
         if (getArguments() != null)
         {
             question = (IQuestion) getArguments().getSerializable(ARG_QUESTION);
@@ -93,18 +105,7 @@ public class StudentResponseFragment extends Fragment
                              Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_student_response, container, false);
-        if(questionServiceIsBound)
-        {
-            question = questionService.getQuestion();
-        }
-        if (question != null)
-        {
-            questionCardView = inflater.inflate(R.layout.question_response_card, (ViewGroup) rootView);
-            initUI(questionCardView);
-            populateQuestionCardFromQuestion();
-
-        }
+        rootView = inflater.inflate(R.layout.fragment_student_response, container, false);
         return rootView;
     }
 
@@ -112,8 +113,6 @@ public class StudentResponseFragment extends Fragment
     public void onStart()
     {
         super.onStart();
-        Intent i = new Intent(getActivity(), StudentQuestionService.class);
-        getActivity().bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override

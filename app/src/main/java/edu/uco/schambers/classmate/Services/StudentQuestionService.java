@@ -28,6 +28,7 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
     public static final String ACTION_NOTIFY_QUESTION_RECEIVED = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_NOTIFY_QUESTION_RECEIVED";
     public static final String ACTION_REQUEST_QUESTION_RESPONSE = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_REQUEST_QUESTION_RESPONSE";
     public static final String ACTION_SEND_QUESTION_RESPONSE = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_SEND_QUESTION_RESPONSE";
+    public static final String ACTION_START_SERVICE_STICKY= "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_START_SERVICE_STICKY";
 
     private final IBinder serviceBinder = new LocalBinder();
     private SocketAction listenForQuestions;
@@ -134,8 +135,7 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
     public void onQuestionReceived(IQuestion question)
     {
         this.question = question;
-        Intent intent = getNewSendQuestionIntent(this, question);
-        startService(intent);
+        notifyQuestionReceived(question);
     }
 
     @Override
