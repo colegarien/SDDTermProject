@@ -3,10 +3,14 @@ package edu.uco.schambers.classmate.Fragments;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.IBinder;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,11 +31,9 @@ import edu.uco.schambers.classmate.Services.StudentQuestionService;
 
 public class StudentResponseFragment extends Fragment
 {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String ARG_QUESTION = "edu.uco.schambers.classmate.arq_question";
 
-    // TODO: Rename and change types of parameters
     private IQuestion question;
 
     //UI Components
@@ -39,6 +41,26 @@ public class StudentResponseFragment extends Fragment
     private Button sendBtn;
     private TextView questionText;
     private View questionCardView;
+
+    private StudentQuestionService questionService;
+    private boolean questionServiceIsBound;
+
+    private ServiceConnection serviceConnection = new ServiceConnection()
+    {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service)
+        {
+            StudentQuestionService.LocalBinder binder = (StudentQuestionService.LocalBinder) service;
+            questionService = binder.getService();
+            questionServiceIsBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name)
+        {
+            questionServiceIsBound = false;
+        }
+    };
 
     private OnFragmentInteractionListener mListener;
 
@@ -72,6 +94,10 @@ public class StudentResponseFragment extends Fragment
     {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_student_response, container, false);
+        if(questionServiceIsBound)
+        {
+            question = questionService.getQuestion();
+        }
         if (question != null)
         {
             questionCardView = inflater.inflate(R.layout.question_response_card, (ViewGroup) rootView);
@@ -88,6 +114,24 @@ public class StudentResponseFragment extends Fragment
             populateQuestionCardFromQuestion();
         }
         return rootView;
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        Intent i = new Intent(getActivity(), StudentQuestionService.class);
+        getActivity().bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onStop()
+    {
+        if(questionServiceIsBound)
+        {
+            getActivity().unbindService(serviceConnection);
+        }
+        super.onStop();
     }
 
     private void initUI(final View rootView)
