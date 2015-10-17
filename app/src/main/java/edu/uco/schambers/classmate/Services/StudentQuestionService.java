@@ -142,6 +142,8 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
     public void onQuestionSentSuccessfully(String domain, int port)
     {
         this.question = null;
+        NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(R.integer.question_received_notification);
         final String domainFinal = domain;
         final int portFinal = port;
         //Yes, I know this is totally awful. Its not going to stay this way, I swear. Just want these toasts to fire for debug purposes.
