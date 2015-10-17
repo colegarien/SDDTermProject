@@ -105,14 +105,6 @@ public class StudentResponseFragment extends Fragment
             populateQuestionCardFromQuestion();
 
         }
-        //inserting a question for testing
-        else
-        {
-            question = new DefaultMultiChoiceQuestion();
-            questionCardView = inflater.inflate(R.layout.question_response_card, (ViewGroup) rootView);
-            initUI(questionCardView);
-            populateQuestionCardFromQuestion();
-        }
         return rootView;
     }
 
