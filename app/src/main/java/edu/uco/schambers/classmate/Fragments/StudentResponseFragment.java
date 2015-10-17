@@ -72,6 +72,12 @@ public class StudentResponseFragment extends Fragment
 
     private OnFragmentInteractionListener mListener;
 
+    public static StudentResponseFragment newInstance()
+    {
+        StudentResponseFragment fragment = new StudentResponseFragment();
+        return fragment;
+    }
+
     public static StudentResponseFragment newInstance(IQuestion question)
     {
         StudentResponseFragment fragment = new StudentResponseFragment();

@@ -110,9 +110,6 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
 
         Intent notifyIntent = new Intent(this, MainActivity.class);
         notifyIntent.setAction(ACTION_REQUEST_QUESTION_RESPONSE);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(StudentResponseFragment.ARG_QUESTION, question);
-        notifyIntent.putExtras(bundle);
         PendingIntent notifyPendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         notificationBuilder.setContentIntent(notifyPendingIntent);
 
