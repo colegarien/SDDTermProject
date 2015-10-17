@@ -90,10 +90,6 @@ public class StudentResponseFragment extends Fragment
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        Intent i = new Intent(getActivity(), StudentQuestionService.class);
-        i.setAction(StudentQuestionService.ACTION_START_SERVICE_STICKY);
-        getActivity().startService(i);
-        getActivity().bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
         if (getArguments() != null)
         {
             question = (IQuestion) getArguments().getSerializable(ARG_QUESTION);
@@ -110,19 +106,23 @@ public class StudentResponseFragment extends Fragment
     }
 
     @Override
-    public void onStart()
-    {
-        super.onStart();
-    }
-
-    @Override
-    public void onStop()
+    public void onPause()
     {
         if(questionServiceIsBound)
         {
             getActivity().unbindService(serviceConnection);
         }
-        super.onStop();
+        super.onPause();
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        Intent i = new Intent(getActivity(), StudentQuestionService.class);
+        i.setAction(StudentQuestionService.ACTION_START_SERVICE_STICKY);
+        getActivity().startService(i);
+        getActivity().bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     private void initUI(final View rootView)
