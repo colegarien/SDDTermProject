@@ -89,9 +89,7 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         {
 
             case StudentQuestionService.ACTION_REQUEST_QUESTION_RESPONSE:
-                Bundle bundle= intent.getExtras();
-                IQuestion question =(IQuestion) bundle.getSerializable(StudentResponseFragment.ARG_QUESTION);
-                StudentResponseFragment studentResponseFragment= StudentResponseFragment.newInstance(question);
+                StudentResponseFragment studentResponseFragment= StudentResponseFragment.newInstance();
                 trans.replace(R.id.fragment_container,studentResponseFragment);
                 break;
 
