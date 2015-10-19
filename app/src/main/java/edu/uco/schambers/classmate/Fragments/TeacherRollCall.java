@@ -101,8 +101,16 @@ public class TeacherRollCall extends Fragment {
         token = sp.getString("AUTH_TOKEN", null);
         user = TokenUtility.parseUserToken(token);
 
-        // intialize class_open to false
-        sp.edit().putBoolean(CLASS_OPEN,false).apply();
+        // initialize class_open to false if doesn't exist
+        if(!sp.contains(CLASS_OPEN))
+            sp.edit().putBoolean(CLASS_OPEN,false).apply();
+
+        // set the button's text properly
+        if (sp.getBoolean(CLASS_OPEN,false)) {
+            startBtn.setText(getResources().getString(R.string.btn_roll_call_stop));
+        }else{
+            startBtn.setText(getResources().getString(R.string.btn_roll_call_start));
+        }
 
         teacherText.setText(user.getName().toString());
 
