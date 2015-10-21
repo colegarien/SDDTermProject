@@ -47,6 +47,9 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
     String currentTeacher = "";
     String student_id = "";
 
+    // TODO: change to special Student Adapter
+    private ArrayList<String> studentInfo = new ArrayList<String>();
+
     public TeacherRollCallService() {
     }
 
@@ -106,17 +109,23 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
         return locBinder;
     }
 
+    // for bound fragments
+    public ArrayList<String> getStudentInfo(){
+        return studentInfo;
+    }
+
     @Override
     public void onStudentConnect(String id, InetAddress ip) {
         // TODO: add student ID to ArrayList (possibly query from DB)
         Log.d("StudentConnect", "Connected ID: " + id);
         student_id = id;
-        handler.post(new Runnable() {
+        /*handler.post(new Runnable() {
             @Override
             public void run() {
                 Toast.makeText(TeacherRollCallService.this.getApplicationContext(), "Student ID: " + student_id, Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
+        studentInfo.add(student_id);
         if (ip!=null){
             IPAddressManager.getInstance().addStudentAddress(ip);
             Log.d("StudentConnect", "IP Added: " + ip.toString());
