@@ -14,12 +14,15 @@
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +62,9 @@ public class TeacherRollCall extends Fragment {
     public User user;
     private String token;
 
+    // for Service binding
+    TeacherRollCallService teacherRollCallService;
+    private boolean isBound = false;
 
     // TODO: Get Class Name from DB/Dropdown Box
     public static TeacherRollCall newInstance() {
@@ -92,6 +98,30 @@ public class TeacherRollCall extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onStop(){
+        super.onStop();
+        // unbind from service it is bound
+        unBindService();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        // unbind from service it is bound
+        unBindService();
+    }
+
+    private void unBindService(){
+        if(isBound){
+            getActivity().unbindService(serviceConnection);
+            isBound = false;
+        }
+    }
+    private void bindService(){
+        Intent intent = TeacherRollCallService.getNewStartSessionIntent(getActivity(), teacherText.getText().toString());
+        getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
 
     private void initUI(final View rootView) throws JSONException {
         startBtn = (Button) rootView.findViewById(R.id.btn_start_roll_call);
@@ -131,6 +161,9 @@ public class TeacherRollCall extends Fragment {
                         ((MainActivity) activity).addLocalService(SocketAction.ROLL_CALL_PORT_NUMBER, teacherText.getText().toString(), classText.getText().toString(), true);
                     }
 
+                    // bind the service
+                    bindService();
+
                     // TODO: lock all input (like class)
                     startBtn.setText(getResources().getString(R.string.btn_roll_call_stop));
                     sp.edit().putBoolean(CLASS_OPEN,true).apply();
@@ -142,6 +175,9 @@ public class TeacherRollCall extends Fragment {
                     if (activity instanceof MainActivity) {
                         ((MainActivity) activity).removeLocalService(SocketAction.ROLL_CALL_PORT_NUMBER, teacherText.getText().toString(), classText.getText().toString(), true);
                     }
+
+                    // unbind the service
+                    unBindService();
 
                     // TODO: unlock inputs (like class)
                     startBtn.setText(getResources().getString(R.string.btn_roll_call_start));
@@ -173,5 +209,20 @@ public class TeacherRollCall extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    // define callbacks for service binding, passed to bindService()
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // We've bound to TeacherRollCallService, cast the IBinder and get TeacherRollCallService instance
+            TeacherRollCallService.LocalBinder binder = (TeacherRollCallService.LocalBinder) service;
+            teacherRollCallService = binder.getService();
+            isBound = true;
+        }
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            isBound = false;
+        }
+    };
 
 }

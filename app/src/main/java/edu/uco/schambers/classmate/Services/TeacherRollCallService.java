@@ -133,7 +133,7 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
     }
 
     public class LocalBinder extends Binder {
-        TeacherRollCallService getService(){
+        public TeacherRollCallService getService(){
             // return this instance of the for calling of public methods
             return TeacherRollCallService.this;
         }
