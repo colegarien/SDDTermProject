@@ -15,6 +15,7 @@ package edu.uco.schambers.classmate.Services;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -36,6 +37,7 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
     public static final String ACTION_END_ROLL_CALL_SESSION = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_END_ROLL_CALL_SESSION";
     public static final String ACTION_START_ROLL_CALL_SESSION = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_START_ROLL_CALL_SESSION";
 
+    private IBinder locBinder = new LocalBinder();
 
     private SocketAction listenForStudents;
 
@@ -101,8 +103,7 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        return locBinder;
     }
 
     @Override
@@ -119,6 +120,13 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
         if (ip!=null){
             IPAddressManager.getInstance().addStudentAddress(ip);
             Log.d("StudentConnect", "IP Added: " + ip.toString());
+        }
+    }
+
+    public class LocalBinder extends Binder {
+        TeacherRollCallService getService(){
+            // return this instance of the for calling of public methods
+            return TeacherRollCallService.this;
         }
     }
 }
