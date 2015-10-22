@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import edu.uco.schambers.classmate.Fragments.TeacherRollCall;
 import edu.uco.schambers.classmate.ListenerInterfaces.OnStudentConnectListener;
 import edu.uco.schambers.classmate.ObservableManagers.IPAddressManager;
+import edu.uco.schambers.classmate.ObservableManagers.StudentAttendanceObservable;
 import edu.uco.schambers.classmate.SocketActions.SocketAction;
 import edu.uco.schambers.classmate.SocketActions.StudentReceiveQuestionsAction;
 import edu.uco.schambers.classmate.SocketActions.TeacherRollCallAction;
@@ -86,20 +87,21 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
-        String action = intent.getAction();
-        switch (action)
-        {
-            case ACTION_END_ROLL_CALL_SESSION:
-                ((TeacherRollCallAction)listenForStudents).stopListening();
-                // TODO: submit attendance to database
-                Toast.makeText(getApplicationContext(),"Class Session Closed",Toast.LENGTH_LONG).show();
-                stopSelf();
-                break;
-            case ACTION_START_ROLL_CALL_SESSION:
-                // TODO: change to Teacher object
-                currentTeacher = (String) intent.getExtras().getSerializable(TeacherRollCall.ARG_TEACHER);
-                Toast.makeText(getApplicationContext(),"Class Session Started",Toast.LENGTH_LONG).show();
-                break;
+        if (intent.getAction() != null) {
+            String action = intent.getAction();
+            switch (action) {
+                case ACTION_END_ROLL_CALL_SESSION:
+                    ((TeacherRollCallAction) listenForStudents).stopListening();
+                    // TODO: submit attendance to database
+                    Toast.makeText(getApplicationContext(), "Class Session Closed", Toast.LENGTH_LONG).show();
+                    stopSelf();
+                    break;
+                case ACTION_START_ROLL_CALL_SESSION:
+                    // TODO: change to Teacher object
+                    currentTeacher = (String) intent.getExtras().getSerializable(TeacherRollCall.ARG_TEACHER);
+                    Toast.makeText(getApplicationContext(), "Class Session Started", Toast.LENGTH_LONG).show();
+                    break;
+            }
         }
         return START_STICKY;
     }
@@ -126,6 +128,10 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
             }
         });*/
         studentInfo.add(student_id);
+
+        // notify student attendance observers
+        StudentAttendanceObservable.getInstance().directNotifyObservers(studentInfo);
+
         if (ip!=null){
             IPAddressManager.getInstance().addStudentAddress(ip);
             Log.d("StudentConnect", "IP Added: " + ip.toString());
