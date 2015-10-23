@@ -14,15 +14,21 @@
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -31,10 +37,16 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+
 import edu.uco.schambers.classmate.Activites.MainActivity;
 import edu.uco.schambers.classmate.Database.DataRepo;
 import edu.uco.schambers.classmate.Database.TokenUtility;
 import edu.uco.schambers.classmate.Database.User;
+import edu.uco.schambers.classmate.ObservableManagers.StudentAttendanceObservable;
 import edu.uco.schambers.classmate.R;
 import edu.uco.schambers.classmate.Services.TeacherRollCallService;
 import edu.uco.schambers.classmate.SocketActions.SocketAction;
@@ -44,6 +56,7 @@ public class TeacherRollCall extends Fragment {
     private static final String CLASS_OPEN = "edu.uco.schambers.classmate.class_open";
 
     //UI Components
+    private View rootView;
     private Button startBtn;
     private TextView teacherText;
     private EditText classText;
@@ -59,6 +72,12 @@ public class TeacherRollCall extends Fragment {
     public User user;
     private String token;
 
+    // for Service binding
+    TeacherRollCallService teacherRollCallService;
+    private boolean isBound = false;
+    private Observer attendanceObserver;
+    private ArrayAdapter<String> listAdapter;
+    private ArrayList<String> student_info = new ArrayList<String>();
 
     // TODO: Get Class Name from DB/Dropdown Box
     public static TeacherRollCall newInstance() {
@@ -77,13 +96,34 @@ public class TeacherRollCall extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
         }
+
+        attendanceObserver = new Observer() {
+            @Override
+            public void update(Observable observable, Object data) {
+                // TODO: switch over to student data-type
+                if (data != null) {
+                    student_info = (ArrayList<String>) data;
+
+                    // TODO: display arraylist
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listAdapter.clear();
+                            listAdapter.addAll(student_info);
+                            listAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            }
+        };
+                StudentAttendanceObservable.getInstance().addObserver(attendanceObserver);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_teacher_roll_call, container, false);
+        rootView = inflater.inflate(R.layout.fragment_teacher_roll_call, container, false);
         try {
             initUI(rootView);
         } catch (JSONException e) {
@@ -92,6 +132,40 @@ public class TeacherRollCall extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onStop(){
+        super.onStop();
+        // unbind from service it is bound
+        unBindService();
+        StudentAttendanceObservable.getInstance().deleteObserver(attendanceObserver);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        // unbind from service it is bound
+        unBindService();
+        StudentAttendanceObservable.getInstance().deleteObserver(attendanceObserver);
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        // unbind from service it is bound
+        unBindService();
+        StudentAttendanceObservable.getInstance().deleteObserver(attendanceObserver);
+    }
+
+    private void unBindService(){
+        if(isBound){
+            getActivity().unbindService(serviceConnection);
+            isBound = false;
+        }
+    }
+    private void bindService(){
+        Intent intent = TeacherRollCallService.getNewStartSessionIntent(getActivity(), teacherText.getText().toString());
+        getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
 
     private void initUI(final View rootView) throws JSONException {
         startBtn = (Button) rootView.findViewById(R.id.btn_start_roll_call);
@@ -115,7 +189,10 @@ public class TeacherRollCall extends Fragment {
         teacherText.setText(user.getName().toString());
 
         classText = (EditText) rootView.findViewById(R.id.txt_rc_class);
+        listAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
         connectedList = (ListView) rootView.findViewById(R.id.list_connected);
+        connectedList.setAdapter(listAdapter);
+
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,6 +208,9 @@ public class TeacherRollCall extends Fragment {
                         ((MainActivity) activity).addLocalService(SocketAction.ROLL_CALL_PORT_NUMBER, teacherText.getText().toString(), classText.getText().toString(), true);
                     }
 
+                    // bind the service
+                    bindService();
+
                     // TODO: lock all input (like class)
                     startBtn.setText(getResources().getString(R.string.btn_roll_call_stop));
                     sp.edit().putBoolean(CLASS_OPEN,true).apply();
@@ -142,6 +222,9 @@ public class TeacherRollCall extends Fragment {
                     if (activity instanceof MainActivity) {
                         ((MainActivity) activity).removeLocalService(SocketAction.ROLL_CALL_PORT_NUMBER, teacherText.getText().toString(), classText.getText().toString(), true);
                     }
+
+                    // unbind the service
+                    unBindService();
 
                     // TODO: unlock inputs (like class)
                     startBtn.setText(getResources().getString(R.string.btn_roll_call_start));
@@ -173,5 +256,20 @@ public class TeacherRollCall extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    // define callbacks for service binding, passed to bindService()
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // We've bound to TeacherRollCallService, cast the IBinder and get TeacherRollCallService instance
+            TeacherRollCallService.LocalBinder binder = (TeacherRollCallService.LocalBinder) service;
+            teacherRollCallService = binder.getService();
+            isBound = true;
+        }
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            isBound = false;
+        }
+    };
 
 }
