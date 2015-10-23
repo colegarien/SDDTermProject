@@ -100,13 +100,10 @@ public class TeacherQuestion extends Fragment {
     private void sendQuestion(){
         //TODO implement sendQuestion method
         IQuestion question = new DefaultMultiChoiceQuestion();
-        Intent intent = TeacherQuestionService.getNewSendQuestionIntent(getActivity(), question);
-        Intent intent1 = StudentQuestionService.getNewSendResponseIntent(getActivity(), question);
+        Intent intent = TeacherQuestionService.getNewSendResponseIntent(getActivity(), question);
         //TODO create teacherQuestion service and initialize for communication w/ steven
         getActivity().startService(intent);
-        getActivity().startService(intent1);
         //stub toast
-        Toast.makeText(getActivity(), "Question sent to class!", Toast.LENGTH_SHORT).show();
     }
 
     private void sendCollection(){

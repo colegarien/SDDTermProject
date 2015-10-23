@@ -5,8 +5,8 @@
  *   Main ServerSocket that will deal with incoming and outgoing
  *   communications to a students phone (dealing with roll call packets)
  *
- * Edit: 10/7/2015
- *
+ * Edit: 10/12/2015
+ *   Student IP is now collected from the ServerSocket
  *
  */
 
@@ -17,6 +17,7 @@ import android.util.Log;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 
 import edu.uco.schambers.classmate.Fragments.TeacherRollCall;
@@ -54,7 +55,8 @@ public class TeacherRollCallAction extends SocketAction{
             {
                 // TODO: use Student object (check with someone on status, may do myself)
                 String student =(String) objectInputStream.readObject();
-                studentConnectListener.onStudentConnect(student);
+                InetAddress ip = socket.getInetAddress();
+                studentConnectListener.onStudentConnect(student, ip);
                 receiveSuccess = true;
             }
             catch (ClassNotFoundException e)

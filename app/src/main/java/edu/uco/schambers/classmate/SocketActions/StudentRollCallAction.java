@@ -10,6 +10,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 import edu.uco.schambers.classmate.ObservableManagers.IPAddressManager;
+import edu.uco.schambers.classmate.ObservableManagers.SocketResultManager;
 
 /**
  * Created by WenHsi on 10/6/2015.
@@ -20,6 +21,11 @@ public class StudentRollCallAction extends SocketAction {
     DataInputStream dataInputStream;
 
     private boolean result = false;
+    private  String studentId;
+
+    public StudentRollCallAction(String studentId){
+        this.studentId = studentId;
+    }
 
     @Override
     void setUpSocket() throws IOException {
@@ -39,9 +45,10 @@ public class StudentRollCallAction extends SocketAction {
     void performAction() throws IOException {
         Log.d("SocketAction", "Sending message to server");
 
-        objectOutputStream.writeObject("Test message for student roll call");
+        objectOutputStream.writeObject(studentId);
         result = dataInputStream.readBoolean();
 
+        SocketResultManager.getInstance().directNotifyObservers(result);
         Log.d("SocketAction", String.valueOf(result));
     }
 

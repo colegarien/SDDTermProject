@@ -3,10 +3,14 @@ package edu.uco.schambers.classmate.Fragments;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.IBinder;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,17 +24,15 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import edu.uco.schambers.classmate.Models.Questions.DefaultMultiChoiceQuestion;
 import edu.uco.schambers.classmate.Models.Questions.IQuestion;
 import edu.uco.schambers.classmate.R;
 import edu.uco.schambers.classmate.Services.StudentQuestionService;
 
 public class StudentResponseFragment extends Fragment
 {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String ARG_QUESTION = "edu.uco.schambers.classmate.arq_question";
 
-    // TODO: Rename and change types of parameters
     private IQuestion question;
 
     //UI Components
@@ -38,8 +40,43 @@ public class StudentResponseFragment extends Fragment
     private Button sendBtn;
     private TextView questionText;
     private View questionCardView;
+    private View rootView;
+
+    private StudentQuestionService questionService;
+    private boolean questionServiceIsBound;
+
+    private ServiceConnection serviceConnection = new ServiceConnection()
+    {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service)
+        {
+            StudentQuestionService.LocalBinder binder = (StudentQuestionService.LocalBinder) service;
+            questionService = binder.getService();
+            questionServiceIsBound = true;
+            question = questionService.getQuestion();
+            if (question != null)
+            {
+                questionCardView = getActivity().getLayoutInflater().inflate(R.layout.question_response_card, (ViewGroup) rootView);
+                initUI(questionCardView);
+                populateQuestionCardFromQuestion();
+
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name)
+        {
+            questionServiceIsBound = false;
+        }
+    };
 
     private OnFragmentInteractionListener mListener;
+
+    public static StudentResponseFragment newInstance()
+    {
+        StudentResponseFragment fragment = new StudentResponseFragment();
+        return fragment;
+    }
 
     public static StudentResponseFragment newInstance(IQuestion question)
     {
@@ -70,15 +107,33 @@ public class StudentResponseFragment extends Fragment
                              Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_student_response, container, false);
-        if (question != null)
-        {
-            questionCardView = inflater.inflate(R.layout.question_response_card, (ViewGroup) rootView);
-            initUI(questionCardView);
-            populateQuestionCardFromQuestion();
-
-        }
+        rootView = inflater.inflate(R.layout.fragment_student_response, container, false);
         return rootView;
+    }
+
+    @Override
+    public void onPause()
+    {
+        if(questionServiceIsBound)
+        {
+            getActivity().unbindService(serviceConnection);
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        bindToService();
+    }
+
+    private void bindToService()
+    {
+        Intent i = new Intent(getActivity(), StudentQuestionService.class);
+        i.setAction(StudentQuestionService.ACTION_START_SERVICE_STICKY);
+        getActivity().startService(i);
+        getActivity().bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     private void initUI(final View rootView)

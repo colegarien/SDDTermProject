@@ -36,6 +36,7 @@ public class TeacherInterface extends Fragment {
     private Button inClassResponse;
     private Button responseResults;
     private Button userInfo;
+    private Button attend;
 
     private OnFragmentInteractionListener mListener;
 
@@ -95,6 +96,7 @@ public class TeacherInterface extends Fragment {
         inClassResponse = (Button)rootView.findViewById(R.id.teach_response_btn);
         responseResults = (Button)rootView.findViewById(R.id.teach_results_btn);
         userInfo = (Button)rootView.findViewById(R.id.user_info_btn);
+        attend = (Button)rootView.findViewById(R.id.teach_attend_btn);
 
 
         rollcall.setOnClickListener(new View.OnClickListener()
@@ -127,7 +129,7 @@ public class TeacherInterface extends Fragment {
             @Override
             public void onClick(View v)
             {
-                Fragment classManagementFragment = TeacherAttendance.newInstance(null, null);
+                Fragment classManagementFragment = TeacherClassManagement.newInstance(null, null);
                 launchFragment(classManagementFragment);
 
             }
@@ -153,6 +155,15 @@ public class TeacherInterface extends Fragment {
 
                 Fragment teacherQuestionResults = TeacherQuestionResults.newInstance("test", "test");
                 launchFragment(teacherQuestionResults);
+
+            }
+        });
+
+        attend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment teacherAttendanceFragment = TeacherAttendance.newInstance(null, null);
+                launchFragment(teacherAttendanceFragment);
 
             }
         });

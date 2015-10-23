@@ -145,7 +145,7 @@ public class TeacherQuestionService extends Service implements OnQuestionReceive
 
             public void run()
             {
-                Toast.makeText(getBaseContext(),String.format("The question was sent successfully to domain: %s port %d ", domainFinal, portFinal), Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(),String.format("The question was sent successfully to %s port %d ", domainFinal, portFinal), Toast.LENGTH_LONG).show();
             }
         });
     }

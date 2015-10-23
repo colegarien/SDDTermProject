@@ -227,7 +227,7 @@ public class TeacherAttendance extends Fragment {
                     public boolean onTouch(View v, MotionEvent event) {
                         //If the row is touched
                         if (event.getAction() == MotionEvent.ACTION_DOWN ||
-                        event.getAction() == MotionEvent.ACTION_CANCEL) {
+                                event.getAction() == MotionEvent.ACTION_CANCEL) {
                             //Momentarily change background color to indicate the touch
                             v.setBackgroundColor(Color.GRAY);
                             //Set up a new fragment object
@@ -238,7 +238,7 @@ public class TeacherAttendance extends Fragment {
                             transaction.replace(R.id.fragment_container, teacherAttendanceItem);
                             transaction.addToBackStack(null);
                             transaction.commit();
-                          //Once touch is lifted, return the row color
+                            //Once touch is lifted, return the row color
                         } else if (event.getAction() == MotionEvent.ACTION_UP) {
                             v.setBackgroundColor(Color.LTGRAY);
                         }
