@@ -139,7 +139,7 @@ public class Auth extends Fragment {
             token = sp.getString("AUTH_TOKEN", null);
             try {
                 User user = TokenUtility.parseUserToken(token);
-                ChooseInterface(user.isStudent());
+                ChooseAutoInterface(user.isStudent());
             } catch (JSONException e) {
 
             }
@@ -265,6 +265,16 @@ public class Auth extends Fragment {
         }
     }
 
+    public void ChooseAutoInterface(boolean isStudent) {
+        if (!isStudent) {
+            Fragment teacher = TeacherInterface.newInstance("test", "test");
+            launchAutoLoginFragment(teacher);
+        }else{
+            Fragment student = StudentInterface.newInstance("test", "test");
+            launchAutoLoginFragment(student);
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -286,6 +296,15 @@ public class Auth extends Fragment {
         {
             FragmentTransaction trans = getFragmentManager().beginTransaction();
             trans.replace(R.id.fragment_container, f).addToBackStack("debug");
+            trans.commit();
+        }
+    }
+
+    private void launchAutoLoginFragment(Fragment f){
+        if(f != null)
+        {
+            FragmentTransaction trans = getFragmentManager().beginTransaction();
+            trans.replace(R.id.fragment_container, f);
             trans.commit();
         }
     }
