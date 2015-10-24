@@ -10,7 +10,10 @@ import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +38,8 @@ public class StudentResponseFragment extends Fragment
 
     private IQuestion question;
 
+    private IncomingHandler fragmentMessageHandler = new IncomingHandler();
+
     //UI Components
     private RadioGroup radioGroup;
     private Button sendBtn;
@@ -53,6 +58,7 @@ public class StudentResponseFragment extends Fragment
             StudentQuestionService.LocalBinder binder = (StudentQuestionService.LocalBinder) service;
             questionService = binder.getService();
             questionServiceIsBound = true;
+            questionService.setFragmentMessenger(new Messenger(fragmentMessageHandler));
             question = questionService.getQuestion();
             if (question != null)
             {
@@ -69,6 +75,26 @@ public class StudentResponseFragment extends Fragment
             questionServiceIsBound = false;
         }
     };
+
+    class IncomingHandler extends Handler
+    {
+        @Override
+        public void handleMessage(Message msg)
+        {
+            switch (msg.what)
+            {
+                case StudentQuestionService.MSG_QUESTION_RECEIEVED:
+                    loadQuestionWithAnimation();
+                default:
+                    super.handleMessage(msg);
+            }
+        }
+    }
+
+    private void loadQuestionWithAnimation()
+    {
+
+    }
 
     private OnFragmentInteractionListener mListener;
 

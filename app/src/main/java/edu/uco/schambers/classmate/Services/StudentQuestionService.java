@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Messenger;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -31,12 +32,18 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
     public static final String ACTION_SEND_QUESTION_RESPONSE = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_SEND_QUESTION_RESPONSE";
     public static final String ACTION_START_SERVICE_STICKY= "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_START_SERVICE_STICKY";
 
+    public static final int MSG_QUESTION_RECEIEVED = 1;
+
     private final IBinder serviceBinder = new LocalBinder();
     private SocketAction listenForQuestions;
+
+    private boolean serviceIsBound = false;
 
     private IQuestion question;
 
     Handler handler;
+
+    Messenger fragmentMessenger;
 
     public StudentQuestionService()
     {
@@ -118,8 +125,21 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
     @Override
     public IBinder onBind(Intent intent)
     {
-        // TODO: Return the communication channel to the service.
+        serviceIsBound = true;
         return serviceBinder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent)
+    {
+        serviceIsBound = false;
+        fragmentMessenger = null;
+        return super.onUnbind(intent);
+    }
+
+    public void setFragmentMessenger(Messenger messenger)
+    {
+        fragmentMessenger = messenger;
     }
 
     @Override
@@ -144,7 +164,7 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
 
             public void run()
             {
-                Toast.makeText(getBaseContext(),String.format("The question was sent successfully to domain: %s port %d ", domainFinal, portFinal), Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), String.format("The question was sent successfully to domain: %s port %d ", domainFinal, portFinal), Toast.LENGTH_LONG).show();
             }
         });
     }
