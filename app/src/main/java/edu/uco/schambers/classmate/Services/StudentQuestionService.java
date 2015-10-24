@@ -13,7 +13,9 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import edu.uco.schambers.classmate.Activites.MainActivity;
@@ -146,6 +148,17 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
     public void onQuestionReceived(IQuestion question)
     {
         this.question = question;
+        if(serviceIsBound)
+        {
+            Message questionArrivedMessage = Message.obtain(null, MSG_QUESTION_RECEIEVED, 0, 0);
+            try
+            {
+                fragmentMessenger.send(questionArrivedMessage);
+            }catch (RemoteException e)
+            {
+                Log.d("StudentQuestionService", String.format("Message failed. Exception: %s", e.toString()));
+            }
+        }
         notifyQuestionReceived();
     }
 
