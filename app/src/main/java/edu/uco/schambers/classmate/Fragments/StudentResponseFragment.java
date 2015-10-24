@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.ViewManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -75,9 +76,13 @@ public class StudentResponseFragment extends Fragment
 
     protected void setUpQuestionCard()
     {
-        questionCardView = getActivity().getLayoutInflater().inflate(R.layout.question_response_card, (ViewGroup) rootView);
-        initUI(questionCardView);
-        populateQuestionCardFromQuestion();
+        if(questionCardView == null)
+        {
+            questionCardView = getActivity().getLayoutInflater().inflate(R.layout.question_response_card, null);
+            ((ViewGroup) rootView).addView(questionCardView);
+            initUI(questionCardView);
+            populateQuestionCardFromQuestion();
+        }
     }
 
     class IncomingHandler extends Handler
@@ -117,7 +122,6 @@ public class StudentResponseFragment extends Fragment
             @Override
             public void onAnimationEnd(Animation animation)
             {
-
             }
 
             @Override
@@ -244,7 +248,7 @@ public class StudentResponseFragment extends Fragment
             @Override
             public void onAnimationEnd(Animation animation)
             {
-                questionCardView.setVisibility(View.INVISIBLE);
+                destroyQuestionCard();
             }
 
             @Override
@@ -254,6 +258,12 @@ public class StudentResponseFragment extends Fragment
             }
         });
         questionCardView.startAnimation(slideOutRight);
+    }
+
+    private void destroyQuestionCard()
+    {
+        ((ViewGroup)questionCardView.getParent()).removeView(questionCardView);
+        questionCardView = null;
     }
 
 
