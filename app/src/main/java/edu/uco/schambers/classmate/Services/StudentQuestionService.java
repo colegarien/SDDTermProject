@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.Message;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -41,12 +42,6 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
     {
     }
 
-    public static Intent getNewSendQuestionIntent(Context context, IQuestion question)
-    {
-        Intent questionReceivedIntent = getBaseIntent(context,question);
-        questionReceivedIntent.setAction(ACTION_NOTIFY_QUESTION_RECEIVED);
-        return questionReceivedIntent;
-    }
 
     public static Intent getNewSendResponseIntent(Context context, IQuestion question)
     {
@@ -81,8 +76,7 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
         switch (action)
         {
             case ACTION_NOTIFY_QUESTION_RECEIVED:
-                question = (IQuestion) intent.getExtras().getSerializable(StudentResponseFragment.ARG_QUESTION);
-                notifyQuestionReceived(question);
+                notifyQuestionReceived();
                 break;
             case ACTION_SEND_QUESTION_RESPONSE:
                 question = (IQuestion) intent.getExtras().getSerializable(StudentResponseFragment.ARG_QUESTION);
@@ -98,7 +92,7 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
         sendQuestion.execute();
     }
 
-    private void notifyQuestionReceived(IQuestion question)
+    private void notifyQuestionReceived()
     {
         NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
@@ -132,7 +126,7 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
     public void onQuestionReceived(IQuestion question)
     {
         this.question = question;
-        notifyQuestionReceived(question);
+        notifyQuestionReceived();
     }
 
     @Override
