@@ -132,11 +132,18 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
     }
 
     @Override
+    public void onRebind(Intent intent)
+    {
+        super.onRebind(intent);
+        serviceIsBound = true;
+    }
+
+    @Override
     public boolean onUnbind(Intent intent)
     {
         serviceIsBound = false;
         fragmentMessenger = null;
-        return super.onUnbind(intent);
+        return true;
     }
 
     public void setFragmentMessenger(Messenger messenger)

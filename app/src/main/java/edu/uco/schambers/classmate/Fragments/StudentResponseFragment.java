@@ -62,10 +62,7 @@ public class StudentResponseFragment extends Fragment
             question = questionService.getQuestion();
             if (question != null)
             {
-                questionCardView = getActivity().getLayoutInflater().inflate(R.layout.question_response_card, (ViewGroup) rootView);
-                initUI(questionCardView);
-                populateQuestionCardFromQuestion();
-
+                setUpQuestionCard();
             }
         }
 
@@ -75,6 +72,13 @@ public class StudentResponseFragment extends Fragment
             questionServiceIsBound = false;
         }
     };
+
+    protected void setUpQuestionCard()
+    {
+        questionCardView = getActivity().getLayoutInflater().inflate(R.layout.question_response_card, (ViewGroup) rootView);
+        initUI(questionCardView);
+        populateQuestionCardFromQuestion();
+    }
 
     class IncomingHandler extends Handler
     {
@@ -93,7 +97,36 @@ public class StudentResponseFragment extends Fragment
 
     private void loadQuestionWithAnimation()
     {
+        question = questionService.getQuestion();
+        setUpQuestionCard();
+        questionCardView.setVisibility(View.INVISIBLE);
+        incommingQuestionAnimation();
+    }
 
+    private void incommingQuestionAnimation()
+    {
+        Animation slideInLeft= AnimationUtils.loadAnimation(getActivity(), android.R.anim.slide_in_left);
+        slideInLeft.setAnimationListener(new Animation.AnimationListener()
+        {
+            @Override
+            public void onAnimationStart(Animation animation)
+            {
+                questionCardView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation)
+            {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation)
+            {
+
+            }
+        });
+        questionCardView.startAnimation(slideInLeft);
     }
 
     private OnFragmentInteractionListener mListener;
