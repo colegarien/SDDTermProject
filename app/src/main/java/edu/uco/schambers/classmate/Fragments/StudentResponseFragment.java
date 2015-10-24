@@ -10,12 +10,16 @@ import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.ViewManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -35,6 +39,8 @@ public class StudentResponseFragment extends Fragment
 
     private IQuestion question;
 
+    private IncomingHandler fragmentMessageHandler = new IncomingHandler();
+
     //UI Components
     private RadioGroup radioGroup;
     private Button sendBtn;
@@ -53,13 +59,11 @@ public class StudentResponseFragment extends Fragment
             StudentQuestionService.LocalBinder binder = (StudentQuestionService.LocalBinder) service;
             questionService = binder.getService();
             questionServiceIsBound = true;
+            questionService.setFragmentMessenger(new Messenger(fragmentMessageHandler));
             question = questionService.getQuestion();
             if (question != null)
             {
-                questionCardView = getActivity().getLayoutInflater().inflate(R.layout.question_response_card, (ViewGroup) rootView);
-                initUI(questionCardView);
-                populateQuestionCardFromQuestion();
-
+                setUpQuestionCard();
             }
         }
 
@@ -69,6 +73,65 @@ public class StudentResponseFragment extends Fragment
             questionServiceIsBound = false;
         }
     };
+
+    protected void setUpQuestionCard()
+    {
+        if(questionCardView == null)
+        {
+            questionCardView = getActivity().getLayoutInflater().inflate(R.layout.question_response_card, null);
+            ((ViewGroup) rootView).addView(questionCardView);
+            initUI(questionCardView);
+            populateQuestionCardFromQuestion();
+        }
+    }
+
+    class IncomingHandler extends Handler
+    {
+        @Override
+        public void handleMessage(Message msg)
+        {
+            switch (msg.what)
+            {
+                case StudentQuestionService.MSG_QUESTION_RECEIEVED:
+                    loadQuestionWithAnimation();
+                default:
+                    super.handleMessage(msg);
+            }
+        }
+    }
+
+    private void loadQuestionWithAnimation()
+    {
+        question = questionService.getQuestion();
+        setUpQuestionCard();
+        questionCardView.setVisibility(View.INVISIBLE);
+        incommingQuestionAnimation();
+    }
+
+    private void incommingQuestionAnimation()
+    {
+        Animation slideInLeft= AnimationUtils.loadAnimation(getActivity(), android.R.anim.slide_in_left);
+        slideInLeft.setAnimationListener(new Animation.AnimationListener()
+        {
+            @Override
+            public void onAnimationStart(Animation animation)
+            {
+                questionCardView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation)
+            {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation)
+            {
+
+            }
+        });
+        questionCardView.startAnimation(slideInLeft);
+    }
 
     private OnFragmentInteractionListener mListener;
 
@@ -185,7 +248,7 @@ public class StudentResponseFragment extends Fragment
             @Override
             public void onAnimationEnd(Animation animation)
             {
-                questionCardView.setVisibility(View.INVISIBLE);
+                destroyQuestionCard();
             }
 
             @Override
@@ -195,6 +258,12 @@ public class StudentResponseFragment extends Fragment
             }
         });
         questionCardView.startAnimation(slideOutRight);
+    }
+
+    private void destroyQuestionCard()
+    {
+        ((ViewGroup)questionCardView.getParent()).removeView(questionCardView);
+        questionCardView = null;
     }
 
 
