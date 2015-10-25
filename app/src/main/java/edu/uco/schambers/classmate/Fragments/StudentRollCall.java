@@ -22,22 +22,18 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -90,11 +86,6 @@ public class StudentRollCall extends Fragment {
 
     // for indicate check in status
     private boolean isCheckingIn = false;
-
-    // Discovered class list
-    ArrayList<ArrayList<String>> classes =new ArrayList<>();
-    // Adapter of classes
-    ArrayAdapter<ArrayList<String>> classAdapter;
 
     public User getUser() {
         return user;
@@ -250,8 +241,6 @@ public class StudentRollCall extends Fragment {
         token = sp.getString("AUTH_TOKEN", null);
         user = TokenUtility.parseUserToken(token);
 
-        initListView(rootView);
-
         btnCheckin = (Button) rootView.findViewById(R.id.btn_check_in);
         lblCheckinStatus = (TextView) rootView.findViewById(R.id.lbl_checkin_status);
         btnCheckin.setOnClickListener(new View.OnClickListener() {
@@ -273,46 +262,6 @@ public class StudentRollCall extends Fragment {
         // The check-in button can be enabled
         // only if there is a teacher roll call service found.
         btnCheckin.setEnabled(false);
-    }
-
-    private void initListView(View rootView){
-
-        classes = new ArrayList<>();
-        classAdapter=new ArrayAdapter<ArrayList<String>>(this.getActivity(),
-                android.R.layout.two_line_list_item,
-                classes){
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent){
-                LayoutInflater inflater = (LayoutInflater)getContext()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-                View listItemView = convertView;
-                if (null == convertView) {
-                    listItemView = inflater.inflate(
-                            android.R.layout.simple_list_item_2,
-                            parent,
-                            false);
-                }
-
-                // The ListItemLayout must use the standard text item IDs.
-                TextView lineOneView = (TextView)listItemView.findViewById(
-                        android.R.id.text1);
-                TextView lineTwoView = (TextView)listItemView.findViewById(
-                        android.R.id.text2);
-                lineOneView.setGravity(Gravity.CENTER );
-                lineTwoView.setGravity(Gravity.CENTER );
-                lineOneView.setPadding(0, 80, 0, 20);
-                lineTwoView.setPadding(0, 20, 0, 80);
-                ArrayList<String> item = getItem(position);
-                lineOneView.setText(item.get(0));
-                lineTwoView.setText(item.get(1));
-
-                return listItemView;
-            }
-        };
-
-        ListView list = (ListView) rootView.findViewById(R.id.list_class);
-        list.setAdapter(classAdapter);
     }
 
     private void changeAudioSetting(String audioMode){
