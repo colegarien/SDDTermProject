@@ -319,6 +319,7 @@ public class StudentEnrollment extends Fragment {
                                 }else{
                                     Toast.makeText(getActivity(), "Enrollment was Successful ", Toast.LENGTH_LONG).show();
                                     c2.setEnabled(false);
+                                    c2.setText("Enrolled");
                                 }
                             }
                         });
