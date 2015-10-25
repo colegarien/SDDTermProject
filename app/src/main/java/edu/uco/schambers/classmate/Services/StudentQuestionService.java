@@ -11,7 +11,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import edu.uco.schambers.classmate.Activites.MainActivity;
@@ -30,23 +34,23 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
     public static final String ACTION_SEND_QUESTION_RESPONSE = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_SEND_QUESTION_RESPONSE";
     public static final String ACTION_START_SERVICE_STICKY= "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_START_SERVICE_STICKY";
 
+    public static final int MSG_QUESTION_RECEIEVED = 1;
+
     private final IBinder serviceBinder = new LocalBinder();
     private SocketAction listenForQuestions;
+
+    private boolean serviceIsBound = false;
 
     private IQuestion question;
 
     Handler handler;
 
+    Messenger fragmentMessenger;
+
     public StudentQuestionService()
     {
     }
 
-    public static Intent getNewSendQuestionIntent(Context context, IQuestion question)
-    {
-        Intent questionReceivedIntent = getBaseIntent(context,question);
-        questionReceivedIntent.setAction(ACTION_NOTIFY_QUESTION_RECEIVED);
-        return questionReceivedIntent;
-    }
 
     public static Intent getNewSendResponseIntent(Context context, IQuestion question)
     {
@@ -81,8 +85,7 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
         switch (action)
         {
             case ACTION_NOTIFY_QUESTION_RECEIVED:
-                question = (IQuestion) intent.getExtras().getSerializable(StudentResponseFragment.ARG_QUESTION);
-                notifyQuestionReceived(question);
+                notifyQuestionReceived();
                 break;
             case ACTION_SEND_QUESTION_RESPONSE:
                 question = (IQuestion) intent.getExtras().getSerializable(StudentResponseFragment.ARG_QUESTION);
@@ -98,7 +101,7 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
         sendQuestion.execute();
     }
 
-    private void notifyQuestionReceived(IQuestion question)
+    private void notifyQuestionReceived()
     {
         NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
@@ -124,15 +127,46 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
     @Override
     public IBinder onBind(Intent intent)
     {
-        // TODO: Return the communication channel to the service.
+        serviceIsBound = true;
         return serviceBinder;
+    }
+
+    @Override
+    public void onRebind(Intent intent)
+    {
+        super.onRebind(intent);
+        serviceIsBound = true;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent)
+    {
+        serviceIsBound = false;
+        fragmentMessenger = null;
+        return true;
+    }
+
+    public void setFragmentMessenger(Messenger messenger)
+    {
+        fragmentMessenger = messenger;
     }
 
     @Override
     public void onQuestionReceived(IQuestion question)
     {
         this.question = question;
-        notifyQuestionReceived(question);
+        if(serviceIsBound)
+        {
+            Message questionArrivedMessage = Message.obtain(null, MSG_QUESTION_RECEIEVED, 0, 0);
+            try
+            {
+                fragmentMessenger.send(questionArrivedMessage);
+            }catch (RemoteException e)
+            {
+                Log.d("StudentQuestionService", String.format("Message failed. Exception: %s", e.toString()));
+            }
+        }
+        notifyQuestionReceived();
     }
 
     @Override
@@ -150,7 +184,7 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
 
             public void run()
             {
-                Toast.makeText(getBaseContext(),String.format("The question was sent successfully to domain: %s port %d ", domainFinal, portFinal), Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), String.format("The question was sent successfully to domain: %s port %d ", domainFinal, portFinal), Toast.LENGTH_LONG).show();
             }
         });
     }

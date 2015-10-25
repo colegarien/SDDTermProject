@@ -9,6 +9,10 @@ import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
+
+import org.json.JSONException;
+
+import edu.uco.schambers.classmate.Database.TokenUtility;
 import edu.uco.schambers.classmate.Fragments.StudentRollCall;
 import edu.uco.schambers.classmate.ObservableManagers.IPAddressManager;
 import edu.uco.schambers.classmate.Services.StudentRollCallService;
@@ -53,7 +57,12 @@ public class StudentRollCallBroadcastReceiver extends WiFiDirectBroadcastReceive
                 Activity activity = fragment.getActivity();
 
                 Intent studentServiceIntent = new Intent(activity, StudentRollCallService.class);
-                studentServiceIntent.putExtra("id", String.valueOf(((StudentRollCall)fragment).getUser().getId()));
+                try {
+                    studentServiceIntent.putExtra("id", String.valueOf(TokenUtility.parseUserToken(fragment.getActivity()).getId()));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
                 activity.startService(studentServiceIntent);
             }
         }
