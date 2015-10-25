@@ -1,4 +1,4 @@
-package edu.uco.schambers.classmate.Database;
+package edu.uco.schambers.classmate.AdapterModels;
 
 /**
  * Created by calitova on 10/7/2015.

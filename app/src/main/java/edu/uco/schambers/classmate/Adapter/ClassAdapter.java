@@ -1,7 +1,5 @@
 package edu.uco.schambers.classmate.Adapter;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -10,8 +8,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import edu.uco.schambers.classmate.Database.*;
-import edu.uco.schambers.classmate.Database.Class;
+import edu.uco.schambers.classmate.AdapterModels.*;
+import edu.uco.schambers.classmate.AdapterModels.Class;
 
 public class ClassAdapter {
     private final static String Url = "http://classmateapi.azurewebsites.net/api/";

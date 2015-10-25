@@ -1,14 +1,11 @@
 package edu.uco.schambers.classmate.Adapter;
 
-import android.content.res.Resources;
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 
-import edu.uco.schambers.classmate.Database.User;
+import edu.uco.schambers.classmate.AdapterModels.User;
 
 public class UserAdapter {
     private final static String Url = "http://classmateapi.azurewebsites.net/api/";

@@ -24,9 +24,9 @@ import edu.uco.schambers.classmate.Adapter.AuthAdapter;
 import edu.uco.schambers.classmate.Adapter.Callback;
 import edu.uco.schambers.classmate.Adapter.HttpResponse;
 import edu.uco.schambers.classmate.Adapter.UserAdapter;
-import edu.uco.schambers.classmate.Database.DataRepo;
-import edu.uco.schambers.classmate.Database.TokenUtility;
-import edu.uco.schambers.classmate.Database.User;
+import edu.uco.schambers.classmate.AdapterModels.DataRepo;
+import edu.uco.schambers.classmate.AdapterModels.TokenUtility;
+import edu.uco.schambers.classmate.AdapterModels.User;
 import edu.uco.schambers.classmate.R;
 
 

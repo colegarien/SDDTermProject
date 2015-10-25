@@ -2,21 +2,14 @@ package edu.uco.schambers.classmate.Fragments;
 
 import edu.uco.schambers.classmate.Adapter.Callback;
 import edu.uco.schambers.classmate.Adapter.ClassAdapter;
-import edu.uco.schambers.classmate.Database.Class;
+import edu.uco.schambers.classmate.AdapterModels.Class;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,10 +20,9 @@ import android.widget.Toast;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.Set;
 
-import edu.uco.schambers.classmate.Database.TokenUtility;
-import edu.uco.schambers.classmate.Database.User;
+import edu.uco.schambers.classmate.AdapterModels.TokenUtility;
+import edu.uco.schambers.classmate.AdapterModels.User;
 import edu.uco.schambers.classmate.R;
 
 /**

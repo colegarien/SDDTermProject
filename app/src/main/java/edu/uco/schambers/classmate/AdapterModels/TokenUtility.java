@@ -1,4 +1,4 @@
-package edu.uco.schambers.classmate.Database;
+package edu.uco.schambers.classmate.AdapterModels;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,8 +6,6 @@ import android.content.SharedPreferences;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.InputStreamReader;
 
 public class TokenUtility {
 
