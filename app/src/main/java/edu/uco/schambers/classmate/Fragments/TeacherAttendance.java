@@ -24,40 +24,30 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.uco.schambers.classmate.Adapter.Callback;
+import edu.uco.schambers.classmate.Adapter.ClassAdapter;
+import edu.uco.schambers.classmate.AdapterModels.*;
+import edu.uco.schambers.classmate.AdapterModels.Class;
 import edu.uco.schambers.classmate.R;
-
-//TESTING CLASS - Student objects are created and fill an array that populates
-//the main table
-class Student{
-    String studentFName;
-    String studentLName;
-    int numberAbsences;
-    String course;
-    public String getStudentFName(){return studentFName;}
-    public String getStudentLName(){return studentLName;}
-    public int getNumberAbsences(){return numberAbsences;}
-    public String getCourse(){return course;}
-    Student(String studentFName, String studentLName, int numberAbsences,String course){
-        this.studentFName = studentFName;
-        this.studentLName = studentLName;
-        this.numberAbsences=numberAbsences;
-        this.course = course;
-    }
-}
-//End Student class
-
 
 public class TeacherAttendance extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private String mParam1;
     private String mParam2;
+    private Spinner sSemester;
+    private Spinner sYear;
+    User user;
+    ClassAdapter classAdapter = new ClassAdapter();
 
     //UI Components
-    Student [] students = new Student[30];
+    ArrayList<StudentAbsenceByClass> students = new ArrayList<>();
 
     public static TeacherAttendance newInstance(String param1, String param2) {
         TeacherAttendance fragment = new TeacherAttendance();
@@ -79,7 +69,8 @@ public class TeacherAttendance extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        //Set up 30 Student Dummy Records
+
+        /*//Set up 30 Student Dummy Records
         students[0] = new Student("Rayan","Al-Hammami",5, "Data Structures");
         students[1] = new Student("Rajiv","Mancharamo",3, "Data Structures");
         students[2] = new Student("Mossi","Alobaid",4, "Data Structures");
@@ -110,7 +101,7 @@ public class TeacherAttendance extends Fragment {
         students[27] = new Student("Albert","Albertson",4,"Programming II");
         students[28] = new Student("Raymond","Butler",7,"Programming II");
         students[29] = new Student("Howard","Howardson",2,"Programming II");
-        //End dummy record insertion
+        //End dummy record insertion*/
     }
 
 
@@ -125,18 +116,26 @@ public class TeacherAttendance extends Fragment {
     }
 
 
-    private void initUI(final View rootView)
-    {   //ArrayList set up to hold values of courses
-        final List<String> spinnerArray =  new ArrayList<String>();
+    private void initUI(final View rootView) {
+        try {
+            user = TokenUtility.parseUserToken(getActivity());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        sSemester = (Spinner) rootView.findViewById(R.id.semester_sp);
+        sYear = (Spinner) rootView.findViewById(R.id.year_sp);
+
+        //ArrayList set up to hold values of courses
+        final List<SpinnerItem> spinnerArray =  new ArrayList<>();
         //Hard-coded Course Selection temporarily for testing purposes
-        spinnerArray.add("Select Course..");
+        spinnerArray.add(new SpinnerItem("Select Course..", "-1"));
         //spinnerArray.add("All"); Retained just in case functionality is returned
-        spinnerArray.add("Data Structures");
+        /*spinnerArray.add("Data Structures");
         spinnerArray.add("Programming I");
         spinnerArray.add("Programming II");
-        spinnerArray.add("Computer Organization");
+        spinnerArray.add("Computer Organization");*/
         //Link Spinner control to course ArrayList from above
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+        final ArrayAdapter<SpinnerItem> adapter = new ArrayAdapter<>(
                 rootView.getContext(), android.R.layout.simple_spinner_item, spinnerArray);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -159,12 +158,80 @@ public class TeacherAttendance extends Fragment {
         Spinner sItemsSort = (Spinner) rootView.findViewById(R.id.spinnerSort);
         sItemsSort.setAdapter(adapterSort);
         sItems.setSelection(0);
+
+        sSemester.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                int pos = sYear.getSelectedItemPosition();
+                if (pos == 0)
+                    return;
+                int year = Integer.parseInt(sYear.getSelectedItem().toString());
+                String semester = adapterView.getSelectedItem().toString();
+                classAdapter.professorClasses(user.getpKey(), semester, year, new Callback<ArrayList<edu.uco.schambers.classmate.AdapterModels.Class>>() {
+                    @Override
+                    public void onComplete(ArrayList<Class> result) throws Exception {
+                        spinnerArray.clear();
+                        spinnerArray.add(new SpinnerItem("Select Course..", "-1"));
+                        for (Class classItem : result) {
+                            spinnerArray.add(new SpinnerItem(classItem.getClass_name(), Integer.toString(classItem.getId())));
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+
+        sYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                int pos = sSemester.getSelectedItemPosition();
+                if (pos == 0)
+                    return;
+                int year = Integer.parseInt(adapterView.getSelectedItem().toString());
+                String semester = sSemester.getSelectedItem().toString();
+                classAdapter.professorClasses(user.getpKey(), semester, year, new Callback<ArrayList<edu.uco.schambers.classmate.AdapterModels.Class>>() {
+                    @Override
+                    public void onComplete(ArrayList<Class> result) throws Exception {
+                        spinnerArray.clear();
+                        spinnerArray.add(new SpinnerItem("Select Course..", "-1"));
+                        for (Class classItem : result) {
+                            spinnerArray.add(new SpinnerItem(classItem.getClass_name(), Integer.toString(classItem.getId())));
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+
         //Add onItemSelectedListener to Course Selection spinner
         sItems.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //Call buildTable method to build student attendance table dynamically
-                buildTable(rootView,spinnerArray,position);
+                final int pos = position;
+                SpinnerItem item = (SpinnerItem)parent.getSelectedItem();
+                classAdapter.studentAbsences(Integer.parseInt(item.getValue()), new Callback<ArrayList<StudentAbsenceByClass>>() {
+                    @Override
+                    public void onComplete(ArrayList<StudentAbsenceByClass> result) throws Exception {
+
+                        students.clear();
+                        for (StudentAbsenceByClass studentAbsense : result) {
+                            students.add(studentAbsense);
+                        }
+
+                        //Call buildTable method to build student attendance table dynamically
+                        buildTable(rootView, pos);
+                    }
+                });
+
+
             }
 
             @Override
@@ -176,7 +243,7 @@ public class TeacherAttendance extends Fragment {
         sItemsSort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //If selected item is XXX sort by name in ascending order
+                /*//If selected item is XXX sort by name in ascending order
                 if (parent.getSelectedItem().equals("By Name A-Z")) {
                     sortByName("asc");
                 }
@@ -194,7 +261,7 @@ public class TeacherAttendance extends Fragment {
                 }
                 //Call buildTable method to build student attendance table dynamically
                 //based on the new sort pattern
-                buildTable(rootView,spinnerArray,sItems.getSelectedItemPosition());
+                buildTable(rootView,spinnerArray,sItems.getSelectedItemPosition());*/
             }
 
             @Override
@@ -205,71 +272,66 @@ public class TeacherAttendance extends Fragment {
     }
 
     //buildTable method to build the table dynamically, and reduce complications above
-    public void buildTable(View view, List<String> spinnerArray, int position){
+    public void buildTable(View view, int position){
         //Create a table layout object and link it to the fragment's table layout
         TableLayout teacherAttendanceTable = (TableLayout) view.findViewById(R.id.teacherAttendanceTable);
         teacherAttendanceTable.setStretchAllColumns(true);
         teacherAttendanceTable.bringToFront();
         teacherAttendanceTable.removeAllViews();
         //Loops through the entire list of students
-        for (int i = 0; i < students.length; i++) {
+        for (StudentAbsenceByClass student : students) {
             //If the current student's course is equal to the course chosen
-            if (students[i].getCourse().equals(spinnerArray.get(position)) /*||
-                    spinnerArray.get(position).equals("All")*/) {
-                //Store the number of absences
-                final int absences = students[i].getNumberAbsences();
-                //Create a new table row
-                TableRow tr = new TableRow(view.getContext());
-                //Set up the clickable functionality for the table row
-                tr.setClickable(true);
-                tr.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        //If the row is touched
-                        if (event.getAction() == MotionEvent.ACTION_DOWN ||
-                                event.getAction() == MotionEvent.ACTION_CANCEL) {
-                            //Momentarily change background color to indicate the touch
-                            v.setBackgroundColor(Color.GRAY);
-                            //Set up a new fragment object
-                            Fragment teacherAttendanceItem = TeacherAttendanceItem.newInstance(absences+"","test");
-                            //Pass the attendance info, replace the current fragment, and place old
-                            //fragment on the backstack
-                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                            transaction.replace(R.id.fragment_container, teacherAttendanceItem);
-                            transaction.addToBackStack(null);
-                            transaction.commit();
-                            //Once touch is lifted, return the row color
-                        } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                            v.setBackgroundColor(Color.LTGRAY);
-                        }
-                        return false;
+
+            //Store the number of absences
+            final int absences = student.getAbsences();
+            //Create a new table row
+            TableRow tr = new TableRow(view.getContext());
+            //Set up the clickable functionality for the table row
+            tr.setClickable(true);
+            tr.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    //If the row is touched
+                    if (event.getAction() == MotionEvent.ACTION_DOWN ||
+                            event.getAction() == MotionEvent.ACTION_CANCEL) {
+                        //Momentarily change background color to indicate the touch
+                        v.setBackgroundColor(Color.GRAY);
+                        //Set up a new fragment object
+                        Fragment teacherAttendanceItem = TeacherAttendanceItem.newInstance(absences + "", "test");
+                        //Pass the attendance info, replace the current fragment, and place old
+                        //fragment on the backstack
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, teacherAttendanceItem);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                        //Once touch is lifted, return the row color
+                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                        v.setBackgroundColor(Color.LTGRAY);
                     }
-                });
-                //Set each column's data in the row
-                TextView c0 = new TextView(view.getContext());
-                c0.setText(students[i].getStudentLName());
-                TextView c1 = new TextView(view.getContext());
-                c1.setText(students[i].getStudentFName());
-                TextView c2 = new TextView(view.getContext());
-                c2.setText(String.valueOf(students[i].getNumberAbsences()));
-                //Add the data to the row
-                tr.addView(c0);
-                tr.addView(c1);
-                tr.addView(c2);
-                //Add the row to the table
-                teacherAttendanceTable.addView(tr);
-            }
+                    return false;
+                }
+            });
+            //Set each column's data in the row
+            TextView c0 = new TextView(view.getContext());
+            c0.setText(student.getName());
+            TextView c2 = new TextView(view.getContext());
+            c2.setText(String.valueOf(student.getAbsences()));
+            //Add the data to the row
+            tr.addView(c0);
+            tr.addView(c2);
+            //Add the row to the table
+            teacherAttendanceTable.addView(tr);
         }
     }
 
-    //sortByName method that takes asc for ascending or des for descending order
+    /*//sortByName method that takes asc for ascending or des for descending order
     public void sortByName(String sortType){
-        int n = students.length;
+        int n = students.size();
         int k;
         for (int m = n; m >= 0; m--) {
             for (int i = 0; i < n - 1; i++) {
                 k = i + 1;
-                int comp = students[i].getStudentLName().compareTo(students[k].getStudentLName());
+                int comp = students.get(i).getStudentName().compareTo(students.get(k).getStudentName());
                 if (sortType.equals("asc")) {
                     if (comp > 0) {
                         swapNumbers(i, k, students);
@@ -307,13 +369,13 @@ public class TeacherAttendance extends Fragment {
     }
 
     //Utility method to aid in swapping numbers for the sorting methods
-    private static void swapNumbers(int i, int j, Student[] array) {
+    private static void swapNumbers(int i, int j, ArrayList<Student> array) {
 
         Student temp;
-        temp = array[i];
+        temp = array.;
         array[i] = array[j];
         array[j] = temp;
-    }
+    }*/
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name

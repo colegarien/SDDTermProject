@@ -65,6 +65,35 @@ public class ClassAdapter {
         call.execute(new ServiceCall(Url + "professorclasses/" + professorId, "GET", ""));
     }
 
+    public void professorClasses(int professorId, String semester, int year, final Callback<ArrayList<Class>> callback) {
+        ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
+            @Override
+            public void onComplete(HttpResponse response) throws Exception {
+                Log.d("WS", response.getResponse());
+
+                JSONArray array = new JSONArray(response.getResponse());
+
+                ArrayList<Class> classes = new ArrayList<>();
+
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject jsonObject = array.getJSONObject(i);
+
+                    Class newClass = new Class();
+                    newClass.setId(jsonObject.getInt("Id"));
+                    newClass.setSchool(jsonObject.getString("School"));
+                    newClass.setClass_name(jsonObject.getString("Class_Name"));
+                    newClass.setSemester(jsonObject.getString("Semester"));
+                    newClass.setYear(jsonObject.getInt("Year"));
+                    classes.add(newClass);
+                }
+
+                callback.onComplete(classes);
+            }
+        });
+
+        call.execute(new ServiceCall(Url + "professorclasses/" + professorId + "/" + semester + "/" + year, "GET", ""));
+    }
+
     public void studentAbsences(int classId, final Callback<ArrayList<StudentAbsenceByClass>> callback) {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
             @Override
@@ -94,4 +123,6 @@ public class ClassAdapter {
 
         call.execute(new ServiceCall(Url + "studentabsencesbyclass/" + classId, "GET", ""));
     }
+
+
 }
