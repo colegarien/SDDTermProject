@@ -90,7 +90,7 @@
     <!--Student Roll Call UI Strings-->
     <string name="btn_check_in">Check in</string>
     <string name="lbl_status_checked_in">You have checked-in</string>
-    <string name="lbl_status_not_connected">No class found</string>
+    <string name="lbl_status_not_connected">Not connected</string>
     <string name="lbl_status_checking_in">Checking in...</string>
     <string name="lbl_status_failed">Check-in failed. Please try again</string>
     <string name="action_debug">Debug</string>
