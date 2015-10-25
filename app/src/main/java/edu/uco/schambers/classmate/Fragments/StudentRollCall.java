@@ -137,7 +137,14 @@ public class StudentRollCall extends Fragment {
                 }
 
                 classAdapter.notifyDataSetChanged();
-                lblCheckinStatus.setText(classes.size() + " class(es) have been found");
+
+                if (classes.size() == 1){
+                    lblCheckinStatus.setText("1 class has been found.");
+                }
+                else {
+                    lblCheckinStatus.setText(classes.size() + " classes have been found. Scroll to view more");
+                }
+
             }
         };
 
@@ -278,7 +285,7 @@ public class StudentRollCall extends Fragment {
                 ClassService item = getItem(position);
 
                 lineOneView.setText("Class Name: " + item.getClassName());
-                lineTwoView.setText("Professor Name:" + item.getProfessorName());
+                lineTwoView.setText("Professor Name: " + item.getProfessorName());
 
                 return listItemView;
             }
