@@ -65,8 +65,6 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
     // For creating service request, and initiate discovery
     private WifiP2pDnsSdServiceRequest serviceRequest;
 
-    private WifiP2pDevice targetDevice = null;
-
     // BroadcastReceiver
     private BroadcastReceiver wifiReceiver;
 
@@ -223,12 +221,11 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                         // A service has been discovered. Is this our app?
                         if (instanceName.equalsIgnoreCase(SERVICE_INSTANCE)){
 
+                            records.put("deviceaddress", srcDevice.deviceAddress);
                             // Notify the observers to update their UI
                             ServiceDiscoveryManager.getInstance().directNotifyObservers(records);
 
                             Log.d("ServiceDiscovery", "Service found");
-
-                            targetDevice = srcDevice;
                         }
 
                     }
@@ -321,13 +318,10 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         });
     }
 
-    public void connectToPeer() {
-        if (targetDevice == null){
-            Log.d("ServiceDiscovery", "Target not found, make sure this method is called after a service was found");
-        }
+    public void connectToPeer(String deviceAddress) {
 
         WifiP2pConfig config = new WifiP2pConfig();
-        config.deviceAddress = targetDevice.deviceAddress;
+        config.deviceAddress = deviceAddress;
         config.wps.setup = WpsInfo.PBC;
 
         if (serviceRequest != null)

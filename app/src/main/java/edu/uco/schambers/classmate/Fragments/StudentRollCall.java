@@ -22,27 +22,29 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
 import edu.uco.schambers.classmate.Activites.MainActivity;
 import edu.uco.schambers.classmate.BroadcastReceivers.StudentRollCallBroadcastReceiver;
-import edu.uco.schambers.classmate.Database.DataRepo;
-import edu.uco.schambers.classmate.Database.TokenUtility;
-import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.ObservableManagers.ServiceDiscoveryManager;
 import edu.uco.schambers.classmate.ObservableManagers.SocketResultManager;
 import edu.uco.schambers.classmate.R;
@@ -66,7 +68,6 @@ public class StudentRollCall extends Fragment {
     private String mParam2;
 
     //UI Components
-    private Button btnCheckin;
     private TextView lblCheckinStatus;
 
     private SharedPreferences prefs;
@@ -76,20 +77,13 @@ public class StudentRollCall extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    // for retrieving student name
-    private SharedPreferences sp;
-    public static final String MyPREFS = "MyPREFS";
-    private String user_key;
-    private DataRepo dr;
-    private User user;
-    private String token;
-
     // for indicate check in status
     private boolean isCheckingIn = false;
 
-    public User getUser() {
-        return user;
-    }
+    // Discovered class list
+    private ArrayList<ClassService> classes =new ArrayList<>();
+    // Adapter of classes
+    private ArrayAdapter<ClassService> classAdapter;
 
     /**
      * Use this factory method to create a new instance of
@@ -131,8 +125,26 @@ public class StudentRollCall extends Fragment {
             public void update(Observable observable, Object data) {
                 Map<String, String> record = (Map<String, String>)data;
 
-                btnCheckin.setEnabled(true);
-                lblCheckinStatus.setText("Professor " + record.get("buddyname") + "'s class has been found");
+                ClassService classService = new ClassService(
+                                                record.get("classname"),
+                                                record.get("buddyname"),
+                                                record.get("deviceaddress"),
+                                                record.get("listenport")
+                                        );
+
+                if (!classes.contains(classService)){
+                    classes.add(classService);
+                }
+
+                classAdapter.notifyDataSetChanged();
+
+                if (classes.size() == 1){
+                    lblCheckinStatus.setText("1 class has been found.");
+                }
+                else {
+                    lblCheckinStatus.setText(classes.size() + " classes have been found. Scroll to view more");
+                }
+
             }
         };
 
@@ -237,31 +249,71 @@ public class StudentRollCall extends Fragment {
 
 
     private void initUI(final View rootView) throws JSONException {
-        sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-        token = sp.getString("AUTH_TOKEN", null);
-        user = TokenUtility.parseUserToken(token);
+        initListView(rootView);
 
-        btnCheckin = (Button) rootView.findViewById(R.id.btn_check_in);
         lblCheckinStatus = (TextView) rootView.findViewById(R.id.lbl_checkin_status);
-        btnCheckin.setOnClickListener(new View.OnClickListener() {
+    }
+
+    private void initListView(View rootView){
+
+        classes = new ArrayList<>();
+        classAdapter=new ArrayAdapter<ClassService>(this.getActivity(),
+                android.R.layout.two_line_list_item,
+                classes){
             @Override
-            public void onClick(View v) {
+            public View getView(int position, View convertView, ViewGroup parent){
+                LayoutInflater inflater = (LayoutInflater)getContext()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                View listItemView = convertView;
+                if (null == convertView) {
+                    listItemView = inflater.inflate(
+                            android.R.layout.simple_list_item_2,
+                            parent,
+                            false);
+                }
+
+                // The ListItemLayout must use the standard text item IDs.
+                TextView lineOneView = (TextView)listItemView.findViewById(
+                        android.R.id.text1);
+                TextView lineTwoView = (TextView)listItemView.findViewById(
+                        android.R.id.text2);
+                lineOneView.setGravity(Gravity.CENTER );
+                lineTwoView.setGravity(Gravity.CENTER);
+                lineOneView.setPadding(0, 80, 0, 20);
+                lineTwoView.setPadding(0, 20, 0, 80);
+                ClassService item = getItem(position);
+
+                lineOneView.setText("Class Name: " + item.getClassName());
+                lineTwoView.setText("Professor Name: " + item.getProfessorName());
+
+                return listItemView;
+            }
+        };
+
+        final ListView list = (ListView) rootView.findViewById(R.id.list_class);
+        list.setAdapter(classAdapter);
+
+        final ScrollView scrollView = (ScrollView) rootView.findViewById(R.id.scrollView_class);
+
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
                 // Mute or vibrate user's devices
                 changeAudioSetting(prefs.getString("CheckedInMode", null));
 
                 lblCheckinStatus.setText(getString(R.string.lbl_status_checking_in));
-                btnCheckin.setEnabled(false);
                 isCheckingIn = true;
+                scrollView.setEnabled(false);
+                list.setEnabled(false);
 
                 initBroadcast();
-                connectToGroupOwner();
+                connectToGroupOwner(classes.get(position).getDeviceAddress());
+
+                return false;
             }
         });
-
-        // Disable the button.
-        // The check-in button can be enabled
-        // only if there is a teacher roll call service found.
-        btnCheckin.setEnabled(false);
     }
 
     private void changeAudioSetting(String audioMode){
@@ -295,12 +347,12 @@ public class StudentRollCall extends Fragment {
         }
     }
 
-    private void connectToGroupOwner(){
+    private void connectToGroupOwner(String deviceAddress){
         Activity activity = getActivity();
 
         /// Start discovering teacher service
         if(activity instanceof MainActivity) {
-            ((MainActivity) activity).connectToPeer();
+            ((MainActivity) activity).connectToPeer(deviceAddress);
         }
     }
 
@@ -362,4 +414,64 @@ public class StudentRollCall extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    public class ClassService{
+        private String className;
+        private String professorName;
+        private String deviceAddress;
+        private String devicePort;
+
+        public ClassService(){}
+
+        public ClassService(String className, String professorName, String deviceAddress, String devicePort) {
+            this.className = className;
+            this.professorName = professorName;
+            this.deviceAddress = deviceAddress;
+            this.devicePort = devicePort;
+        }
+
+        public String getClassName() {
+            return className;
+        }
+
+        public void setClassName(String className) {
+            this.className = className;
+        }
+
+        public String getProfessorName() {
+            return professorName;
+        }
+
+        public void setProfessorName(String professorName) {
+            this.professorName = professorName;
+        }
+
+        public String getDeviceAddress() {
+            return deviceAddress;
+        }
+
+        public void setDeviceAddress(String deviceAddress) {
+            deviceAddress = deviceAddress;
+        }
+
+        public String getDevicePort() {
+            return devicePort;
+        }
+
+        public void setDevicePort(String devicePort) {
+            devicePort = devicePort;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof ClassService) {
+                ClassService other = (ClassService) o;
+                return this.className.equals(other.className)
+                        && this.professorName.equals(other.professorName)
+                        && this.deviceAddress.equals(other.deviceAddress)
+                        && this.devicePort.equals(other.devicePort);
+            } else {
+                return false;
+            }
+        }
+    }
 }
