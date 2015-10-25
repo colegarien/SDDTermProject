@@ -45,9 +45,6 @@ import java.util.Observer;
 
 import edu.uco.schambers.classmate.Activites.MainActivity;
 import edu.uco.schambers.classmate.BroadcastReceivers.StudentRollCallBroadcastReceiver;
-import edu.uco.schambers.classmate.Database.DataRepo;
-import edu.uco.schambers.classmate.Database.TokenUtility;
-import edu.uco.schambers.classmate.Database.User;
 import edu.uco.schambers.classmate.ObservableManagers.ServiceDiscoveryManager;
 import edu.uco.schambers.classmate.ObservableManagers.SocketResultManager;
 import edu.uco.schambers.classmate.R;
@@ -80,14 +77,6 @@ public class StudentRollCall extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    // for retrieving student name
-    private SharedPreferences sp;
-    public static final String MyPREFS = "MyPREFS";
-    private String user_key;
-    private DataRepo dr;
-    private User user;
-    private String token;
-
     // for indicate check in status
     private boolean isCheckingIn = false;
 
@@ -95,10 +84,6 @@ public class StudentRollCall extends Fragment {
     private ArrayList<ClassService> classes =new ArrayList<>();
     // Adapter of classes
     private ArrayAdapter<ClassService> classAdapter;
-
-    public User getUser() {
-        return user;
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -257,10 +242,6 @@ public class StudentRollCall extends Fragment {
 
 
     private void initUI(final View rootView) throws JSONException {
-        sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-        token = sp.getString("AUTH_TOKEN", null);
-        user = TokenUtility.parseUserToken(token);
-
         initListView(rootView);
 
         lblCheckinStatus = (TextView) rootView.findViewById(R.id.lbl_checkin_status);
