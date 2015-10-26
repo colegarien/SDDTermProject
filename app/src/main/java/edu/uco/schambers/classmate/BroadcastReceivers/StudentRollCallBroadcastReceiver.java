@@ -12,7 +12,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 
-import edu.uco.schambers.classmate.Database.TokenUtility;
+import edu.uco.schambers.classmate.AdapterModels.TokenUtility;
 import edu.uco.schambers.classmate.Fragments.StudentRollCall;
 import edu.uco.schambers.classmate.ObservableManagers.IPAddressManager;
 import edu.uco.schambers.classmate.Services.StudentRollCallService;

@@ -1,4 +1,4 @@
-package edu.uco.schambers.classmate.Database;
+package edu.uco.schambers.classmate.AdapterModels;
 
 public class StudentAbsenceByClass {
     private int enrollmentId;

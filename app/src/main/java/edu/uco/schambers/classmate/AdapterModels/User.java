@@ -1,4 +1,4 @@
-package edu.uco.schambers.classmate.Database;
+package edu.uco.schambers.classmate.AdapterModels;
 
 import java.io.Serializable;
 import java.util.regex.Matcher;

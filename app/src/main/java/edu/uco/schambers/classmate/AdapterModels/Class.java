@@ -1,4 +1,4 @@
-package edu.uco.schambers.classmate.Database;
+package edu.uco.schambers.classmate.AdapterModels;
 
 /**
  * Created by calitova on 10/7/2015.
@@ -9,7 +9,9 @@ public class Class {
     private String school;
     private String class_name;
     private String semester;
+    private String professor_name;
     private int year;
+    private boolean enrolled;
 
     public int getId() {
         return id;
@@ -35,6 +37,14 @@ public class Class {
         this.class_name = class_name;
     }
 
+    public String getProfessor_name() {
+        return professor_name;
+    }
+
+    public void setProfessor_name(String professor_name) {
+        this.professor_name = professor_name;
+    }
+
     public int getYear() {
         return year;
     }
@@ -50,4 +60,14 @@ public class Class {
     public void setSemester(String semester) {
         this.semester = semester;
     }
+
+    public boolean isEnrolled() {
+        return enrolled;
+    }
+
+    public void setEnrolled(boolean enrolled) {
+        this.enrolled = enrolled;
+    }
+
+
 }

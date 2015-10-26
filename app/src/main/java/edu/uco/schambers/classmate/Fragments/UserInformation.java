@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,9 +22,9 @@ import java.io.IOException;
 import edu.uco.schambers.classmate.Adapter.Callback;
 import edu.uco.schambers.classmate.Adapter.HttpResponse;
 import edu.uco.schambers.classmate.Adapter.UserAdapter;
-import edu.uco.schambers.classmate.Database.DataRepo;
-import edu.uco.schambers.classmate.Database.TokenUtility;
-import edu.uco.schambers.classmate.Database.User;
+import edu.uco.schambers.classmate.AdapterModels.DataRepo;
+import edu.uco.schambers.classmate.AdapterModels.TokenUtility;
+import edu.uco.schambers.classmate.AdapterModels.User;
 import edu.uco.schambers.classmate.R;
 
 

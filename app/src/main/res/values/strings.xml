@@ -45,6 +45,7 @@
     <string name="response">In Class Response</string>
     <string name="responseres">Response Results</string>
     <string name="classmanage">Class Management</string>
+    <string name="user_enrollment">Enrollment</string>
     <string name="class_add">Add Class</string>
     <string name="classname">Class Name</string>
     <string name="schoolname">School Name</string>

@@ -33,19 +33,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
 import edu.uco.schambers.classmate.Activites.MainActivity;
-import edu.uco.schambers.classmate.Database.DataRepo;
-import edu.uco.schambers.classmate.Database.TokenUtility;
-import edu.uco.schambers.classmate.Database.User;
+import edu.uco.schambers.classmate.AdapterModels.DataRepo;
+import edu.uco.schambers.classmate.AdapterModels.TokenUtility;
+import edu.uco.schambers.classmate.AdapterModels.User;
 import edu.uco.schambers.classmate.ObservableManagers.StudentAttendanceObservable;
 import edu.uco.schambers.classmate.R;
 import edu.uco.schambers.classmate.Services.TeacherRollCallService;
