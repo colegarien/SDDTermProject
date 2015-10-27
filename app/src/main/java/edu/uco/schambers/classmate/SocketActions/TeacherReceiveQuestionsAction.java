@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 
+import edu.uco.schambers.classmate.Fragments.TeacherQuestion;
 import edu.uco.schambers.classmate.ListenerInterfaces.OnQuestionReceivedListener;
 import edu.uco.schambers.classmate.Models.Questions.IQuestion;
+import edu.uco.schambers.classmate.Services.TeacherQuestionService;
 
 /**
  * Created by Steven Chambers on 10/3/2015.
@@ -32,57 +34,52 @@ public class TeacherReceiveQuestionsAction extends SocketAction
     @Override
     void setUpSocket() throws IOException
     {
+
         serverSocket = new ServerSocket(QUESTIONS_PORT_NUMBER);
 
     }
 
     @Override
-    void performAction() throws IOException
-    {
-        while (listeningForQuestions)
-        {
+    void performAction() throws IOException {
+        while (listeningForQuestions) {
             socket = serverSocket.accept();
+
             objectInputStream = new ObjectInputStream(socket.getInputStream());
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
-            try
-            {
+            try {
                 IQuestion questionReceived =(IQuestion) objectInputStream.readObject();
                 questionReceivedSuccessfully = true;
                 questionReceivedListener.onQuestionReceived(questionReceived);
-            }
-            catch (ClassNotFoundException e)
-            {
+            } catch (ClassNotFoundException e) {
                 Log.d("SocketAction", "There was a problem decoding the serializable question. Exception: " + e.toString());
             }
             dataOutputStream.writeBoolean(questionReceivedSuccessfully);
-
         }
-
     }
 
     @Override
-    void tearDownSocket() throws IOException
-    {
-        if(serverSocket != null)
-        {
+    void tearDownSocket() throws IOException {
+        if (serverSocket != null) {
             serverSocket.close();
         }
-        if(socket != null)
-        {
+        if (socket != null) {
             socket.close();
         }
-        if(objectInputStream != null)
-        {
+        if (objectInputStream != null) {
             objectInputStream.close();
         }
-        if(dataOutputStream != null)
-        {
+        if (dataOutputStream != null) {
             dataOutputStream.close();
         }
     }
-    public void stopListening()
-    {
+
+    public void stopListening() {
         listeningForQuestions = false;
+    }
+
+    public void startListening() {
+
+        listeningForQuestions = true;
     }
 }

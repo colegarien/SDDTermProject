@@ -38,7 +38,7 @@ public class TeacherQuestionService extends Service implements OnQuestionReceive
     public static final String ACTION_CALL_TIME = "edu.uco.schambers.classmate.Services.TeacherQuestionService.ACTION_CALL_TIME";
 
     private SocketAction listenForQuestions;
-    private ArrayList<IQuestion> answerList;
+    public static ArrayList<IQuestion> answerList;
     private boolean isAccepting;
     Handler handler;
 
@@ -86,8 +86,7 @@ public class TeacherQuestionService extends Service implements OnQuestionReceive
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
         IQuestion question;
-        switch (action)
-        {
+        switch (action) {
             case ACTION_NOTIFY_QUESTION_RECEIVED://Question recieved from student, called from listener
                 question = (IQuestion) intent.getExtras().getSerializable(TeacherQuestion.ARG_QUESTION);
                 aggregateQuestion(question);//Add the current answer to the running answer list
@@ -96,10 +95,12 @@ public class TeacherQuestionService extends Service implements OnQuestionReceive
             case ACTION_SEND_QUESTION_RESPONSE://Button pressed to send questions to all students
                 question = (IQuestion) intent.getExtras().getSerializable(TeacherQuestion.ARG_QUESTION);
                 isAccepting = true; //Begin accepting Answers
+                (((TeacherReceiveQuestionsAction) listenForQuestions)).startListening();
                 balanceAnswerList();
                 sendQuestionResponse(question);
                 break;
             case ACTION_CALL_TIME://Button to collect answers pressed
+                (((TeacherReceiveQuestionsAction) listenForQuestions)).stopListening();
                 isAccepting = false;
                 balanceAnswerList();
                 //Update UI/Send to Thomas
@@ -131,12 +132,14 @@ public class TeacherQuestionService extends Service implements OnQuestionReceive
         answerList.add(question);
     }
 
+
+    //NOT SURE IF THIS EVEN WORKS GIVEN CHANGES, WILL BE REWORKING IT OR POSSIBLY JUST REMOVING IT
     private void notifyQuestionReceived(IQuestion question) {
         NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
         notificationBuilder.setSmallIcon(R.drawable.ic_stat_question_broadcast_recieved)
                 .setContentTitle("Question Received")
-                .setContentText("Questions Received! Press here to see class aggregate answers!");
+                .setContentText("Question Recieved: answer[" + question.getAnswer() + "]");
         notificationBuilder.setAutoCancel(true);
         notificationBuilder.setPriority(Notification.PRIORITY_HIGH);
         Intent notifyIntent = new Intent(this, MainActivity.class);
@@ -191,6 +194,7 @@ public class TeacherQuestionService extends Service implements OnQuestionReceive
 
             public void run()
             {
+
                 Toast.makeText(getBaseContext(),String.format("The question was sent successfully to %s port %d ", domainFinal, portFinal), Toast.LENGTH_LONG).show();
             }
         });
