@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -59,6 +60,7 @@ public class UserInformation extends Fragment {
     private Button confirm;
     private CheckBox changePass;
     private boolean toChangePass;
+    
 
 
     public SharedPreferences sp;
@@ -174,29 +176,38 @@ public class UserInformation extends Fragment {
             @Override
             public void onClick(View v) {
                 UserAdapter userAdapter = new UserAdapter();
+                if (!user.isValidPassword(newPass.getText().toString())) {
+                    newPass.requestFocus();
+                    newPass.setError("Password must be at least eight characters");
+                } else if (!newPass.getText().toString().equals(confirmNewPass.getText().toString())) {
+                    newPass.requestFocus();
+                    newPass.setError("New passwords do not match.");
+                } else {
+                    try {
+                        userAdapter.changePass(user.getEmail(), currentPass.getText().toString(), newPass.getText().toString(), new Callback<HttpResponse>() {
+                            @Override
+                            public void onComplete(HttpResponse response) throws Exception {
+                                if (response.getHttpCode() == 204) {
+                                    Toast.makeText(getActivity(), "Your Password has been Updated", Toast.LENGTH_LONG).show();
+                                }
+                                else if (response.getHttpCode() == 401) {
+                                    currentPass.requestFocus();
+                                    currentPass.setError("Incorrect Current Password");
+                                }
+                                else{
+                                    Toast.makeText(getActivity(), "Error communicating with server. Status code: " + response.getHttpCode(), Toast.LENGTH_LONG).show();
+                                }
 
-                try {
-                    userAdapter.changePass(user.getEmail(), currentPass.getText().toString(), newPass.getText().toString(), new Callback<HttpResponse>() {
-                        @Override
-                        public void onComplete(HttpResponse response) throws Exception {
-                            if (response.getHttpCode() == 204) {
-                                Toast.makeText(getActivity(), "Your Password has been Updated", Toast.LENGTH_LONG).show();
                             }
-                            else if (response.getHttpCode() == 401) {
-                                currentPass.requestFocus();
-                                currentPass.setError("Incorrect Current Password");
-                            }
-                            else{
-                                Toast.makeText(getActivity(), "Error communicating with server. Status code: " + response.getHttpCode(), Toast.LENGTH_LONG).show();
-                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-                        }
-                    });
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
+
 
                 /*if (!dr.validateUser(user.getEmail().toString(), currentPass.getText().toString())) {
                     currentPass.setError("Incorrect Current Password");
