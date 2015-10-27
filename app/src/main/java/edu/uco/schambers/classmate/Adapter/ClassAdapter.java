@@ -14,7 +14,7 @@ import edu.uco.schambers.classmate.AdapterModels.Class;
 public class ClassAdapter {
     private final static String Url = "http://classmateapi.azurewebsites.net/api/";
 
-    public void createClass(int professorId, String school, String className, String semester, int year, final Callback<Boolean> callback) throws JSONException {
+    public void createClass(int professorId, String className, String school, String semester, int year, final Callback<Boolean> callback) throws JSONException {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
 
             @Override

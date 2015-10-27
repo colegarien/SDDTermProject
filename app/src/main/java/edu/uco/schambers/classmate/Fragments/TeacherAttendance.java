@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -220,7 +221,9 @@ public class TeacherAttendance extends Fragment {
                 classAdapter.studentAbsences(Integer.parseInt(item.getValue()), new Callback<ArrayList<StudentAbsenceByClass>>() {
                     @Override
                     public void onComplete(ArrayList<StudentAbsenceByClass> result) throws Exception {
-
+                        for (int i=0; i<result.size(); i++){
+                            Log.d("RAYAN TEST", result.get(i).getName());
+                        }
                         students.clear();
                         for (StudentAbsenceByClass studentAbsense : result) {
                             students.add(studentAbsense);

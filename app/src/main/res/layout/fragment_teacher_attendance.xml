@@ -12,57 +12,33 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TableLayout
+    <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
+        android:ems="10"
+        android:id="@+id/semester_sp"
+        android:layout_gravity="center_horizontal"
+        android:entries="@array/semester_array" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:baselineAligned="false">
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:id="@+id/year_sp"
+        android:layout_gravity="center_horizontal"
+        android:entries="@array/year_array" />
 
-            <Spinner
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:id="@+id/semester_sp"
-                android:layout_gravity="center_horizontal"
-                android:entries="@array/semester_array"
-                android:layout_weight="0.5"/>
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerClassSelect"
+        android:spinnerMode="dropdown" />
 
-            <Spinner
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:id="@+id/year_sp"
-                android:layout_gravity="center_horizontal"
-                android:entries="@array/year_array"
-                android:layout_weight="0.5"/>
-
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:baselineAligned="false">
-
-            <Spinner
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/spinnerClassSelect"
-                android:spinnerMode="dropdown"
-                android:layout_weight="0.5"/>
-
-            <Spinner
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/spinnerSort"
-                android:spinnerMode="dropdown"
-                android:layout_weight="0.5"/>
-
-        </TableRow>
-
-    </TableLayout>
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerSort"
+        android:spinnerMode="dropdown" />
 
     <TableRow
         android:layout_width="match_parent"
@@ -71,20 +47,9 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text=" Last"
+            android:text=" Name"
             android:id="@+id/textView4"
-            android:layout_weight="2"
-            android:background="@drawable/cell_shape"
-            android:textColor="@android:color/black"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" First"
-            android:id="@+id/textView6"
-            android:layout_weight="0.5"
+            android:layout_weight="1"
             android:background="@drawable/cell_shape"
             android:textColor="@android:color/black"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
@@ -107,12 +72,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/scrollView"
-        android:layout_gravity="center_horizontal"
         android:background="#d8dcdc">
 
         <TableLayout
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/teacherAttendanceTable"></TableLayout>
     </ScrollView>
+
 </LinearLayout>
