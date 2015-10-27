@@ -11,8 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +53,9 @@ public class Auth extends Fragment {
     private Button signin;
     private TextView signup;
     private TextView resetLink;
+    private LinearLayout ll;
+    private Animation errorBlink;
+    private Animation titleMove;
 
     public SharedPreferences sp;
     public SharedPreferences.Editor editor;
@@ -127,6 +133,7 @@ public class Auth extends Fragment {
 
     private void initUI(final View rootView) {
 
+        ll = (LinearLayout) rootView.findViewById(R.id.auth_ll);
         email = (EditText) rootView.findViewById(R.id.email_et);
         pass = (EditText) rootView.findViewById(R.id.pass_et);
         signin = (Button) rootView.findViewById(R.id.sign_in_btn);
@@ -164,11 +171,9 @@ public class Auth extends Fragment {
             }
         });
 
-        signup.setOnClickListener(new View.OnClickListener()
-        {
+        signup.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 Fragment signup = Login.newInstance("test", "test");
                 launchFragment(signup);
             }
@@ -188,9 +193,13 @@ public class Auth extends Fragment {
             public void onClick(View v)
             {
                 if (!user.isValidEmail(email.getText().toString())) {
+                    errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
+                    email.startAnimation(errorBlink);
                     email.requestFocus();
                     email.setError("Invalid email");
                 } else if (pass.getText().toString().equals("")) {
+                    errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
+                    pass.startAnimation(errorBlink);
                     pass.requestFocus();
                     pass.setError("please enter a password.");
                 }  else {
@@ -203,6 +212,8 @@ public class Auth extends Fragment {
                             @Override
                             public void onComplete(HttpResponse result) {
                                 if (result.getHttpCode() == 401) {
+                                    errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
+                                    pass.startAnimation(errorBlink);
                                     pass.requestFocus();
                                     pass.setError("Incorrect E-Mail or Password");
                                 } else if (result.getHttpCode() >= 300)
@@ -217,6 +228,8 @@ public class Auth extends Fragment {
                                         User user = TokenUtility.parseUserToken(result.getResponse());
                                         ChooseInterface(user.isStudent());
                                     } catch (JSONException e) {
+                                        errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
+                                        pass.startAnimation(errorBlink);
                                         pass.setError("Incorrect E-Mail or Password");
                                         Log.d("DEBUG", e.toString());
                                         Toast.makeText(getActivity(), "Error parsing token response", Toast.LENGTH_LONG);
@@ -234,23 +247,11 @@ public class Auth extends Fragment {
                         pass.setError("Incorrect E-Mail or Password");
                     }
 
-                /*if(!dr.validateUser(email.getText().toString(), pass.getText().toString())) {
-                    pass.setError("Incorrect E-Mail or Password");
-                }else{
-
-
-
-                    dr = new DataRepo(getActivity());
-                    user = dr.getUser(email.getText().toString());
-                    sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-                    editor = sp.edit();
-                    editor.putString("USER_KEY", user.getEmail());
-                    editor.commit();
-                    ChooseInterface(user);
-                }*/
                 }
             }
         });
+        titleMove = AnimationUtils.loadAnimation(getActivity(), R.anim.signinmove);
+        ll.startAnimation(titleMove);
 
 
     }

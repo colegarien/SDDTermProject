@@ -8,7 +8,15 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal|top">
+        android:layout_gravity="center_horizontal|top"
+        android:id="@+id/auth_ll">
+
+        <ImageView
+            android:layout_width="185dp"
+            android:layout_height="246dp"
+            android:id="@+id/imageView"
+            android:src="@drawable/cm_logo_circle"
+            android:layout_gravity="center_horizontal" />
 
         <EditText
             android:layout_width="match_parent"
