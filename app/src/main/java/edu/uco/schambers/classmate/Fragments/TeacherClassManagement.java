@@ -125,7 +125,7 @@ public class TeacherClassManagement extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Scanner scanner = new Scanner(getResources().openRawResource(R.raw.schools));
                 List<String> list = new ArrayList<String>();
-                while (scanner.hasNext()) {
+                while (scanner.hasNextLine()) {
                     String data = scanner.nextLine();
                     String [] values = data.split(",");
                     if (values[1].equals(parent.getSelectedItem().toString()))
