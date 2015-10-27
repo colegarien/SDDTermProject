@@ -7,21 +7,28 @@ import edu.uco.schambers.classmate.AdapterModels.Class;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 import edu.uco.schambers.classmate.AdapterModels.TokenUtility;
 import edu.uco.schambers.classmate.AdapterModels.User;
@@ -50,6 +57,7 @@ public class TeacherClassManagement extends Fragment {
     ListView addedClasses;
     ArrayList<String> listItems;
     ArrayAdapter<String> adapter;
+    ArrayAdapter<String> schooladapter;
     Button addButton;
     Spinner semester;
     Spinner year;
@@ -101,28 +109,51 @@ public class TeacherClassManagement extends Fragment {
     }
 
     private void initUI(final View rootView) throws JSONException {
-        addedClasses = (ListView)rootView.findViewById(R.id.add_class_lst);
+        //addedClasses = (ListView)rootView.findViewById(R.id.add_class_lst);
         addButton = (Button)rootView.findViewById(R.id.add_class_btn);
         semester = (Spinner)rootView.findViewById(R.id.semester_sp);
         year = (Spinner)rootView.findViewById(R.id.year_sp);
         listItems = new ArrayList<String>();
         adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, listItems);
-        addedClasses.setAdapter(adapter);
+        //addedClasses.setAdapter(adapter);
+        Spinner stateName = (Spinner)rootView.findViewById(R.id.state_sp);
+        stateName.setSelection(0);
+        stateName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Scanner scanner = new Scanner(getResources().openRawResource(R.raw.schools));
+                List<String> list = new ArrayList<String>();
+                while (scanner.hasNext()) {
+                    String data = scanner.nextLine();
+                    String [] values = data.split(",");
+                    Log.d("RAYAN",values[1]);
+                    if (values[1].equals(parent.getSelectedItem().toString()))
+                        list.add(values[0]);
+                }
+                schooladapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, list);
+                Spinner schoolName = (Spinner)rootView.findViewById(R.id.schoolname_sp);
+                schoolName.setAdapter(schooladapter);
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        final Spinner schoolName = ((Spinner) rootView.findViewById(R.id.schoolname_sp));
         final User user = TokenUtility.parseUserToken(getActivity());
         final ClassAdapter classAdapter = new ClassAdapter();
 
         refreshList();
         ((EditText) rootView.findViewById(R.id.classname_et)).setText("");
         rootView.findViewById(R.id.classname_et).requestFocus();
-        ((EditText) rootView.findViewById(R.id.schoolname_et)).setText("");
 
         addButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                 boolean valid = true;
                 EditText classNameTemp = ((EditText) rootView.findViewById(R.id.classname_et));
-                EditText schoolName = ((EditText) rootView.findViewById(R.id.schoolname_et));
+
                 Spinner semester = (Spinner) rootView.findViewById((R.id.semester_sp));
                 Spinner year = (Spinner) rootView.findViewById((R.id.year_sp));
 
@@ -132,15 +163,11 @@ public class TeacherClassManagement extends Fragment {
                     classNameTemp.setError("Class Name is Required!");
                     valid = false;
                 }
-                if (schoolName.getText().toString().length() == 0) {
-                    errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
-                    schoolName.startAnimation(errorBlink);
-                    schoolName.setError("School Name is Required");
-                    valid = false;
-                }
+
                 if (semester.getSelectedItem().toString().contains("..") ||
-                        year.getSelectedItem().toString().contains("..")) {
-                    Toast.makeText(getActivity(), "Select Semester/Year!", Toast.LENGTH_LONG)
+                        year.getSelectedItem().toString().contains("..") ||
+                        schoolName.getSelectedItem().toString().contains("..")) {
+                    Toast.makeText(getActivity(), "Select State/School/Semester/Year!", Toast.LENGTH_LONG)
                             .show();
                     valid = false;
                 }
@@ -148,7 +175,7 @@ public class TeacherClassManagement extends Fragment {
 
                     try {
 
-                        classAdapter.createClass(user.getpKey(), classNameTemp.getText().toString(), schoolName.getText().toString(), semester.getSelectedItem().toString(), Integer.parseInt(year.getSelectedItem().toString()), new Callback<Boolean>() {
+                        classAdapter.createClass(user.getpKey(), schoolName.getSelectedItem().toString(), classNameTemp.getText().toString(), semester.getSelectedItem().toString(), Integer.parseInt(year.getSelectedItem().toString()), new Callback<Boolean>() {
                                     @Override
                                     public void onComplete(Boolean isAdded) throws Exception {
                                         if (isAdded) {
@@ -157,7 +184,6 @@ public class TeacherClassManagement extends Fragment {
                                             refreshList();
                                             ((EditText) rootView.findViewById(R.id.classname_et)).setText("");
                                             rootView.findViewById(R.id.classname_et).requestFocus();
-                                            ((EditText) rootView.findViewById(R.id.schoolname_et)).setText("");
                                         }
                                     }
                                 }
@@ -194,6 +220,33 @@ public class TeacherClassManagement extends Fragment {
             public void onComplete(ArrayList<Class> result) throws Exception {
                 listItems.clear();
                 for (Class classItem : result) {
+                    TableLayout classTable = (TableLayout) getView().findViewById(R.id.classMgmtTable);
+                    TableRow tr = new TableRow(getView().getContext());
+                    String schoolnames[] = classItem.getSchool().split(" ");
+                    String schoolAbbrev = "";
+                    if (classItem.getSchool().length()>4) {
+                        for (int i = 0; i < schoolnames.length; i++) {
+                            if (!schoolnames[i].contains("of") || !schoolnames[i].contains("the")) {
+                                schoolAbbrev += schoolnames[i].charAt(0);
+                            }
+                        }
+                    }
+                    else{
+                        schoolAbbrev = classItem.getSchool();
+                    }
+                    //Set each column's data in the row
+                    TextView c0 = new TextView(getView().getContext());
+                    c0.setText(classItem.getClass_name());
+                    TextView c2 = new TextView(getView().getContext());
+                    c2.setText(String.valueOf("\t"+schoolAbbrev));
+                    TextView c3 = new TextView(getView().getContext());
+                    c3.setText(String.valueOf("\t\t\t\t"+classItem.getSemester() + "/" + classItem.getYear()));
+                    tr.addView(c0);
+                    tr.addView(c2);
+                    tr.addView(c3);
+                    //Add the row to the table
+                    classTable.addView(tr);
+
                     listItems.add(
                             classItem.getClass_name() + "-" +
                                     classItem.getSemester() + "-" +
@@ -201,6 +254,7 @@ public class TeacherClassManagement extends Fragment {
                                     classItem.getSchool());
                 }
                 adapter.notifyDataSetChanged();
+
             }
         });
     }
