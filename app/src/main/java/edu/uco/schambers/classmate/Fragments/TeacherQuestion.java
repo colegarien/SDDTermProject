@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import edu.uco.schambers.classmate.Models.Questions.DefaultMultiChoiceQuestion;
+import edu.uco.schambers.classmate.Models.Questions.DefaultUnanswerdQuestion;
 import edu.uco.schambers.classmate.Models.Questions.IQuestion;
 import edu.uco.schambers.classmate.R;
 import edu.uco.schambers.classmate.Services.StudentQuestionService;
@@ -83,12 +84,12 @@ public class TeacherQuestion extends Fragment {
             @Override
             public void onClick(View v) {
                 if (toggle) {
-                    toggleBtn.setText(R.string.btn_teacher_collect);
+                    toggleBtn.setText(R.string.btn_teacher_call_time);
                     sendQuestion();
                     toggle = false;
                 } else {
                     toggleBtn.setText(R.string.btn_teacher_send);
-                    sendCollection();
+                    callTime();
                     toggle = true;
                 }
             }
@@ -96,20 +97,21 @@ public class TeacherQuestion extends Fragment {
 
     }
 
-    //Call to service ****CURRENT****
+
     private void sendQuestion(){
-        //TODO implement sendQuestion method
         IQuestion question = new DefaultMultiChoiceQuestion();
         Intent intent = TeacherQuestionService.getNewSendResponseIntent(getActivity(), question);
-        //TODO create teacherQuestion service and initialize for communication w/ steven
+
         getActivity().startService(intent);
         //stub toast
     }
 
-    private void sendCollection(){
+    private void callTime() {
         //TODO implement sendCollection method
-
+        IQuestion question = new DefaultUnanswerdQuestion(); //Redundent
+        Intent intent = TeacherQuestionService.getNewCallTimeIntent(getActivity(), question);
         //stub toast
+        getActivity().startService(intent);
         Toast.makeText(getActivity(), "Answers collected from class!", Toast.LENGTH_SHORT).show();
     }
 
