@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -62,6 +64,7 @@ public class Login extends Fragment {
     private EditText confirmPass;
     private EditText name;
     private EditText email;
+    private Animation errorBlink;
 
     //user class
     public User user;
@@ -188,18 +191,28 @@ public class Login extends Fragment {
 
                 //check for all appropriate information and toast if missing anything
                 if (!user.isValidName(name.getText().toString())) {
+                    errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
+                    name.startAnimation(errorBlink);
                     name.requestFocus();
                     name.setError("Invalid Name");
                 } else if (!user.isValidPassword(pass.getText().toString())) {
+                    errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
+                    pass.startAnimation(errorBlink);
                     pass.requestFocus();
                     pass.setError("password must be at least 8 characters");
                 } else if (!pass.getText().toString().equals(confirmPass.getText().toString())) {
+                    errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
+                    confirmPass.startAnimation(errorBlink);
                     confirmPass.requestFocus();
                     confirmPass.setError("password do not match");
                 } else if (!user.isValidEmail(email.getText().toString())) {
+                    errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
+                    email.startAnimation(errorBlink);
                     email.requestFocus();
                     email.setError("Invalid email");
                 } else if (cb.isChecked() && idET.getText().toString().matches("")) {
+                    errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
+                    idET.startAnimation(errorBlink);
                     idET.requestFocus();
                     idET.setError("please fill out all appropriate information");
                 } /*else if (cb.isChecked() && dr.userExist(Integer.parseInt(idET.getText().toString()))) {
@@ -229,6 +242,8 @@ public class Login extends Fragment {
                             public void onComplete(HttpResponse result) {
 
                                 if (result.getHttpCode() == 409){
+                                    errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
+                                    email.startAnimation(errorBlink);
                                     email.requestFocus();
                                     email.setError("User already exist");
                                 }

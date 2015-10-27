@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -50,6 +52,7 @@ public class Auth extends Fragment {
     private Button signin;
     private TextView signup;
     private TextView resetLink;
+    private Animation errorBlink;
 
     public SharedPreferences sp;
     public SharedPreferences.Editor editor;
@@ -188,9 +191,13 @@ public class Auth extends Fragment {
             public void onClick(View v)
             {
                 if (!user.isValidEmail(email.getText().toString())) {
+                    errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
+                    email.startAnimation(errorBlink);
                     email.requestFocus();
                     email.setError("Invalid email");
                 } else if (pass.getText().toString().equals("")) {
+                    errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
+                    pass.startAnimation(errorBlink);
                     pass.requestFocus();
                     pass.setError("please enter a password.");
                 }  else {
@@ -203,6 +210,8 @@ public class Auth extends Fragment {
                             @Override
                             public void onComplete(HttpResponse result) {
                                 if (result.getHttpCode() == 401) {
+                                    errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
+                                    pass.startAnimation(errorBlink);
                                     pass.requestFocus();
                                     pass.setError("Incorrect E-Mail or Password");
                                 } else if (result.getHttpCode() >= 300)
@@ -217,6 +226,8 @@ public class Auth extends Fragment {
                                         User user = TokenUtility.parseUserToken(result.getResponse());
                                         ChooseInterface(user.isStudent());
                                     } catch (JSONException e) {
+                                        errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
+                                        pass.startAnimation(errorBlink);
                                         pass.setError("Incorrect E-Mail or Password");
                                         Log.d("DEBUG", e.toString());
                                         Toast.makeText(getActivity(), "Error parsing token response", Toast.LENGTH_LONG);

@@ -10,6 +10,8 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -51,6 +53,7 @@ public class TeacherClassManagement extends Fragment {
     Button addButton;
     Spinner semester;
     Spinner year;
+    private Animation errorBlink;
 
     /**
      * Use this factory method to create a new instance of
@@ -124,10 +127,14 @@ public class TeacherClassManagement extends Fragment {
                 Spinner year = (Spinner) rootView.findViewById((R.id.year_sp));
 
                 if (classNameTemp.getText().toString().length() == 0) {
+                    errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
+                    classNameTemp.startAnimation(errorBlink);
                     classNameTemp.setError("Class Name is Required!");
                     valid = false;
                 }
                 if (schoolName.getText().toString().length() == 0) {
+                    errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
+                    schoolName.startAnimation(errorBlink);
                     schoolName.setError("School Name is Required");
                     valid = false;
                 }

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -60,6 +61,7 @@ public class UserInformation extends Fragment {
     private Button confirm;
     private CheckBox changePass;
     private boolean toChangePass;
+    private Animation errorBlink;
     
 
 
@@ -177,9 +179,13 @@ public class UserInformation extends Fragment {
             public void onClick(View v) {
                 UserAdapter userAdapter = new UserAdapter();
                 if (!user.isValidPassword(newPass.getText().toString())) {
+                    errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
+                    newPass.startAnimation(errorBlink);
                     newPass.requestFocus();
                     newPass.setError("Password must be at least eight characters");
                 } else if (!newPass.getText().toString().equals(confirmNewPass.getText().toString())) {
+                    errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
+                    newPass.startAnimation(errorBlink);
                     newPass.requestFocus();
                     newPass.setError("New passwords do not match.");
                 } else {
