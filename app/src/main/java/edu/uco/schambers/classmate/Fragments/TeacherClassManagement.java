@@ -243,9 +243,9 @@ public class TeacherClassManagement extends Fragment {
                     c2.setText(String.valueOf(schoolAbbrev));
                     TextView c3 = new TextView(getView().getContext());
                     c3.setText(String.valueOf(classItem.getSemester() + "/" + classItem.getYear()));
-                    tr.addView(c0, new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1.2f));
-                    tr.addView(c2, new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, .6f));
-                    tr.addView(c3, new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1.3f));
+                    tr.addView(c0, new TableRow.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, 1f));
+                    tr.addView(c2, new TableRow.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, .5f));
+                    tr.addView(c3, new TableRow.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, 1f));
                     //Add the row to the table
                     classTable.addView(tr);
 
