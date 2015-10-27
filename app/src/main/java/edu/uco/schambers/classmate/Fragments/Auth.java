@@ -15,6 +15,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,7 +53,9 @@ public class Auth extends Fragment {
     private Button signin;
     private TextView signup;
     private TextView resetLink;
+    private LinearLayout ll;
     private Animation errorBlink;
+    private Animation titleMove;
 
     public SharedPreferences sp;
     public SharedPreferences.Editor editor;
@@ -130,6 +133,7 @@ public class Auth extends Fragment {
 
     private void initUI(final View rootView) {
 
+        ll = (LinearLayout) rootView.findViewById(R.id.auth_ll);
         email = (EditText) rootView.findViewById(R.id.email_et);
         pass = (EditText) rootView.findViewById(R.id.pass_et);
         signin = (Button) rootView.findViewById(R.id.sign_in_btn);
@@ -167,11 +171,9 @@ public class Auth extends Fragment {
             }
         });
 
-        signup.setOnClickListener(new View.OnClickListener()
-        {
+        signup.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 Fragment signup = Login.newInstance("test", "test");
                 launchFragment(signup);
             }
@@ -245,23 +247,11 @@ public class Auth extends Fragment {
                         pass.setError("Incorrect E-Mail or Password");
                     }
 
-                /*if(!dr.validateUser(email.getText().toString(), pass.getText().toString())) {
-                    pass.setError("Incorrect E-Mail or Password");
-                }else{
-
-
-
-                    dr = new DataRepo(getActivity());
-                    user = dr.getUser(email.getText().toString());
-                    sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-                    editor = sp.edit();
-                    editor.putString("USER_KEY", user.getEmail());
-                    editor.commit();
-                    ChooseInterface(user);
-                }*/
                 }
             }
         });
+        titleMove = AnimationUtils.loadAnimation(getActivity(), R.anim.signinmove);
+        ll.startAnimation(titleMove);
 
 
     }
