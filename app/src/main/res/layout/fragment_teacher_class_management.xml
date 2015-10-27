@@ -83,29 +83,29 @@
                 android:layout_height="wrap_content"
                 android:text=" Name"
                 android:id="@+id/textView4"
-                android:layout_weight="2"
+                android:layout_weight="1"
                 android:background="@drawable/cell_shape"
                 android:textColor="@android:color/black"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                 android:textStyle="bold" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text=" School"
                 android:id="@+id/textView7"
-                android:layout_weight="0.1"
+                android:layout_weight=".5"
                 android:background="@drawable/cell_shape"
                 android:textColor="@android:color/black"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
                 android:textStyle="bold" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text=" Semester/Year"
                 android:id="@+id/textView5"
-                android:layout_weight="0.3"
+                android:layout_weight="1"
                 android:background="@drawable/cell_shape"
                 android:textColor="@android:color/black"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
