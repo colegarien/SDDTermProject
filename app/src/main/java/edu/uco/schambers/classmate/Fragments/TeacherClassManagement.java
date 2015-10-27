@@ -127,12 +127,12 @@ public class TeacherClassManagement extends Fragment {
                 List<String> list = new ArrayList<String>();
                 while (scanner.hasNextLine()) {
                     String data = scanner.nextLine();
-                    String [] values = data.split(",");
+                    String[] values = data.split(",");
                     if (values[1].equals(parent.getSelectedItem().toString()))
                         list.add(values[0]);
                 }
-                schooladapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, list);
-                Spinner schoolName = (Spinner)rootView.findViewById(R.id.schoolname_sp);
+                schooladapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
+                Spinner schoolName = (Spinner) rootView.findViewById(R.id.schoolname_sp);
                 schoolName.setAdapter(schooladapter);
             }
 
@@ -220,8 +220,9 @@ public class TeacherClassManagement extends Fragment {
             @Override
             public void onComplete(ArrayList<Class> result) throws Exception {
                 listItems.clear();
+                TableLayout classTable = (TableLayout) getView().findViewById(R.id.classMgmtTable);
+                classTable.removeAllViews();
                 for (Class classItem : result) {
-                    TableLayout classTable = (TableLayout) getView().findViewById(R.id.classMgmtTable);
                     TableRow tr = new TableRow(getView().getContext());
                     String schoolnames[] = classItem.getSchool().split(" ");
                     String schoolAbbrev = "";
@@ -239,12 +240,12 @@ public class TeacherClassManagement extends Fragment {
                     TextView c0 = new TextView(getView().getContext());
                     c0.setText(classItem.getClass_name());
                     TextView c2 = new TextView(getView().getContext());
-                    c2.setText(String.valueOf("\t"+schoolAbbrev));
+                    c2.setText(String.valueOf(schoolAbbrev));
                     TextView c3 = new TextView(getView().getContext());
-                    c3.setText(String.valueOf("\t\t\t\t"+classItem.getSemester() + "/" + classItem.getYear()));
-                    tr.addView(c0);
-                    tr.addView(c2);
-                    tr.addView(c3);
+                    c3.setText(String.valueOf(classItem.getSemester() + "/" + classItem.getYear()));
+                    tr.addView(c0, new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1.2f));
+                    tr.addView(c2, new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, .6f));
+                    tr.addView(c3, new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1.3f));
                     //Add the row to the table
                     classTable.addView(tr);
 
