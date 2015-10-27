@@ -4,7 +4,15 @@
     tools:context="edu.uco.schambers.classmate.Fragments.TeacherQuestion">
 
     <!-- TODO: Update fragment layout -->
-    <include layout="@layout/question_propose_card"/>
+    <include
+        layout="@layout/question_propose_card"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent" />
 
+    <include
+        layout="@layout/answers_recieved_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="130dp" />
 
 </FrameLayout>

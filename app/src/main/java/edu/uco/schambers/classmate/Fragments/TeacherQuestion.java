@@ -7,8 +7,12 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 import edu.uco.schambers.classmate.Models.Questions.DefaultMultiChoiceQuestion;
 import edu.uco.schambers.classmate.Models.Questions.DefaultUnanswerdQuestion;
@@ -32,6 +36,10 @@ public class TeacherQuestion extends Fragment {
 
     // TODO: Rename and change types of parameters
     private IQuestion question;
+
+    private ListView listView;
+    private ArrayList<String> myAnsArray;
+    private ArrayAdapter<String> adapter;
 
     private Button toggleBtn;
 
@@ -78,6 +86,13 @@ public class TeacherQuestion extends Fragment {
 
     private void initUI(final View rootView){
         toggleBtn = (Button) rootView.findViewById(R.id.btn_send_question_propose);
+        myAnsArray = new ArrayList<>();
+        listView = (ListView) rootView.findViewById(R.id.answer_list_view);
+        adapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1, myAnsArray);
+        listView.setAdapter(adapter);
+        listView.setVisibility(View.INVISIBLE);
+
         toggle = true;
 
         toggleBtn.setOnClickListener(new View.OnClickListener() {
@@ -101,8 +116,11 @@ public class TeacherQuestion extends Fragment {
     private void sendQuestion(){
         IQuestion question = new DefaultMultiChoiceQuestion();
         Intent intent = TeacherQuestionService.getNewSendResponseIntent(getActivity(), question);
-
+        listView.setVisibility(View.INVISIBLE);
+        myAnsArray.clear();
         getActivity().startService(intent);
+
+
         //stub toast
     }
 
@@ -110,8 +128,21 @@ public class TeacherQuestion extends Fragment {
         //TODO implement sendCollection method
         IQuestion question = new DefaultUnanswerdQuestion(); //Redundent
         Intent intent = TeacherQuestionService.getNewCallTimeIntent(getActivity(), question);
-        //stub toast
+
         getActivity().startService(intent);
+
+        for (IQuestion q :
+                TeacherQuestionService.answerList) {
+            adapter.add("Student answered: " + q.getAnswer());
+        }
+        /* for testing solo
+        adapter.add("Sttuddy: AAA");
+        adapter.add("Sttuddy: BBB");
+        adapter.add("Sttuddy: CCC");
+        adapter.add("Sttuddy: AAA");
+        adapter.add("Sttuddy: EEE");*/
+        listView.setVisibility(View.VISIBLE);
+
         Toast.makeText(getActivity(), "Answers collected from class!", Toast.LENGTH_SHORT).show();
     }
 

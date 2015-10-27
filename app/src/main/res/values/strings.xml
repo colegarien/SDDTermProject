@@ -79,6 +79,7 @@
     <string name="lbl_status_failed">Check-in failed. Please try again</string>
     <string name="action_debug">Debug</string>
     <string name="btn_teacher_call_time">Call Time</string>
+    <string name="answers_returned_text">Answers Recieved:</string>
 
     <string-array name="attendance_list">
         <item>3</item>
