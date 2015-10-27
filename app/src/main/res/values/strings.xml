@@ -95,6 +95,7 @@
     <string name="lbl_status_checking_in">Checking in...</string>
     <string name="lbl_status_failed">Check-in failed. Please try again</string>
     <string name="action_debug">Debug</string>
+    <string name="btn_teacher_call_time">Call Time</string>
 
     <string-array name="attendance_list">
         <item>3</item>
