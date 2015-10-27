@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -61,6 +62,7 @@ public class TeacherClassManagement extends Fragment {
     Button addButton;
     Spinner semester;
     Spinner year;
+    ProgressBar pb;
     private Animation errorBlink;
 
     /**
@@ -126,7 +128,6 @@ public class TeacherClassManagement extends Fragment {
                 while (scanner.hasNext()) {
                     String data = scanner.nextLine();
                     String [] values = data.split(",");
-                    Log.d("RAYAN",values[1]);
                     if (values[1].equals(parent.getSelectedItem().toString()))
                         list.add(values[0]);
                 }
@@ -175,7 +176,7 @@ public class TeacherClassManagement extends Fragment {
 
                     try {
 
-                        classAdapter.createClass(user.getpKey(), schoolName.getSelectedItem().toString(), classNameTemp.getText().toString(), semester.getSelectedItem().toString(), Integer.parseInt(year.getSelectedItem().toString()), new Callback<Boolean>() {
+                        classAdapter.createClass(user.getpKey(), classNameTemp.getText().toString(), schoolName.getSelectedItem().toString(), semester.getSelectedItem().toString(), Integer.parseInt(year.getSelectedItem().toString()), new Callback<Boolean>() {
                                     @Override
                                     public void onComplete(Boolean isAdded) throws Exception {
                                         if (isAdded) {
