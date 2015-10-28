@@ -125,4 +125,19 @@ public class EnrollmentAdapter {
         call.execute(new ServiceCall(Url + "Enrollments/", "POST", jsonObject.toString()));
     }
 
+    public void dropClass(int class_id, int user_id, final Callback<HttpResponse> callback) throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("Class_Id", class_id);
+        jsonObject.put("User_Id", user_id);
+        ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
+
+            @Override
+            public void onComplete(HttpResponse result) throws Exception {
+                callback.onComplete(result);
+            }
+        });
+
+        call.execute(new ServiceCall(Url + "Dropclass/" + class_id + "/" + user_id + "/", "POST", jsonObject.toString()));
+    }
+
 }
