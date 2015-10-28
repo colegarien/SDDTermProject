@@ -310,13 +310,15 @@ public class StudentEnrollment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     try {
-                        enrollmentAdapter.classEnroll(TokenUtility.parseUserToken(getActivity()).getId(), classItem.getId(), new Callback<HttpResponse>() {
+                        enrollmentAdapter.classEnroll(TokenUtility.parseUserToken(getActivity()).getpKey(), classItem.getId(), new Callback<HttpResponse>() {
                             @Override
                             public void onComplete(HttpResponse result) throws Exception {
                                 Log.d("EnrollDebug", "Enroll result" + result);
                                 if(result.getHttpCode() == 409){
                                     Toast.makeText(getActivity(), "Cant Enroll in the same class twice", Toast.LENGTH_LONG).show();
-                                }else{
+                                } else if (result.getHttpCode() >= 400) {
+                                    Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_LONG).show();
+                                } else{
                                     Toast.makeText(getActivity(), "Enrollment was Successful ", Toast.LENGTH_LONG).show();
                                     c2.setEnabled(false);
                                     c2.setText("Enrolled");
