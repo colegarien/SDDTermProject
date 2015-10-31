@@ -22,6 +22,12 @@
                 android:spinnerMode="dropdown"
                 android:layout_weight="0.5"/>
 
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:baselineAligned="false">
+
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

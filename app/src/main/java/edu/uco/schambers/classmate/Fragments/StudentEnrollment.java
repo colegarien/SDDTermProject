@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -129,7 +130,7 @@ public class StudentEnrollment extends Fragment {
         semesterList = new ArrayList<>();
 
         // instantiate array adapters for each object
-        schoolAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, schoolList);
+        schoolAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item, schoolList);
         yearAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item, yearList);
         semesterAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item, semesterList);
 
@@ -158,22 +159,26 @@ public class StudentEnrollment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String selectedSchool = school.getSelectedItem().toString();
-                enrollmentAdapter.getYears(selectedSchool, new Callback<ArrayList<String>>() {
-                    @Override
-                    public void onComplete(ArrayList<String> result) throws Exception {
-                        yearList.clear();
-                        yearList.add("Select Year");
-                        for (String year : result) {
-                            yearList.add(year);
+                try {
+                    enrollmentAdapter.getYears(selectedSchool, new Callback<ArrayList<String>>() {
+                        @Override
+                        public void onComplete(ArrayList<String> result) throws Exception {
+                            yearList.clear();
+                            yearList.add("Select Year");
+                            for (String year : result) {
+                                yearList.add(year);
+                            }
+                            yearAdapter.notifyDataSetChanged();
+                            year.setEnabled(true);
+                            year.setSelection(0);
+                            semesterList.clear();
+                            semesterAdapter.notifyDataSetChanged();
+                            semester.setEnabled(false);
                         }
-                        yearAdapter.notifyDataSetChanged();
-                        year.setEnabled(true);
-                        year.setSelection(0);
-                        semesterList.clear();
-                        semesterAdapter.notifyDataSetChanged();
-                        semester.setEnabled(false);
-                    }
-                });
+                    });
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
 
                 resetTable();
             }
@@ -192,19 +197,23 @@ public class StudentEnrollment extends Fragment {
                 }
                 String selectedSchool = school.getSelectedItem().toString();
                 String selectedYear = year.getSelectedItem().toString();
-                enrollmentAdapter.getSemesters(selectedSchool, selectedYear, new Callback<ArrayList<String>>() {
-                    @Override
-                    public void onComplete(ArrayList<String> result) throws Exception {
-                        semesterList.clear();
-                        semesterList.add("Select Semester");
-                        for (String semester : result) {
-                            semesterList.add(semester);
+                try {
+                    enrollmentAdapter.getSemesters(selectedSchool, selectedYear, new Callback<ArrayList<String>>() {
+                        @Override
+                        public void onComplete(ArrayList<String> result) throws Exception {
+                            semesterList.clear();
+                            semesterList.add("Select Semester");
+                            for (String semester : result) {
+                                semesterList.add(semester);
+                            }
+                            semesterAdapter.notifyDataSetChanged();
+                            semester.setEnabled(true);
+                            semester.setSelection(0);
                         }
-                        semesterAdapter.notifyDataSetChanged();
-                        semester.setEnabled(true);
-                        semester.setSelection(0);
-                    }
-                });
+                    });
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
 
                 resetTable();
             }
@@ -234,7 +243,7 @@ public class StudentEnrollment extends Fragment {
                             buildTable();
                         }
                     });
-                } catch (JSONException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -310,13 +319,15 @@ public class StudentEnrollment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     try {
-                        enrollmentAdapter.classEnroll(TokenUtility.parseUserToken(getActivity()).getId(), classItem.getId(), new Callback<HttpResponse>() {
+                        enrollmentAdapter.classEnroll(TokenUtility.parseUserToken(getActivity()).getpKey(), classItem.getId(), new Callback<HttpResponse>() {
                             @Override
                             public void onComplete(HttpResponse result) throws Exception {
                                 Log.d("EnrollDebug", "Enroll result" + result);
                                 if(result.getHttpCode() == 409){
                                     Toast.makeText(getActivity(), "Cant Enroll in the same class twice", Toast.LENGTH_LONG).show();
-                                }else{
+                                } else if (result.getHttpCode() >= 400) {
+                                    Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_LONG).show();
+                                } else{
                                     Toast.makeText(getActivity(), "Enrollment was Successful ", Toast.LENGTH_LONG).show();
                                     c2.setEnabled(false);
                                     c2.setText("Enrolled");

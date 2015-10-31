@@ -6,6 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import edu.uco.schambers.classmate.AdapterModels.Class;
@@ -36,7 +38,7 @@ public class EnrollmentAdapter {
         call.execute(new ServiceCall(Url + "schools", "GET", ""));
     }
 
-    public void getYears(String school, final Callback<ArrayList<String>> callback) {
+    public void getYears(String school, final Callback<ArrayList<String>> callback) throws UnsupportedEncodingException {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
             @Override
             public void onComplete(HttpResponse response) throws Exception {
@@ -55,10 +57,12 @@ public class EnrollmentAdapter {
             }
         });
 
-        call.execute(new ServiceCall(Url + "years/" + school, "GET", ""));
+        String url = Url + "years/" + URLEncoder.encode(school, "UTF-8").replace("+", "%20");
+
+        call.execute(new ServiceCall(url, "GET", ""));
     }
 
-    public void getSemesters(String school, String year, final Callback<ArrayList<String>> callback) {
+    public void getSemesters(String school, String year, final Callback<ArrayList<String>> callback) throws UnsupportedEncodingException {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
             @Override
             public void onComplete(HttpResponse response) throws Exception {
@@ -77,10 +81,10 @@ public class EnrollmentAdapter {
             }
         });
 
-        call.execute(new ServiceCall(Url + "semesters/" + school + "/" + year, "GET", ""));
+        call.execute(new ServiceCall(Url + "semesters/" + URLEncoder.encode(school, "UTF-8").replace("+", "%20") + "/" + year, "GET", ""));
     }
 
-    public void getClasses(String school, final String year, final String semester, int studentId, final Callback<ArrayList<Class>> callback) {
+    public void getClasses(String school, final String year, final String semester, int studentId, final Callback<ArrayList<Class>> callback) throws UnsupportedEncodingException {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
             @Override
             public void onComplete(HttpResponse response) throws Exception {
@@ -107,7 +111,7 @@ public class EnrollmentAdapter {
             }
         });
 
-        call.execute(new ServiceCall(Url + "classes/" + school + "/" + year + "/" + semester + "/" + studentId, "GET", ""));
+        call.execute(new ServiceCall(Url + "classes/" + URLEncoder.encode(school, "UTF-8").replace("+", "%20") + "/" + year + "/" + semester + "/" + studentId, "GET", ""));
     }
 
     public void classEnroll(int user_id, int class_id, final Callback<HttpResponse> callback) throws JSONException {
@@ -123,6 +127,21 @@ public class EnrollmentAdapter {
         });
 
         call.execute(new ServiceCall(Url + "Enrollments/", "POST", jsonObject.toString()));
+    }
+
+    public void dropClass(int class_id, int user_id, final Callback<HttpResponse> callback) throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("Class_Id", class_id);
+        jsonObject.put("User_Id", user_id);
+        ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
+
+            @Override
+            public void onComplete(HttpResponse result) throws Exception {
+                callback.onComplete(result);
+            }
+        });
+
+        call.execute(new ServiceCall(Url + "Dropclass/" + class_id + "/" + user_id + "/", "POST", jsonObject.toString()));
     }
 
 }
