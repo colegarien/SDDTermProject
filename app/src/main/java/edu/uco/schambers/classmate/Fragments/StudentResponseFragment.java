@@ -76,7 +76,7 @@ public class StudentResponseFragment extends Fragment
 
     protected void setUpQuestionCard()
     {
-        if(questionCardView == null)
+        if (questionCardView == null)
         {
             questionCardView = getActivity().getLayoutInflater().inflate(R.layout.question_response_card, null);
             ((ViewGroup) rootView).addView(questionCardView);
@@ -94,6 +94,12 @@ public class StudentResponseFragment extends Fragment
             {
                 case StudentQuestionService.MSG_QUESTION_RECEIEVED:
                     loadQuestionWithAnimation();
+                    break;
+                case StudentQuestionService.MSG_QUESTION_SEND_ERROR:
+                    displayErrorAndErrorAnimation(msg.obj);
+                    break;
+                case StudentQuestionService.MSG_QUESTION_SEND_SUCCESS:
+                    displaySuccessAndSuccessAnimation();
                 default:
                     super.handleMessage(msg);
             }
@@ -108,9 +114,22 @@ public class StudentResponseFragment extends Fragment
         incommingQuestionAnimation();
     }
 
+    private void displayErrorAndErrorAnimation(Object obj)
+    {
+        String message = (String) obj;
+        Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+        sendBtn.setEnabled(true);
+    }
+
+    private void displaySuccessAndSuccessAnimation()
+    {
+        Toast.makeText(getActivity(),"The question response was sent successfully!", Toast.LENGTH_LONG).show();
+        dismissCardAnimation();
+    }
+
     private void incommingQuestionAnimation()
     {
-        Animation slideInLeft= AnimationUtils.loadAnimation(getActivity(), android.R.anim.slide_in_left);
+        Animation slideInLeft = AnimationUtils.loadAnimation(getActivity(), android.R.anim.slide_in_left);
         slideInLeft.setAnimationListener(new Animation.AnimationListener()
         {
             @Override
@@ -177,7 +196,7 @@ public class StudentResponseFragment extends Fragment
     @Override
     public void onPause()
     {
-        if(questionServiceIsBound)
+        if (questionServiceIsBound)
         {
             getActivity().unbindService(serviceConnection);
         }
@@ -229,9 +248,9 @@ public class StudentResponseFragment extends Fragment
     private void sendResponse(IQuestion question)
     {
         //TODO implement send method
-        Intent questionResponseIntent = StudentQuestionService.getNewSendResponseIntent(getActivity(),question);
+        sendBtn.setEnabled(false);
+        Intent questionResponseIntent = StudentQuestionService.getNewSendResponseIntent(getActivity(), question);
         getActivity().startService(questionResponseIntent);
-        dismissCardAnimation();
     }
 
     private void dismissCardAnimation()
@@ -262,7 +281,7 @@ public class StudentResponseFragment extends Fragment
 
     private void destroyQuestionCard()
     {
-        ((ViewGroup)questionCardView.getParent()).removeView(questionCardView);
+        ((ViewGroup) questionCardView.getParent()).removeView(questionCardView);
         questionCardView = null;
     }
 

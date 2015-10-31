@@ -178,18 +178,15 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
         this.question = null;
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(R.integer.question_received_notification);
-        final String domainFinal = domain;
-        final int portFinal = port;
-        //Yes, I know this is totally awful. Its not going to stay this way, I swear. Just want these toasts to fire for debug purposes.
-        handler.post(new Runnable()
-        {
-            @Override
 
-            public void run()
-            {
-                Toast.makeText(getBaseContext(), String.format("The question was sent successfully to domain: %s port %d ", domainFinal, portFinal), Toast.LENGTH_LONG).show();
-            }
-        });
+        Message successMessage = Message.obtain(null, MSG_QUESTION_SEND_SUCCESS, 0, 0);
+        try
+        {
+            fragmentMessenger.send(successMessage);
+        }catch (RemoteException e)
+        {
+            Log.d("StudentQuestionService", String.format("Message failed. Exception: %s", e.toString()));
+        }
     }
 
     @Override
