@@ -21,13 +21,14 @@ import android.widget.Toast;
 import edu.uco.schambers.classmate.Activites.MainActivity;
 import edu.uco.schambers.classmate.Fragments.StudentResponseFragment;
 import edu.uco.schambers.classmate.ListenerInterfaces.OnQuestionReceivedListener;
+import edu.uco.schambers.classmate.ListenerInterfaces.OnQuestionSendErrorListener;
 import edu.uco.schambers.classmate.Models.Questions.IQuestion;
 import edu.uco.schambers.classmate.R;
 import edu.uco.schambers.classmate.SocketActions.SocketAction;
 import edu.uco.schambers.classmate.SocketActions.StudentReceiveQuestionsAction;
 import edu.uco.schambers.classmate.SocketActions.StudentSendQuestionAction;
 
-public class StudentQuestionService extends Service implements OnQuestionReceivedListener
+public class StudentQuestionService extends Service implements OnQuestionReceivedListener, OnQuestionSendErrorListener
 {
     public static final String ACTION_NOTIFY_QUESTION_RECEIVED = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_NOTIFY_QUESTION_RECEIVED";
     public static final String ACTION_REQUEST_QUESTION_RESPONSE = "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_REQUEST_QUESTION_RESPONSE";
@@ -35,6 +36,8 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
     public static final String ACTION_START_SERVICE_STICKY= "edu.uco.schambers.classmate.Services.StudentQuestionService.ACTION_START_SERVICE_STICKY";
 
     public static final int MSG_QUESTION_RECEIEVED = 1;
+    public static final int MSG_QUESTION_SEND_ERROR = 2;
+    public static final int MSG_QUESTION_SEND_SUCCESS = 3;
 
     private final IBinder serviceBinder = new LocalBinder();
     private SocketAction listenForQuestions;
@@ -187,6 +190,25 @@ public class StudentQuestionService extends Service implements OnQuestionReceive
                 Toast.makeText(getBaseContext(), String.format("The question was sent successfully to domain: %s port %d ", domainFinal, portFinal), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public void onQuestionSendError(String message)
+    {
+        if(serviceIsBound)
+        {
+            Message questionSendErrorMessage = Message.obtain(null, MSG_QUESTION_SEND_ERROR, 0, 0);
+            questionSendErrorMessage.obj = message;
+            try
+            {
+                fragmentMessenger.send(questionSendErrorMessage);
+            }
+            catch (RemoteException e)
+            {
+                Log.d("StudentQuestionService", String.format("Message failed. Exception: %s", e.toString()));
+            }
+        }
+
     }
 
     public class LocalBinder extends Binder
