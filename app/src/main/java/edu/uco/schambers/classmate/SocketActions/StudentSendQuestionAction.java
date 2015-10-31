@@ -47,7 +47,7 @@ public class StudentSendQuestionAction extends SocketAction
             dataInputStream = new DataInputStream(socket.getInputStream());
         }catch (IOException e)
         {
-
+            questionSendErrorListener.onQuestionSendError("There was an error sending the question: Class session not found.");
         }
     }
 
@@ -63,7 +63,7 @@ public class StudentSendQuestionAction extends SocketAction
             questionSentSuccessfully = dataInputStream.readBoolean();
         }catch(IOException e)
         {
-
+            questionSendErrorListener.onQuestionSendError("There was an error sending the question: Please try again soon.");
         }
 
         if (questionSentSuccessfully)
