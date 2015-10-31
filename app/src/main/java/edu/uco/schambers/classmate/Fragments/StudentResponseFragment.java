@@ -119,6 +119,13 @@ public class StudentResponseFragment extends Fragment
         String message = (String) obj;
         Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
         sendBtn.setEnabled(true);
+        shakeQuestionCard();
+    }
+
+    private void shakeQuestionCard()
+    {
+        Animation shake = AnimationUtils.loadAnimation(getActivity(), R.anim.shake);
+        questionCardView.startAnimation(shake);
     }
 
     private void displaySuccessAndSuccessAnimation()
