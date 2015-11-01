@@ -1,5 +1,6 @@
 package edu.uco.schambers.classmate.Fragments;
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,10 +14,12 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.uco.schambers.classmate.Models.Questions.DefaultMultiChoiceQuestion;
 import edu.uco.schambers.classmate.Models.Questions.DefaultUnanswerdQuestion;
 import edu.uco.schambers.classmate.Models.Questions.IQuestion;
+import edu.uco.schambers.classmate.Models.Questions.IQuestionWoodchuck5choices;
 import edu.uco.schambers.classmate.R;
 import edu.uco.schambers.classmate.Services.StudentQuestionService;
 import edu.uco.schambers.classmate.Services.TeacherQuestionService;
@@ -135,6 +138,18 @@ public class TeacherQuestion extends Fragment {
                 TeacherQuestionService.answerList) {
             adapter.add("Student answered: " + q.getAnswer());
         }
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("inputList", getMockData()); // replace getMockData() with TeacherQuestionService.answerlist
+        Fragment newFragment = new TeacherQuestionResults();
+        newFragment.setArguments(bundle);
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+
+        transaction.commit();
+
+
         /* for testing solo
         adapter.add("Sttuddy: AAA");
         adapter.add("Sttuddy: BBB");
@@ -144,6 +159,39 @@ public class TeacherQuestion extends Fragment {
         listView.setVisibility(View.VISIBLE);
 
         Toast.makeText(getActivity(), "Answers collected from class!", Toast.LENGTH_SHORT).show();
+    }
+
+
+    // getMockData() method can be deleted when actual data is being used
+    private ArrayList<IQuestion> getMockData() {
+        ArrayList<IQuestion> inputList = new ArrayList<>();
+
+        for (int i = 0; i < 12; i++) {
+            IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+            mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(0));
+            inputList.add(mockQuestion);
+        }
+        for (int i = 0; i < 8; i++) {
+            IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+            mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(1));
+            inputList.add(mockQuestion);
+        }
+        for (int i = 0; i < 5; i++) {
+            IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+            mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(2));
+            inputList.add(mockQuestion);
+        }
+        for (int i = 0; i < 10; i++) {
+            IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+            mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(3));
+            inputList.add(mockQuestion);
+        }
+        for (int i = 0; i < 3; i++) {
+            IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+            mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(4));
+            inputList.add(mockQuestion);
+        }
+        return inputList;
     }
 
     /**

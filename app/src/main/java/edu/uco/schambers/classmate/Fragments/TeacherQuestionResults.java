@@ -2,6 +2,7 @@ package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
@@ -50,9 +51,7 @@ public class TeacherQuestionResults extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    Button display3Choice;
-    Button display4Choice;
-    Button display5Choice;
+
 
     /**
      * Use this factory method to create a new instance of
@@ -125,7 +124,7 @@ public class TeacherQuestionResults extends Fragment {
 
     }
 
-    private int getHeightInPixels(List<IQuestion> list, int answerIndex) {
+    private int getHeightInPixels(View v, List<IQuestion> list, int answerIndex) {
 //        System.out.println("answer index" + answerIndex);
         int highest = getHighestAnswer(list);
         int totalAnswers = list.size();
@@ -135,7 +134,7 @@ public class TeacherQuestionResults extends Fragment {
         }
         int answers = Collections.frequency(arrayList,list.get(0).getQuestionChoices().get(answerIndex));
 //        System.out.println("answers " + answers);
-        WindowManager wm = (WindowManager) getView().getContext().getSystemService(Context.WINDOW_SERVICE);
+        WindowManager wm = (WindowManager) v.getContext().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -155,114 +154,57 @@ public class TeacherQuestionResults extends Fragment {
         return (int) (percentage * numberToMultiplyByAtEnd);
     }
 
+
+    private List<IQuestion> getMockData(View root) {
+        List<IQuestion> inputList = new ArrayList<>();
+
+        for (int i = 0; i < 12; i++) {
+            IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+            mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(0));
+            inputList.add(mockQuestion);
+        }
+        for (int i = 0; i < 8; i++) {
+            IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+            mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(1));
+            inputList.add(mockQuestion);
+        }
+        for (int i = 0; i < 5; i++) {
+            IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+            mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(2));
+            inputList.add(mockQuestion);
+        }
+        for (int i = 0; i < 10; i++) {
+            IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+            mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(3));
+            inputList.add(mockQuestion);
+        }
+        for (int i = 0; i < 3; i++) {
+            IQuestion mockQuestion = new IQuestionWoodchuck5choices();
+            mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(4));
+            inputList.add(mockQuestion);
+        }
+        return inputList;
+    }
+
     private void InitUI(View root) {
-        display3Choice = (Button) root.findViewById(R.id.display3Choice);
-        display4Choice = (Button) root.findViewById(R.id.display4Choice);
-        display5Choice = (Button) root.findViewById(R.id.display5Choice);
-        display5Choice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                List<IQuestion> inputList = new ArrayList<>();
+        List<IQuestion> inputList = null;
+//        inputList = getMockData(root);
 
-                for (int i = 0; i < 12; i++) {
-                    IQuestion mockQuestion = new IQuestionWoodchuck5choices();
-                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(0));
-                    inputList.add(mockQuestion);
-                }
-                for (int i = 0; i < 8; i++) {
-                    IQuestion mockQuestion = new IQuestionWoodchuck5choices();
-                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(1));
-                    inputList.add(mockQuestion);
-                }
-                for (int i = 0; i < 5; i++) {
-                    IQuestion mockQuestion = new IQuestionWoodchuck5choices();
-                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(2));
-                    inputList.add(mockQuestion);
-                }
-                for (int i = 0; i < 10; i++) {
-                    IQuestion mockQuestion = new IQuestionWoodchuck5choices();
-                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(3));
-                    inputList.add(mockQuestion);
-                }
-                for (int i = 0; i < 3; i++) {
-                    IQuestion mockQuestion = new IQuestionWoodchuck5choices();
-                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(4));
-                    inputList.add(mockQuestion);
-                }
-            DisplayResults(v,inputList);
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            inputList = (List<IQuestion>) bundle.getSerializable("inputList");
+        }
+        if (inputList != null) {
+            DisplayResults(root,inputList);
 
+        }
 
-            }
-        });
-
-        display4Choice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                List<IQuestion> inputList = new ArrayList<>();
-
-
-                for (int i = 0; i < 4; i++) {
-                    IQuestion mockQuestion = new DefaultMultiChoiceQuestion();
-                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(0));
-                    inputList.add(mockQuestion);
-                }
-                for (int i = 0; i < 10; i++) {
-                    IQuestion mockQuestion = new DefaultMultiChoiceQuestion();
-                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(1));
-                    inputList.add(mockQuestion);
-                }
-                for (int i = 0; i < 36; i++) {
-                    IQuestion mockQuestion = new DefaultMultiChoiceQuestion();
-                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(2));
-                    inputList.add(mockQuestion);
-                }
-                for (int i = 0; i < 20; i++) {
-                    IQuestion mockQuestion = new DefaultMultiChoiceQuestion();
-                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(3));
-                    inputList.add(mockQuestion);
-                }
-
-                DisplayResults(v,inputList);
-
-
-            }
-        });
-
-        display3Choice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                List<IQuestion> inputList = new ArrayList<>();
-
-
-                for (int i = 0; i < 10; i++) {
-                    IQuestion mockQuestion = new IQuestion3Choices();
-                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(0));
-                    inputList.add(mockQuestion);
-                }
-                for (int i = 0; i < 4; i++) {
-                    IQuestion mockQuestion = new IQuestion3Choices();
-                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(1));
-                    inputList.add(mockQuestion);
-                }
-                for (int i = 0; i < 5; i++) {
-                    IQuestion mockQuestion = new IQuestion3Choices();
-                    mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(2));
-                    inputList.add(mockQuestion);
-                }
-
-
-                DisplayResults(v,inputList);
-
-
-            }
-        });
     }
 
     private void DisplayResults(View v,List<IQuestion> inputList) {
 
 
         List<String> choices = inputList.get(0).getQuestionChoices();
-        v = getView();
         View choiceLayout = v.findViewById(R.id.choicesLayout);
         View barLayout = v.findViewById(R.id.lin02);
         RelativeLayout r2 = (RelativeLayout) barLayout;
@@ -275,9 +217,6 @@ public class TeacherQuestionResults extends Fragment {
 
 
 
-        display3Choice.setVisibility(View.GONE);
-        display4Choice.setVisibility(View.GONE);
-        display5Choice.setVisibility(View.GONE);
 
         char letters = 'A';
         ArrayList<TextView> choiceTextViews = new ArrayList<>();
@@ -296,7 +235,7 @@ public class TeacherQuestionResults extends Fragment {
         }
 
         TextView holder = new TextView(v.getContext());
-        WindowManager wm = (WindowManager) getView().getContext().getSystemService(Context.WINDOW_SERVICE);
+        WindowManager wm = (WindowManager) v.getContext().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -328,7 +267,7 @@ public class TeacherQuestionResults extends Fragment {
         ArrayList<TextView> bars = new ArrayList<>();
         for (String cc : choices) {
             TextView bar = new TextView(v.getContext());
-            bar.setHeight(getHeightInPixels(inputList, choices.indexOf(cc)));
+            bar.setHeight(getHeightInPixels(v,inputList, choices.indexOf(cc)));
             //     System.out.println(getHeightInPixels(testIQuestion, testIQuestion.get(0).getQuestionChoices().indexOf(cc)) + "Height");
             bar.setWidth(width);
             //      System.out.println(width + " width");
