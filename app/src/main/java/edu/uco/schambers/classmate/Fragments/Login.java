@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 import edu.uco.schambers.classmate.Adapter.AuthAdapter;
 import edu.uco.schambers.classmate.Adapter.Callback;
@@ -62,6 +63,7 @@ public class Login extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     public static final String MyPREFS = "MyPREFS";
+    public static final String MySCHOOL = "MySCHOOL";
     public SharedPreferences sp;
     public SharedPreferences.Editor editor;
     AuthAdapter aa;
@@ -78,6 +80,7 @@ public class Login extends Fragment {
     private Spinner school;
     private Animation errorBlink;
     ArrayList<String> listItems;
+    Set<String> schoolList;
     ArrayAdapter<String> adapter;
     ArrayAdapter<String> schooladapter;
 
@@ -144,6 +147,8 @@ public class Login extends Fragment {
         state = (Spinner) rootView.findViewById(R.id.state_sp);
         school = (Spinner) rootView.findViewById(R.id.school_sp);
         listItems = new ArrayList<String>();
+
+
 
         user = new User();
         dr = new DataRepo(getActivity());
@@ -225,6 +230,7 @@ public class Login extends Fragment {
 
             }
         });
+        
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -275,6 +281,12 @@ public class Login extends Fragment {
                     }else if(!cb.isChecked()){
                         user.setIsStudent(false);
                         user.setId(user.getpKey());
+                        schoolList.add(school.getSelectedItem().toString());
+                        Log.i("school list", schoolList.toString());
+                        sp = getActivity().getSharedPreferences(MySCHOOL, Context.MODE_PRIVATE);
+                        editor = sp.edit();
+                        editor.putStringSet("SCHOOLS", schoolList);
+                        editor.commit();
                     }
 
                     try {
@@ -286,7 +298,7 @@ public class Login extends Fragment {
                                     errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
                                     email.startAnimation(errorBlink);
                                     email.requestFocus();
-                                    email.setError("User already exist");
+                                    email.setError("User already exists");
                                 }
 
                                 else if (result.getHttpCode() >= 300)
