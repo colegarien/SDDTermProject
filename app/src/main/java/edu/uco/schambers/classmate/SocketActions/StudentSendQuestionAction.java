@@ -7,10 +7,14 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.concurrent.TimeoutException;
 
 import edu.uco.schambers.classmate.ListenerInterfaces.OnQuestionReceivedListener;
+import edu.uco.schambers.classmate.ListenerInterfaces.OnQuestionSendErrorListener;
 import edu.uco.schambers.classmate.Models.Questions.IQuestion;
 import edu.uco.schambers.classmate.ObservableManagers.IPAddressManager;
 
@@ -25,49 +29,67 @@ public class StudentSendQuestionAction extends SocketAction
 
     IQuestion questionToSend;
     OnQuestionReceivedListener questionReceivedListener;
+    OnQuestionSendErrorListener questionSendErrorListener;
 
     boolean questionSentSuccessfully;
+    boolean socketConnectionSuccess = true;
 
     public StudentSendQuestionAction(IQuestion question, OnQuestionReceivedListener listener)
     {
         this.questionToSend = question;
         this.questionReceivedListener = listener;
+        this.questionSendErrorListener = (OnQuestionSendErrorListener) listener;
     }
 
     @Override
-    void setUpSocket() throws UnknownHostException, IOException
+    void setUpSocket()
     {
-        socket = new Socket(domain, QUESTIONS_PORT_NUMBER);
-        objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-        dataInputStream = new DataInputStream(socket.getInputStream());
-    }
-
-    @Override
-    void performAction() throws IOException
-    {
-        if (questionToSend != null)
+        try
         {
-            objectOutputStream.writeObject(questionToSend);
+            socket = new Socket();
+            socket.connect(new InetSocketAddress(domain, QUESTIONS_PORT_NUMBER), 1000);
+            objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            dataInputStream = new DataInputStream(socket.getInputStream());
+        }catch (Exception e)
+        {
+            questionSendErrorListener.onQuestionSendError("There was an error sending the question: Class session not found.");
+            socketConnectionSuccess = false;
         }
-        questionSentSuccessfully = dataInputStream.readBoolean();
-        if(questionSentSuccessfully)
+    }
+
+    @Override
+    void performAction()
+    {
+        try
         {
-            questionReceivedListener.onQuestionSentSuccessfully(domain,QUESTIONS_PORT_NUMBER);
+            if (socketConnectionSuccess && questionToSend != null)
+            {
+                objectOutputStream.writeObject(questionToSend);
+                questionSentSuccessfully = dataInputStream.readBoolean();
+            }
+        }catch(Exception e)
+        {
+            questionSendErrorListener.onQuestionSendError("There was an error sending the question: Please try again soon.");
+        }
+
+        if (questionSentSuccessfully)
+        {
+            questionReceivedListener.onQuestionSentSuccessfully(domain, QUESTIONS_PORT_NUMBER);
         }
     }
 
     @Override
     void tearDownSocket() throws IOException
     {
-        if(socket != null)
+        if (socket != null)
         {
             socket.close();
         }
-        if(dataInputStream != null)
+        if (dataInputStream != null)
         {
             dataInputStream.close();
         }
-        if(objectOutputStream != null)
+        if (objectOutputStream != null)
         {
             objectOutputStream.close();
         }
