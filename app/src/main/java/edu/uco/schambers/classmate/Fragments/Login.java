@@ -13,22 +13,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 import edu.uco.schambers.classmate.Adapter.AuthAdapter;
 import edu.uco.schambers.classmate.Adapter.Callback;
+import edu.uco.schambers.classmate.Adapter.ClassAdapter;
 import edu.uco.schambers.classmate.Adapter.HttpResponse;
 import edu.uco.schambers.classmate.Adapter.UserAdapter;
-import edu.uco.schambers.classmate.AdapterModels.DataRepo;
-import edu.uco.schambers.classmate.AdapterModels.TokenUtility;
-import edu.uco.schambers.classmate.AdapterModels.User;
+import edu.uco.schambers.classmate.AdapterModels.*;
+import edu.uco.schambers.classmate.AdapterModels.Class;
 import edu.uco.schambers.classmate.R;
 
 
@@ -64,7 +74,12 @@ public class Login extends Fragment {
     private EditText confirmPass;
     private EditText name;
     private EditText email;
+    private Spinner state;
+    private Spinner school;
     private Animation errorBlink;
+    ArrayList<String> listItems;
+    ArrayAdapter<String> adapter;
+    ArrayAdapter<String> schooladapter;
 
     //user class
     public User user;
@@ -126,6 +141,9 @@ public class Login extends Fragment {
         confirmPass = (EditText) rootView.findViewById(R.id.confirm_pass_et);
         name = (EditText) rootView.findViewById(R.id.username_et);
         email = (EditText) rootView.findViewById(R.id.email_et);
+        state = (Spinner) rootView.findViewById(R.id.state_sp);
+        school = (Spinner) rootView.findViewById(R.id.school_sp);
+        listItems = new ArrayList<String>();
 
         user = new User();
         dr = new DataRepo(getActivity());
@@ -182,6 +200,29 @@ public class Login extends Fragment {
                 if (hasFocus) {
                     idET.setError(null);
                 }
+            }
+        });
+
+        state.setSelection(0);
+        state.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Scanner scanner = new Scanner(getResources().openRawResource(R.raw.schools));
+                List<String> list = new ArrayList<String>();
+                while (scanner.hasNextLine()) {
+                    String data = scanner.nextLine();
+                    String[] values = data.split(",");
+                    if (values[1].equals(parent.getSelectedItem().toString()))
+                        list.add(values[0]);
+                }
+                schooladapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
+                Spinner school = (Spinner) rootView.findViewById(R.id.school_sp);
+                school.setAdapter(schooladapter);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
@@ -311,8 +352,12 @@ public class Login extends Fragment {
             idET.setText("");
             idET.setVisibility(View.INVISIBLE);
             idET.setText("");
+            school.setVisibility(View.VISIBLE);
+            state.setVisibility(View.VISIBLE);
         } else {
             idET.setVisibility(View.VISIBLE);
+            school.setVisibility(View.INVISIBLE);
+            state.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -382,6 +427,54 @@ public class Login extends Fragment {
         editor.putString("AUTH_TOKEN", "");
         editor.commit();
 
+    }
+
+    public void refreshList() throws JSONException {
+        final User user = TokenUtility.parseUserToken(getActivity());
+        final ClassAdapter classAdapter = new ClassAdapter();
+
+        classAdapter.professorClasses(user.getpKey(), new Callback<ArrayList<edu.uco.schambers.classmate.AdapterModels.Class>>() {
+            @Override
+            public void onComplete(ArrayList<Class> result) throws Exception {
+                listItems.clear();
+                TableLayout classTable = (TableLayout) getView().findViewById(R.id.classMgmtTable);
+                classTable.removeAllViews();
+                for (Class classItem : result) {
+                    TableRow tr = new TableRow(getView().getContext());
+                    String schoolnames[] = classItem.getSchool().split(" ");
+                    String schoolAbbrev = "";
+                    if (classItem.getSchool().length() > 4) {
+                        for (int i = 0; i < schoolnames.length; i++) {
+                            if (!schoolnames[i].contains("of") || !schoolnames[i].contains("the")) {
+                                schoolAbbrev += schoolnames[i].charAt(0);
+                            }
+                        }
+                    } else {
+                        schoolAbbrev = classItem.getSchool();
+                    }
+                    //Set each column's data in the row
+                    TextView c0 = new TextView(getView().getContext());
+                    c0.setText(classItem.getClass_name());
+                    TextView c2 = new TextView(getView().getContext());
+                    c2.setText(String.valueOf(schoolAbbrev));
+                    TextView c3 = new TextView(getView().getContext());
+                    c3.setText(String.valueOf(classItem.getSemester() + "/" + classItem.getYear()));
+                    tr.addView(c0, new TableRow.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, 1f));
+                    tr.addView(c2, new TableRow.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, .5f));
+                    tr.addView(c3, new TableRow.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, 1f));
+                    //Add the row to the table
+                    classTable.addView(tr);
+
+                    listItems.add(
+                            classItem.getClass_name() + "-" +
+                                    classItem.getSemester() + "-" +
+                                    Integer.toString(classItem.getYear()) + "\n" +
+                                    classItem.getSchool());
+                }
+                adapter.notifyDataSetChanged();
+
+            }
+        });
     }
 
 }
