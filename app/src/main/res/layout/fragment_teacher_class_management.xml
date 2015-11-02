@@ -40,7 +40,8 @@
             android:id="@+id/state_sp"
             android:hint="@string/statename"
             android:layout_gravity="center_horizontal"
-            android:entries="@array/states_list"/>
+            android:entries="@array/states_list"
+            android:visibility="gone" />
 
         <Spinner
             android:layout_width="match_parent"
