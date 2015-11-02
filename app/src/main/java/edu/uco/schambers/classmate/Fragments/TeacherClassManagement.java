@@ -169,7 +169,7 @@ public class TeacherClassManagement extends Fragment {
         final User user = TokenUtility.parseUserToken(getActivity());
         final ClassAdapter classAdapter = new ClassAdapter();
 
-
+        refreshList();
         ((EditText) rootView.findViewById(R.id.classname_et)).setText("");
         rootView.findViewById(R.id.classname_et).requestFocus();
 
@@ -206,7 +206,7 @@ public class TeacherClassManagement extends Fragment {
                                         if (isAdded) {
                                             Toast.makeText(getActivity(), "Class Added!", Toast.LENGTH_LONG).show();
 
-
+                                            refreshList();
                                             ((EditText) rootView.findViewById(R.id.classname_et)).setText("");
                                             rootView.findViewById(R.id.classname_et).requestFocus();
                                         }
@@ -236,54 +236,54 @@ public class TeacherClassManagement extends Fragment {
 
     }
 
-//    public void refreshList() throws JSONException {
-//        final User user = TokenUtility.parseUserToken(getActivity());
-//        final ClassAdapter classAdapter = new ClassAdapter();
-//
-//        classAdapter.professorClasses(user.getpKey(), new Callback<ArrayList<Class>>() {
-//            @Override
-//            public void onComplete(ArrayList<Class> result) throws Exception {
-//                listItems.clear();
-//                TableLayout classTable = (TableLayout) getView().findViewById(R.id.classMgmtTable);
-//                classTable.removeAllViews();
-//                for (Class classItem : result) {
-//                    TableRow tr = new TableRow(getView().getContext());
-//                    String schoolnames[] = classItem.getSchool().split(" ");
-//                    String schoolAbbrev = "";
-//                    if (classItem.getSchool().length()>4) {
-//                        for (int i = 0; i < schoolnames.length; i++) {
-//                            if (!schoolnames[i].contains("of") || !schoolnames[i].contains("the")) {
-//                                schoolAbbrev += schoolnames[i].charAt(0);
-//                            }
-//                        }
-//                    }
-//                    else{
-//                        schoolAbbrev = classItem.getSchool();
-//                    }
-//                    //Set each column's data in the row
-//                    TextView c0 = new TextView(getView().getContext());
-//                    c0.setText(classItem.getClass_name());
-//                    TextView c2 = new TextView(getView().getContext());
-//                    c2.setText(String.valueOf(schoolAbbrev));
-//                    TextView c3 = new TextView(getView().getContext());
-//                    c3.setText(String.valueOf(classItem.getSemester() + "/" + classItem.getYear()));
-//                    tr.addView(c0, new TableRow.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, 1f));
-//                    tr.addView(c2, new TableRow.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, .5f));
-//                    tr.addView(c3, new TableRow.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, 1f));
-//                    //Add the row to the table
-//                    classTable.addView(tr);
-//
-//                    listItems.add(
-//                            classItem.getClass_name() + "-" +
-//                                    classItem.getSemester() + "-" +
-//                                    Integer.toString(classItem.getYear()) + "\n" +
-//                                    classItem.getSchool());
-//                }
-//                adapter.notifyDataSetChanged();
-//
-//            }
-//        });
-//    }
+    public void refreshList() throws JSONException {
+        final User user = TokenUtility.parseUserToken(getActivity());
+        final ClassAdapter classAdapter = new ClassAdapter();
+
+        classAdapter.professorClasses(user.getpKey(), new Callback<ArrayList<Class>>() {
+            @Override
+            public void onComplete(ArrayList<Class> result) throws Exception {
+                listItems.clear();
+                TableLayout classTable = (TableLayout) getView().findViewById(R.id.classMgmtTable);
+                classTable.removeAllViews();
+                for (Class classItem : result) {
+                    TableRow tr = new TableRow(getView().getContext());
+                    String schoolnames[] = classItem.getSchool().split(" ");
+                    String schoolAbbrev = "";
+                    if (classItem.getSchool().length()>4) {
+                        for (int i = 0; i < schoolnames.length; i++) {
+                            if (!schoolnames[i].contains("of") || !schoolnames[i].contains("the")) {
+                                schoolAbbrev += schoolnames[i].charAt(0);
+                            }
+                        }
+                    }
+                    else{
+                        schoolAbbrev = classItem.getSchool();
+                    }
+                    //Set each column's data in the row
+                    TextView c0 = new TextView(getView().getContext());
+                    c0.setText(classItem.getClass_name());
+                    TextView c2 = new TextView(getView().getContext());
+                    c2.setText(String.valueOf(schoolAbbrev));
+                    TextView c3 = new TextView(getView().getContext());
+                    c3.setText(String.valueOf(classItem.getSemester() + "/" + classItem.getYear()));
+                    tr.addView(c0, new TableRow.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, 1f));
+                    tr.addView(c2, new TableRow.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, .5f));
+                    tr.addView(c3, new TableRow.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, 1f));
+                    //Add the row to the table
+                    classTable.addView(tr);
+
+                    listItems.add(
+                            classItem.getClass_name() + "-" +
+                                    classItem.getSemester() + "-" +
+                                    Integer.toString(classItem.getYear()) + "\n" +
+                                    classItem.getSchool());
+                }
+                adapter.notifyDataSetChanged();
+
+            }
+        });
+    }
 
     /**
      * This interface must be implemented by activities that contain this
