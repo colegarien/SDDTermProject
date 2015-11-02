@@ -2,6 +2,7 @@ package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -12,23 +13,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 
 import edu.uco.schambers.classmate.Adapter.Callback;
+import edu.uco.schambers.classmate.Adapter.ClassAdapter;
 import edu.uco.schambers.classmate.Adapter.HttpResponse;
 import edu.uco.schambers.classmate.Adapter.UserAdapter;
-import edu.uco.schambers.classmate.AdapterModels.DataRepo;
-import edu.uco.schambers.classmate.AdapterModels.TokenUtility;
-import edu.uco.schambers.classmate.AdapterModels.User;
+import edu.uco.schambers.classmate.AdapterModels.*;
+import edu.uco.schambers.classmate.AdapterModels.Class;
 import edu.uco.schambers.classmate.R;
 
 
@@ -54,7 +63,6 @@ public class UserInformation extends Fragment {
 
     private TextView name;
     private TextView email;
-    private TextView school;
     private TextView id;
     private TextView idLbl;
     private EditText currentPass;
@@ -62,10 +70,18 @@ public class UserInformation extends Fragment {
     private EditText confirmNewPass;
     private Button cancel;
     private Button confirm;
+    private Button add;
     private CheckBox changePass;
     private boolean toChangePass;
     private Animation errorBlink;
-    private Set<String> schoolList;
+    private List<String> spinnerArray;
+    private Spinner spinner;
+    private Spinner state;
+    private Spinner school;
+    ArrayAdapter<String> schooladapter;
+    ArrayList<String> listItems;
+    ArrayAdapter<String> adapter;
+    boolean addSchoolActive;
     
 
 
@@ -134,18 +150,23 @@ public class UserInformation extends Fragment {
     private void initUI(final View rootView) throws JSONException {
 
         name  = (TextView)rootView.findViewById(R.id.stored_name_lbl);
-        school = (TextView)rootView.findViewById(R.id.stored_school_lbl);
         email = (TextView)rootView.findViewById(R.id.stored_email_lbl);
         id = (TextView)rootView.findViewById(R.id.stored_id_lbl);
         idLbl = (TextView)rootView.findViewById(R.id.ui_id_lbl);
         currentPass = (EditText)rootView.findViewById(R.id.old_pass);
         newPass = (EditText)rootView.findViewById(R.id.new_pass);
+        spinner = (Spinner)rootView.findViewById((R.id.spinner));
         confirmNewPass = (EditText)rootView.findViewById(R.id.confirm_new_pass);
         confirm = (Button)rootView.findViewById(R.id.confirm_btn);
         cancel = (Button)rootView.findViewById(R.id.cancel_btn);
         changePass = (CheckBox)rootView.findViewById(R.id.change_pw_cb);
-        String[] schoolArray = new String[25];
+        state = (Spinner)rootView.findViewById(R.id.state_sp);
+        school = (Spinner)rootView.findViewById(R.id.school_sp);
+        add = (Button)rootView.findViewById(R.id.addClass_btn);
 
+        String[] schoolArray = new String[25];
+        spinnerArray =  new ArrayList<String>();
+        addSchoolActive = false;
 
 
         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
@@ -156,16 +177,45 @@ public class UserInformation extends Fragment {
         email.setText(user.getEmail().toString());
         for(int i = 0; i < sp2.getInt("SCHOOL_COUNT", 1); i++){
             schoolArray[i] = sp2.getString("SCHOOL_ARRAY_" + i, null);
+            spinnerArray.add(schoolArray[i]);
             Log.i("school array", sp2.getString("SCHOOL_ARRAY_" + i, "not found"));
         }
-        school.setText(schoolArray[0]);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinnerArray);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Spinner sItems = (Spinner) rootView.findViewById(R.id.spinner);
+        sItems.setAdapter(adapter);
         id.setText(Integer.toString(user.getId()));
         toChangePass = false;
         ChangePasswordVisibility(toChangePass);
 
+        state.setSelection(0);
+        state.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Scanner scanner = new Scanner(getResources().openRawResource(R.raw.schools));
+                List<String> list = new ArrayList<String>();
+                while (scanner.hasNextLine()) {
+                    String data = scanner.nextLine();
+                    String[] values = data.split(",");
+                    if (values[1].equals(parent.getSelectedItem().toString()))
+                        list.add(values[0]);
+                }
+                schooladapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
+                Spinner school = (Spinner) rootView.findViewById(R.id.school_sp);
+                school.setAdapter(schooladapter);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         if (!user.isStudent()) {
-            id.setVisibility(View.INVISIBLE);
-            idLbl.setVisibility(View.INVISIBLE);
+            id.setVisibility(View.GONE);
+            idLbl.setVisibility(View.GONE);
+            add.setVisibility(View.VISIBLE);
         }
 
         changePass.setOnClickListener(new View.OnClickListener() {
@@ -176,15 +226,47 @@ public class UserInformation extends Fragment {
             }
         });
 
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(addSchoolActive == false){
+                    state.setVisibility(View.VISIBLE);
+                    school.setVisibility(View.VISIBLE);
+                    cancel.setVisibility(View.VISIBLE);
+                    changePass.setVisibility(View.GONE);
+                    addSchoolActive = true;
+                } else {
+                    sp = getActivity().getSharedPreferences(MySCHOOL, Context.MODE_PRIVATE);
+                    editor = sp.edit();
+                    int count = sp.getInt("SCHOOL_COUNT", 1);
+                    editor.putInt("SCHOOL_COUNT", count + 1);
+                    editor.putString("SCHOOL_ARRAY_" + count, school.getSelectedItem().toString());
+                    editor.commit();
+                    Fragment user = UserInformation.newInstance("test", "test");
+                    launchFragment(user);
+                }
+            }
+        });
+
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toChangePass = false;
-                ChangePasswordVisibility(toChangePass);
-                currentPass.setText("");
-                newPass.setText("");
-                confirmNewPass.setText("");
-                changePass.setChecked(false);
+
+                if(toChangePass == true){
+                    toChangePass = false;
+                    ChangePasswordVisibility(toChangePass);
+                    currentPass.setText("");
+                    newPass.setText("");
+                    confirmNewPass.setText("");
+                    changePass.setChecked(false);
+                }else if (addSchoolActive == true){
+                    state.setVisibility(View.GONE);
+                    school.setVisibility(View.GONE);
+                    cancel.setVisibility(View.GONE);
+                    changePass.setVisibility(View.VISIBLE);
+                    addSchoolActive = false;
+                }
+
 
             }
         });
@@ -210,12 +292,10 @@ public class UserInformation extends Fragment {
                             public void onComplete(HttpResponse response) throws Exception {
                                 if (response.getHttpCode() == 204) {
                                     Toast.makeText(getActivity(), "Your Password has been Updated", Toast.LENGTH_LONG).show();
-                                }
-                                else if (response.getHttpCode() == 401) {
+                                } else if (response.getHttpCode() == 401) {
                                     currentPass.requestFocus();
                                     currentPass.setError("Incorrect Current Password");
-                                }
-                                else{
+                                } else {
                                     Toast.makeText(getActivity(), "Error communicating with server. Status code: " + response.getHttpCode(), Toast.LENGTH_LONG).show();
                                 }
 
@@ -257,14 +337,14 @@ public class UserInformation extends Fragment {
             confirmNewPass.setVisibility(View.VISIBLE);
             confirm.setVisibility(View.VISIBLE);
             cancel.setVisibility(View.VISIBLE);
-            changePass.setVisibility(View.INVISIBLE);
+            changePass.setVisibility(View.GONE);
 
         }else{
-            currentPass.setVisibility(View.INVISIBLE);
-            newPass.setVisibility(View.INVISIBLE);
-            confirmNewPass.setVisibility(View.INVISIBLE);
-            confirm.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.INVISIBLE);
+            currentPass.setVisibility(View.GONE);
+            newPass.setVisibility(View.GONE);
+            confirmNewPass.setVisibility(View.GONE);
+            confirm.setVisibility(View.GONE);
+            cancel.setVisibility(View.GONE);
             changePass.setVisibility(View.VISIBLE);
         }
     }
@@ -299,6 +379,62 @@ public class UserInformation extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+
+    public void refreshList() throws JSONException {
+        final User user = TokenUtility.parseUserToken(getActivity());
+        final ClassAdapter classAdapter = new ClassAdapter();
+
+        classAdapter.professorClasses(user.getpKey(), new Callback<ArrayList<edu.uco.schambers.classmate.AdapterModels.Class>>() {
+            @Override
+            public void onComplete(ArrayList<edu.uco.schambers.classmate.AdapterModels.Class> result) throws Exception {
+                listItems.clear();
+                TableLayout classTable = (TableLayout) getView().findViewById(R.id.classMgmtTable);
+                classTable.removeAllViews();
+                for (Class classItem : result) {
+                    TableRow tr = new TableRow(getView().getContext());
+                    String schoolnames[] = classItem.getSchool().split(" ");
+                    String schoolAbbrev = "";
+                    if (classItem.getSchool().length() > 4) {
+                        for (int i = 0; i < schoolnames.length; i++) {
+                            if (!schoolnames[i].contains("of") || !schoolnames[i].contains("the")) {
+                                schoolAbbrev += schoolnames[i].charAt(0);
+                            }
+                        }
+                    } else {
+                        schoolAbbrev = classItem.getSchool();
+                    }
+                    //Set each column's data in the row
+                    TextView c0 = new TextView(getView().getContext());
+                    c0.setText(classItem.getClass_name());
+                    TextView c2 = new TextView(getView().getContext());
+                    c2.setText(String.valueOf(schoolAbbrev));
+                    TextView c3 = new TextView(getView().getContext());
+                    c3.setText(String.valueOf(classItem.getSemester() + "/" + classItem.getYear()));
+                    tr.addView(c0, new TableRow.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, 1f));
+                    tr.addView(c2, new TableRow.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, .5f));
+                    tr.addView(c3, new TableRow.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, 1f));
+                    //Add the row to the table
+                    classTable.addView(tr);
+
+                    listItems.add(
+                            classItem.getClass_name() + "-" +
+                                    classItem.getSemester() + "-" +
+                                    Integer.toString(classItem.getYear()) + "\n" +
+                                    classItem.getSchool());
+                }
+                adapter.notifyDataSetChanged();
+
+            }
+        });
+    }
+
+    private void launchFragment(Fragment f) {
+        if (f != null) {
+            FragmentTransaction trans = getFragmentManager().beginTransaction();
+            trans.replace(R.id.fragment_container, f).addToBackStack("debug");
+            trans.commit();
+        }
     }
 
 }

@@ -43,13 +43,13 @@
             android:id="@+id/ui_school_lbl"
             android:layout_gravity="center_horizontal" />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <Spinner
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/school_lbl"
-            android:id="@+id/stored_school_lbl"
-            android:layout_gravity="center_horizontal" />
+            android:id="@+id/spinner"
+            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"
+            android:gravity="left|center|center_horizontal|right" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -83,6 +83,36 @@
             android:id="@+id/stored_id_lbl"
             android:layout_gravity="center_horizontal" />
 
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/state_sp"
+            android:hint="@string/statename"
+            android:layout_gravity="center_horizontal"
+            android:entries="@array/states_list"
+            android:visibility="gone"
+            android:labelFor="@string/state_lbl" />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/school_sp"
+            android:hint="@string/schoolname"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"
+            android:labelFor="@string/school_lbl" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_class_btn"
+            android:id="@+id/addClass_btn"
+            android:layout_gravity="center_horizontal" />
+
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -90,7 +120,8 @@
             android:ems="10"
             android:id="@+id/old_pass"
             android:hint="@string/user_info_cpw"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone" />
 
         <EditText
             android:layout_width="match_parent"
@@ -99,7 +130,8 @@
             android:ems="10"
             android:id="@+id/new_pass"
             android:hint="@string/user_info_npw"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone" />
 
         <EditText
             android:layout_width="match_parent"
@@ -108,7 +140,8 @@
             android:ems="10"
             android:id="@+id/confirm_new_pass"
             android:hint="@string/user_info_cnpw"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone" />
 
         <CheckBox
             android:layout_width="wrap_content"
@@ -123,7 +156,8 @@
             android:layout_height="wrap_content"
             android:text="@string/change_pw"
             android:id="@+id/confirm_btn"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone" />
 
         <Button
             android:layout_width="wrap_content"

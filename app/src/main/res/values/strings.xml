@@ -64,7 +64,8 @@
     <string name="login_btn">LOGIN</string>
     <string name="state_lbl">State</string>
     <string name="school_lbl">School</string>
-    <string name="ui_school_lbl">SCHOOL</string>
+    <string name="ui_school_lbl">SCHOOLS</string>
+    <string name="add_class_btn">ADD CLASS</string>
 
 <!--Roll Call UI Strings-->
     <string name="btn_roll_call_start">Start Class</string>
