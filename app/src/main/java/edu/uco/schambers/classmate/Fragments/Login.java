@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.ArraySet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
@@ -147,6 +149,7 @@ public class Login extends Fragment {
         state = (Spinner) rootView.findViewById(R.id.state_sp);
         school = (Spinner) rootView.findViewById(R.id.school_sp);
         listItems = new ArrayList<String>();
+        schoolList = new HashSet<String>();
 
 
 
@@ -230,7 +233,6 @@ public class Login extends Fragment {
 
             }
         });
-        
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -281,11 +283,14 @@ public class Login extends Fragment {
                     }else if(!cb.isChecked()){
                         user.setIsStudent(false);
                         user.setId(user.getpKey());
-                        schoolList.add(school.getSelectedItem().toString());
-                        Log.i("school list", schoolList.toString());
                         sp = getActivity().getSharedPreferences(MySCHOOL, Context.MODE_PRIVATE);
                         editor = sp.edit();
-                        editor.putStringSet("SCHOOLS", schoolList);
+                        editor.putInt("SCHOOL_COUNT", 1);
+                        for(int i=0;i < sp.getInt("SCHOOL_COUNT", 1); i++) {
+                            editor.putString("SCHOOL_ARRAY_" + i, school.getSelectedItem().toString());
+                            Log.i("sp put", sp.getString("SCHOOL_ARRAY_" + i, "not stored"));
+                        }
+
                         editor.commit();
                     }
 

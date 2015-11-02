@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.Set;
 
 import edu.uco.schambers.classmate.Adapter.Callback;
 import edu.uco.schambers.classmate.Adapter.HttpResponse;
@@ -52,6 +54,7 @@ public class UserInformation extends Fragment {
 
     private TextView name;
     private TextView email;
+    private TextView school;
     private TextView id;
     private TextView idLbl;
     private EditText currentPass;
@@ -62,12 +65,15 @@ public class UserInformation extends Fragment {
     private CheckBox changePass;
     private boolean toChangePass;
     private Animation errorBlink;
+    private Set<String> schoolList;
     
 
 
     public SharedPreferences sp;
+    public SharedPreferences sp2;
     public SharedPreferences.Editor editor;
     public static final String MyPREFS = "MyPREFS";
+    public static final String MySCHOOL = "MySCHOOL";
     public String token;
     private DataRepo dr;
     public User user;
@@ -128,6 +134,7 @@ public class UserInformation extends Fragment {
     private void initUI(final View rootView) throws JSONException {
 
         name  = (TextView)rootView.findViewById(R.id.stored_name_lbl);
+        school = (TextView)rootView.findViewById(R.id.stored_school_lbl);
         email = (TextView)rootView.findViewById(R.id.stored_email_lbl);
         id = (TextView)rootView.findViewById(R.id.stored_id_lbl);
         idLbl = (TextView)rootView.findViewById(R.id.ui_id_lbl);
@@ -137,13 +144,21 @@ public class UserInformation extends Fragment {
         confirm = (Button)rootView.findViewById(R.id.confirm_btn);
         cancel = (Button)rootView.findViewById(R.id.cancel_btn);
         changePass = (CheckBox)rootView.findViewById(R.id.change_pw_cb);
+        String[] schoolArray = new String[25];
+
+
 
         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+        sp2 = getActivity().getSharedPreferences(MySCHOOL, Context.MODE_PRIVATE);
         token = sp.getString("AUTH_TOKEN", null);
         user = TokenUtility.parseUserToken(token);
-
         name.setText(user.getName().toString());
         email.setText(user.getEmail().toString());
+        for(int i = 0; i < sp2.getInt("SCHOOL_COUNT", 1); i++){
+            schoolArray[i] = sp2.getString("SCHOOL_ARRAY_" + i, null);
+            Log.i("school array", sp2.getString("SCHOOL_ARRAY_" + i, "not found"));
+        }
+        school.setText(schoolArray[0]);
         id.setText(Integer.toString(user.getId()));
         toChangePass = false;
         ChangePasswordVisibility(toChangePass);

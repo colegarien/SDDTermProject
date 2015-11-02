@@ -111,8 +111,7 @@
             android:text="@string/student"
             android:id="@+id/student_cb"
             android:layout_gravity="center_horizontal"
-            android:checked="true"
-            android:nestedScrollingEnabled="true" />
+            android:checked="true" />
 
 
 
