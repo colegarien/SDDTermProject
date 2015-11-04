@@ -72,6 +72,8 @@ public class StudentEnrollment extends Fragment {
     Context context;
     TableRow classTableHeader;
 
+    Button dropClasses;
+
     EnrollmentAdapter enrollmentAdapter;
 
     /**
@@ -111,12 +113,20 @@ public class StudentEnrollment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        classTable.removeAllViews();
+    }
+
     private void initUI(final View rootView) throws JSONException {
         school = (Spinner)rootView.findViewById(R.id.sp_school);
         semester = (Spinner)rootView.findViewById(R.id.sp_semester);
         year = (Spinner)rootView.findViewById(R.id.sp_year);
         //Create a table layout object and link it to the fragment's table layout
         classTable = (TableLayout) rootView.findViewById(R.id.classTable);
+        dropClasses = (Button)rootView.findViewById(R.id.drop_classes);
+
         context = rootView.getContext();
         resetTable();
         // disable spinners on launching activity
@@ -141,6 +151,15 @@ public class StudentEnrollment extends Fragment {
 
         final User user = TokenUtility.parseUserToken(getActivity());
         enrollmentAdapter = new EnrollmentAdapter();
+
+        dropClasses.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment f = StudentDropClasses.newInstance();
+                launchFragment(f);
+
+            }
+        });
 
         enrollmentAdapter.getSchools(new Callback<ArrayList<String>>() {
             @Override
@@ -232,7 +251,7 @@ public class StudentEnrollment extends Fragment {
                 String selectedSemester = semester.getSelectedItem().toString();
 
                 try {
-                    enrollmentAdapter.getClasses(selectedSchool, selectedYear, selectedSemester, TokenUtility.parseUserToken(getActivity()).getId(), new Callback<ArrayList<Class>>() {
+                    enrollmentAdapter.getClasses(selectedSchool, selectedYear, selectedSemester, TokenUtility.parseUserToken(getActivity()).getpKey(), new Callback<ArrayList<Class>>() {
                         @Override
                         public void onComplete(ArrayList<Class> result) throws Exception {
                             classList.clear();
@@ -442,4 +461,13 @@ public class StudentEnrollment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    private void launchFragment(Fragment f)
+    {
+        if(f != null)
+        {
+            FragmentTransaction trans = getFragmentManager().beginTransaction();
+            trans.replace(R.id.fragment_container, f).addToBackStack("debug");
+            trans.commit();
+        }
+    }
 }

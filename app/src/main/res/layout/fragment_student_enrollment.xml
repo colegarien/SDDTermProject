@@ -4,6 +4,12 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <Button
+        android:id="@+id/drop_classes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Drop Classes" />
+
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -60,4 +66,6 @@
             android:layout_height="match_parent"
             android:id="@+id/classTable"></TableLayout>
     </ScrollView>
+
+
 </LinearLayout>

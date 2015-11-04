@@ -85,13 +85,42 @@ public class EnrollmentAdapter {
         call.execute(new ServiceCall(Url + "semesters/" + URLEncoder.encode(school, "UTF-8").replace("+", "%20") + "/" + year, "GET", ""));
     }
 
-    public void getClasses(String school, final String year, final String semester, int studentId, final Callback<ArrayList<Class>> callback) throws UnsupportedEncodingException {
+    public void getEnrolledClasses(int userId, final Callback<ArrayList<Class>> callback) throws UnsupportedEncodingException {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
             @Override
             public void onComplete(HttpResponse response) throws Exception {
                 Log.d("WS", response.getResponse());
 
-                JSONArray array = new JSONArray(response.getResponse());
+                String json = response.getResponse();
+                JSONArray array = new JSONArray(json);
+
+                ArrayList<Class> list = new ArrayList<>();
+
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject jsonObject = array.getJSONObject(i);
+
+                    Class classItem = new Class();
+                    classItem.setId(jsonObject.getInt("Id"));
+                    classItem.setClass_name(jsonObject.getString("Class_Name"));
+                    classItem.setProfessor_name(jsonObject.getString("Professor_Name"));
+                    list.add(classItem);
+                }
+
+                callback.onComplete(list);
+            }
+        });
+
+        call.execute(new ServiceCall(Url + "Enrollments/" + userId, "GET", ""));
+    }
+
+    public void getClasses(String school, final String year, final String semester, int userId, final Callback<ArrayList<Class>> callback) throws UnsupportedEncodingException {
+        ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
+            @Override
+            public void onComplete(HttpResponse response) throws Exception {
+                Log.d("WS", response.getResponse());
+
+                String json = response.getResponse();
+                JSONArray array = new JSONArray(json);
 
                 ArrayList<Class> list = new ArrayList<>();
 
@@ -112,7 +141,7 @@ public class EnrollmentAdapter {
             }
         });
 
-        call.execute(new ServiceCall(Url + "classes/" + URLEncoder.encode(school, "UTF-8").replace("+", "%20") + "/" + year + "/" + semester + "/" + studentId, "GET", ""));
+        call.execute(new ServiceCall(Url + "classes/" + URLEncoder.encode(school, "UTF-8").replace("+", "%20") + "/" + year + "/" + semester + "/" + userId, "GET", ""));
     }
 
     public void classEnroll(int user_id, int class_id, final Callback<HttpResponse> callback) throws JSONException {
