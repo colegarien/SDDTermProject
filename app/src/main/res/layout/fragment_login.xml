@@ -75,6 +75,28 @@
             android:ems="10"
             android:id="@+id/student_id_et"
             android:layout_gravity="center_horizontal" />
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/state_sp"
+            android:hint="@string/statename"
+            android:layout_gravity="center_horizontal"
+            android:entries="@array/states_list"
+            android:visibility="invisible"
+            android:labelFor="@string/state_lbl" />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/school_sp"
+            android:hint="@string/schoolname"
+            android:layout_gravity="center_horizontal"
+            android:visibility="invisible"
+            android:labelFor="@string/school_lbl" />
 
         <Button
             android:layout_width="match_parent"
@@ -89,8 +111,7 @@
             android:text="@string/student"
             android:id="@+id/student_cb"
             android:layout_gravity="center_horizontal"
-            android:checked="true"
-            android:nestedScrollingEnabled="true" />
+            android:checked="true" />
 
 
 

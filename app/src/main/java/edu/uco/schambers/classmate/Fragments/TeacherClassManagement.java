@@ -4,6 +4,8 @@ import edu.uco.schambers.classmate.Adapter.Callback;
 import edu.uco.schambers.classmate.Adapter.ClassAdapter;
 import edu.uco.schambers.classmate.AdapterModels.Class;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -59,11 +61,17 @@ public class TeacherClassManagement extends Fragment {
     ArrayList<String> listItems;
     ArrayAdapter<String> adapter;
     ArrayAdapter<String> schooladapter;
+    private List<String> spinnerArray;
     Button addButton;
     Spinner semester;
     Spinner year;
+    private Spinner schoolName;
     ProgressBar pb;
     private Animation errorBlink;
+    public SharedPreferences sp;
+    public SharedPreferences.Editor editor;
+    public static final String MyPREFS = "MyPREFS";
+    public static final String MySCHOOL = "MySCHOOL";
 
     /**
      * Use this factory method to create a new instance of
@@ -116,32 +124,48 @@ public class TeacherClassManagement extends Fragment {
         semester = (Spinner)rootView.findViewById(R.id.semester_sp);
         year = (Spinner)rootView.findViewById(R.id.year_sp);
         listItems = new ArrayList<String>();
-        adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, listItems);
-        //addedClasses.setAdapter(adapter);
-        Spinner stateName = (Spinner)rootView.findViewById(R.id.state_sp);
-        stateName.setSelection(0);
-        stateName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Scanner scanner = new Scanner(getResources().openRawResource(R.raw.schools));
-                List<String> list = new ArrayList<String>();
-                while (scanner.hasNextLine()) {
-                    String data = scanner.nextLine();
-                    String[] values = data.split(",");
-                    if (values[1].equals(parent.getSelectedItem().toString()))
-                        list.add(values[0]);
-                }
-                schooladapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
-                Spinner schoolName = (Spinner) rootView.findViewById(R.id.schoolname_sp);
-                schoolName.setAdapter(schooladapter);
-            }
+        String[] schoolArray = new String[25];
+        spinnerArray =  new ArrayList<String>();
+        sp = getActivity().getSharedPreferences(MySCHOOL, Context.MODE_PRIVATE);
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+        for(int i = 0; i < sp.getInt("SCHOOL_COUNT", 1); i++){
+            schoolArray[i] = sp.getString("SCHOOL_ARRAY_" + i, null);
+            spinnerArray.add(schoolArray[i]);
+            Log.i("school array", sp.getString("SCHOOL_ARRAY_" + i, "not found"));
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinnerArray);
 
-            }
-        });
-        final Spinner schoolName = ((Spinner) rootView.findViewById(R.id.schoolname_sp));
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        schoolName = (Spinner) rootView.findViewById(R.id.schoolname_sp);
+        schoolName.setAdapter(adapter);
+
+
+//        adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, listItems);
+//        //addedClasses.setAdapter(adapter);
+//        Spinner stateName = (Spinner)rootView.findViewById(R.id.state_sp);
+//        stateName.setSelection(0);
+//        stateName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                Scanner scanner = new Scanner(getResources().openRawResource(R.raw.schools));
+//                List<String> list = new ArrayList<String>();
+//                while (scanner.hasNextLine()) {
+//                    String data = scanner.nextLine();
+//                    String[] values = data.split(",");
+//                    if (values[1].equals(parent.getSelectedItem().toString()))
+//                        list.add(values[0]);
+//                }
+//                schooladapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
+//                Spinner schoolName = (Spinner) rootView.findViewById(R.id.schoolname_sp);
+//                schoolName.setAdapter(schooladapter);
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
+//        final Spinner schoolName = ((Spinner) rootView.findViewById(R.id.schoolname_sp));
         final User user = TokenUtility.parseUserToken(getActivity());
         final ClassAdapter classAdapter = new ClassAdapter();
 

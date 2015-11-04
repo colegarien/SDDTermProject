@@ -7,28 +7,41 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.ArraySet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Set;
 
 import edu.uco.schambers.classmate.Adapter.AuthAdapter;
 import edu.uco.schambers.classmate.Adapter.Callback;
+import edu.uco.schambers.classmate.Adapter.ClassAdapter;
 import edu.uco.schambers.classmate.Adapter.HttpResponse;
 import edu.uco.schambers.classmate.Adapter.UserAdapter;
-import edu.uco.schambers.classmate.AdapterModels.DataRepo;
-import edu.uco.schambers.classmate.AdapterModels.TokenUtility;
-import edu.uco.schambers.classmate.AdapterModels.User;
+import edu.uco.schambers.classmate.AdapterModels.*;
+import edu.uco.schambers.classmate.AdapterModels.Class;
 import edu.uco.schambers.classmate.R;
 
 
@@ -52,6 +65,7 @@ public class Login extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     public static final String MyPREFS = "MyPREFS";
+    public static final String MySCHOOL = "MySCHOOL";
     public SharedPreferences sp;
     public SharedPreferences.Editor editor;
     AuthAdapter aa;
@@ -64,7 +78,13 @@ public class Login extends Fragment {
     private EditText confirmPass;
     private EditText name;
     private EditText email;
+    private Spinner state;
+    private Spinner school;
     private Animation errorBlink;
+    ArrayList<String> listItems;
+    Set<String> schoolList;
+    ArrayAdapter<String> adapter;
+    ArrayAdapter<String> schooladapter;
 
     //user class
     public User user;
@@ -126,6 +146,12 @@ public class Login extends Fragment {
         confirmPass = (EditText) rootView.findViewById(R.id.confirm_pass_et);
         name = (EditText) rootView.findViewById(R.id.username_et);
         email = (EditText) rootView.findViewById(R.id.email_et);
+        state = (Spinner) rootView.findViewById(R.id.state_sp);
+        school = (Spinner) rootView.findViewById(R.id.school_sp);
+        listItems = new ArrayList<String>();
+        schoolList = new HashSet<String>();
+
+
 
         user = new User();
         dr = new DataRepo(getActivity());
@@ -185,6 +211,29 @@ public class Login extends Fragment {
             }
         });
 
+        state.setSelection(0);
+        state.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Scanner scanner = new Scanner(getResources().openRawResource(R.raw.schools));
+                List<String> list = new ArrayList<String>();
+                while (scanner.hasNextLine()) {
+                    String data = scanner.nextLine();
+                    String[] values = data.split(",");
+                    if (values[1].equals(parent.getSelectedItem().toString()))
+                        list.add(values[0]);
+                }
+                schooladapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
+                Spinner school = (Spinner) rootView.findViewById(R.id.school_sp);
+                school.setAdapter(schooladapter);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -234,6 +283,15 @@ public class Login extends Fragment {
                     }else if(!cb.isChecked()){
                         user.setIsStudent(false);
                         user.setId(user.getpKey());
+                        sp = getActivity().getSharedPreferences(MySCHOOL, Context.MODE_PRIVATE);
+                        editor = sp.edit();
+                        editor.putInt("SCHOOL_COUNT", 1);
+                        for(int i=0;i < sp.getInt("SCHOOL_COUNT", 1); i++) {
+                            editor.putString("SCHOOL_ARRAY_" + i, school.getSelectedItem().toString());
+                            Log.i("sp put", sp.getString("SCHOOL_ARRAY_" + i, "not stored"));
+                        }
+
+                        editor.commit();
                     }
 
                     try {
@@ -245,7 +303,7 @@ public class Login extends Fragment {
                                     errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
                                     email.startAnimation(errorBlink);
                                     email.requestFocus();
-                                    email.setError("User already exist");
+                                    email.setError("User already exists");
                                 }
 
                                 else if (result.getHttpCode() >= 300)
@@ -311,8 +369,12 @@ public class Login extends Fragment {
             idET.setText("");
             idET.setVisibility(View.INVISIBLE);
             idET.setText("");
+            school.setVisibility(View.VISIBLE);
+            state.setVisibility(View.VISIBLE);
         } else {
             idET.setVisibility(View.VISIBLE);
+            school.setVisibility(View.INVISIBLE);
+            state.setVisibility(View.INVISIBLE);
         }
     }
 
