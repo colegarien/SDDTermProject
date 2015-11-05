@@ -69,6 +69,8 @@ public class StudentRollCall extends Fragment {
 
     //UI Components
     private TextView lblCheckinStatus;
+    private ListView list;
+    private ScrollView scrollView;
 
     private SharedPreferences prefs;
 
@@ -260,6 +262,14 @@ public class StudentRollCall extends Fragment {
         return rootView;
     }
 
+    public void reset(){
+        lblCheckinStatus.setText("Class is over!");
+        list.setEnabled(true);
+        scrollView.setEnabled(true);
+
+        classes.clear();
+        classAdapter.notifyDataSetChanged();
+    }
 
     private void initUI(final View rootView) throws JSONException {
         initListView(rootView);
@@ -304,10 +314,10 @@ public class StudentRollCall extends Fragment {
             }
         };
 
-        final ListView list = (ListView) rootView.findViewById(R.id.list_class);
+        list = (ListView) rootView.findViewById(R.id.list_class);
         list.setAdapter(classAdapter);
 
-        final ScrollView scrollView = (ScrollView) rootView.findViewById(R.id.scrollView_class);
+        scrollView = (ScrollView) rootView.findViewById(R.id.scrollView_class);
 
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
