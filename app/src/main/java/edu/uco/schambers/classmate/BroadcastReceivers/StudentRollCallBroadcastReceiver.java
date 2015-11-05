@@ -58,7 +58,7 @@ public class StudentRollCallBroadcastReceiver extends WiFiDirectBroadcastReceive
 
                 Intent studentServiceIntent = new Intent(activity, StudentRollCallService.class);
                 try {
-                    studentServiceIntent.putExtra("id", String.valueOf(TokenUtility.parseUserToken(fragment.getActivity()).getId()));
+                    studentServiceIntent.putExtra("id", String.valueOf(TokenUtility.parseUserToken(fragment.getActivity()).getpKey()));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
