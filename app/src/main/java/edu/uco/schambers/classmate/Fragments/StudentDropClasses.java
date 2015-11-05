@@ -109,7 +109,7 @@ public class StudentDropClasses extends Fragment {
         classList = new ArrayList<>();
 
 
-        final User user = TokenUtility.parseUserToken(getActivity());
+        //final User user = TokenUtility.parseUserToken(getActivity());
         enrollmentAdapter = new EnrollmentAdapter();
 
         refreshList();
