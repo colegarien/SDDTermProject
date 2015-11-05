@@ -70,7 +70,16 @@ public class StudentRollCallBroadcastReceiver extends WiFiDirectBroadcastReceive
 
     @Override
     void onPeerDisconnected() {
-
+        fragment.getActivity().unregisterReceiver(this);
+        if(fragment instanceof StudentRollCall) {
+            fragment.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((StudentRollCall) fragment).reset();
+                }
+            });
+        }
+        Log.d("SocketAction", "Disconnected");
     }
 
     @Override
