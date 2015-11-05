@@ -193,18 +193,7 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
             @Override
             public void onFailure(int reasonCode) {
                 // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
-                String errorMessage = "";
-                switch (reasonCode){
-                    case WifiP2pManager.BUSY:
-                        errorMessage = "Busy...";
-                        break;
-                    case WifiP2pManager.ERROR:
-                        errorMessage = "An Error Occurred";
-                        break;
-                    case WifiP2pManager.P2P_UNSUPPORTED:
-                        errorMessage = "P2P Unsupported";
-                        break;
-                }
+                String errorMessage = reportErrorMessage(reasonCode);
 
                 Log.d("ServiceCreation", "Error: " + errorMessage);
             }
@@ -256,6 +245,8 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
 
                     @Override
                     public void onFailure(int reason) {
+                        reportErrorMessage(reason);
+
                         Log.d("ServiceDiscovery", "Failed adding service discovery request");
                     }
                 });
@@ -268,9 +259,30 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
 
                     @Override
                     public void onFailure(int reason) {
+                        reportErrorMessage(reason);
+
                         Log.d("ServiceDiscovery", "Service discovery failed");
                     }
                 });
+    }
+
+    private String reportErrorMessage(int reason){
+        String errorMessage = "";
+        switch (reason) {
+            case WifiP2pManager.BUSY:
+                errorMessage = "Busy. Try again later";
+                break;
+            case WifiP2pManager.ERROR:
+                errorMessage = "Internal Error. Try reopening app to solve the problem";
+                break;
+            case WifiP2pManager.P2P_UNSUPPORTED:
+                errorMessage = "P2P Unsupported";
+                break;
+        }
+
+        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+
+        return errorMessage;
     }
 
     // used for removing a local service
@@ -307,18 +319,8 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
             @Override
             public void onFailure(int reasonCode) {
                 // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
-                String errorMessage = "";
-                switch (reasonCode) {
-                    case WifiP2pManager.BUSY:
-                        errorMessage = "Busy...";
-                        break;
-                    case WifiP2pManager.ERROR:
-                        errorMessage = "An Error Occurred";
-                        break;
-                    case WifiP2pManager.P2P_UNSUPPORTED:
-                        errorMessage = "P2P Unsupported";
-                        break;
-                }
+                String errorMessage = reportErrorMessage(reasonCode);
+
                 Log.d("ServiceRemoval", "Error: " + errorMessage);
             }
         });
@@ -332,18 +334,7 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         //config.groupOwnerIntent = 15;
 
         if (serviceRequest != null)
-            mManager.removeServiceRequest(mChannel, serviceRequest,
-                    new WifiP2pManager.ActionListener() {
-
-                        @Override
-                        public void onSuccess() {
-
-                        }
-
-                        @Override
-                        public void onFailure(int arg0) {
-                        }
-                    });
+            mManager.removeServiceRequest(mChannel, serviceRequest, null);
 
         mManager.connect(mChannel, config,
                 new WifiP2pManager.ActionListener() {
@@ -355,6 +346,7 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
 
                     @Override
                     public void onFailure(int errorCode) {
+                        reportErrorMessage(errorCode);
                         Log.d("ServiceDiscovery", "Failed connecting to service");
                     }
                 });
@@ -410,6 +402,8 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
 
                             @Override
                             public void onFailure(int reason) {
+                                reportErrorMessage(reason);
+
                                 Log.d("ServiceDiscovery", "Failed *Removing Wifi p2p group");
                             }
                         });
