@@ -25,6 +25,8 @@ import android.app.Fragment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +54,7 @@ import edu.uco.schambers.classmate.SocketActions.SocketAction;
 public class TeacherRollCall extends Fragment {
     public static final String ARG_TEACHER = "edu.uco.schambers.classmate.arq_teacher";
     private static final String CLASS_OPEN = "edu.uco.schambers.classmate.class_open";
+    private static final String CLASS_NAME = "edu.uco.schambers.classmate.class_name";
 
     //UI Components
     private View rootView;
@@ -175,7 +178,7 @@ public class TeacherRollCall extends Fragment {
 
         // initialize class_open to false if doesn't exist
         if(!sp.contains(CLASS_OPEN))
-            sp.edit().putBoolean(CLASS_OPEN,false).apply();
+            sp.edit().putBoolean(CLASS_OPEN, false).apply();
 
         // set the button's text properly
         if (sp.getBoolean(CLASS_OPEN,false)) {
@@ -186,7 +189,27 @@ public class TeacherRollCall extends Fragment {
 
         teacherText.setText(user.getName().toString());
 
+        // Persistent Class Name
         classText = (EditText) rootView.findViewById(R.id.txt_rc_class);
+        classText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // update class name
+                sp.edit().putString(CLASS_NAME, classText.getText().toString()).apply();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+        if(!sp.contains(CLASS_NAME))
+            sp.edit().putString(CLASS_NAME,"").apply();
+        classText.setText(sp.getString(CLASS_NAME,""));
+
         listAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
         connectedList = (ListView) rootView.findViewById(R.id.list_connected);
         connectedList.setAdapter(listAdapter);
