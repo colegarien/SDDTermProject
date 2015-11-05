@@ -313,6 +313,9 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
             public void onSuccess() {
                 // Command successful! Code isn't necessarily needed here,
                 // Unless you want to update the UI or add logging statements.
+
+                // removeGroup broadcasts the disconnect state to all the connected peers
+                mManager.removeGroup(mChannel, null);
                 Log.d("ServiceRemoval", "Service removal successful");
             }
 
