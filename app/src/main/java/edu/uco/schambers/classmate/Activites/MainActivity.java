@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,6 +76,11 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
 
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
+
+        // This method removes all the remembered groups from device.
+        // It prevents the situation that being as group owner once will be as group owner forever.
+        // Solves the problem of check-in indefinitely..
+        this.deletePersistentGroups();
 
         startFragmentAccordingToIntentAction(getIntent());
 
@@ -323,6 +329,7 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = deviceAddress;
         config.wps.setup = WpsInfo.PBC;
+        //config.groupOwnerIntent = 15;
 
         if (serviceRequest != null)
             mManager.removeServiceRequest(mChannel, serviceRequest,
@@ -366,6 +373,22 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         wifiReceiverIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         registerReceiver(wifiReceiver, wifiReceiverIntentFilter);
+    }
+
+    private void deletePersistentGroups(){
+        try {
+            Method[] methods = WifiP2pManager.class.getMethods();
+            for (int i = 0; i < methods.length; i++) {
+                if (methods[i].getName().equals("deletePersistentGroup")) {
+                    // Delete any persistent group
+                    for (int netid = 0; netid < 32; netid++) {
+                        methods[i].invoke(mManager, mChannel, netid, null);
+                    }
+                }
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
