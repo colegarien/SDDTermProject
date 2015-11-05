@@ -178,6 +178,10 @@ public class StudentRollCall extends Fragment {
         final MenuItem vibrate = menu.add("Vibrate when checked-in");
         vibrate.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 
+        final MenuItem refresh = menu.add("Refresh");
+        refresh.setIcon(android.R.drawable.ic_menu_search);
+        refresh.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
         // Get user preference
         String checkedInMode = prefs.getString("CheckedInMode", null);
 
@@ -227,6 +231,15 @@ public class StudentRollCall extends Fragment {
 
                 editor.putString("CheckedInMode", "Vibrate");
                 editor.commit();
+
+                return true;
+            }
+        });
+
+        refresh.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                discoverService();
 
                 return true;
             }
