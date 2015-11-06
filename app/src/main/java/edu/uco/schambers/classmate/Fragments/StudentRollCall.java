@@ -18,6 +18,7 @@ package edu.uco.schambers.classmate.Fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -48,6 +49,7 @@ import edu.uco.schambers.classmate.BroadcastReceivers.StudentRollCallBroadcastRe
 import edu.uco.schambers.classmate.ObservableManagers.ServiceDiscoveryManager;
 import edu.uco.schambers.classmate.ObservableManagers.SocketResultManager;
 import edu.uco.schambers.classmate.R;
+import edu.uco.schambers.classmate.Services.StudentQuestionService;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -392,11 +394,19 @@ public class StudentRollCall extends Fragment {
         if (result){
             lblCheckinStatus.setText(getString(R.string.lbl_status_checked_in));
             Toast.makeText(getActivity(), "You've checked-in", Toast.LENGTH_SHORT).show();
+
+            startStudentQuestionService();
         }
         else {
             lblCheckinStatus.setText(getString(R.string.lbl_status_failed));
             Toast.makeText(getActivity(), "Failed. Please try later", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void startStudentQuestionService(){
+        Intent i = new Intent(getActivity(), StudentQuestionService.class);
+        i.setAction(StudentQuestionService.ACTION_START_SERVICE_STICKY);
+        getActivity().startService(i);
     }
 
     public boolean allowBackPressed(){
