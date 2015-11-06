@@ -486,6 +486,8 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         if (f instanceof StudentRollCall && !((StudentRollCall) f).allowBackPressed()){
             return;
         }
+        //Back button will pop back stack in instances of teacher attendance item
+        //to allow pressing back only once
         else if (f instanceof TeacherAttendanceItem){
             getFragmentManager().popBackStack();
         }
