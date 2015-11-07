@@ -65,6 +65,7 @@ public class UserInformation extends Fragment {
     private TextView email;
     private TextView id;
     private TextView idLbl;
+    private TextView schoolLbl;
     private EditText currentPass;
     private EditText newPass;
     private EditText confirmNewPass;
@@ -151,6 +152,7 @@ public class UserInformation extends Fragment {
 
         name  = (TextView)rootView.findViewById(R.id.stored_name_lbl);
         email = (TextView)rootView.findViewById(R.id.stored_email_lbl);
+        schoolLbl = (TextView)rootView.findViewById(R.id.ui_school_lbl);
         id = (TextView)rootView.findViewById(R.id.stored_id_lbl);
         idLbl = (TextView)rootView.findViewById(R.id.ui_id_lbl);
         currentPass = (EditText)rootView.findViewById(R.id.old_pass);
@@ -162,6 +164,7 @@ public class UserInformation extends Fragment {
         changePass = (CheckBox)rootView.findViewById(R.id.change_pw_cb);
         state = (Spinner)rootView.findViewById(R.id.state_sp);
         school = (Spinner)rootView.findViewById(R.id.school_sp);
+        spinner = (Spinner)rootView.findViewById(R.id.spinner);
         add = (Button)rootView.findViewById(R.id.addClass_btn);
 
         String[] schoolArray = new String[25];
@@ -211,11 +214,17 @@ public class UserInformation extends Fragment {
 
             }
         });
+        add.setVisibility(View.GONE);
+        schoolLbl.setVisibility(View.GONE);
+        spinner.setVisibility(View.GONE);
+
 
         if (!user.isStudent()) {
             id.setVisibility(View.GONE);
             idLbl.setVisibility(View.GONE);
             add.setVisibility(View.VISIBLE);
+            schoolLbl.setVisibility(View.VISIBLE);
+            spinner.setVisibility(View.VISIBLE);
         }
 
         changePass.setOnClickListener(new View.OnClickListener() {
