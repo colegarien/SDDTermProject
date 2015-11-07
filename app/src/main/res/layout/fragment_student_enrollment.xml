@@ -4,11 +4,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/drop_classes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Current Classes" />
 
     <TableLayout
         android:layout_width="match_parent"

@@ -72,7 +72,6 @@ public class StudentEnrollment extends Fragment {
     Context context;
     TableRow classTableHeader;
 
-    Button dropClasses;
 
     EnrollmentAdapter enrollmentAdapter;
 
@@ -113,11 +112,11 @@ public class StudentEnrollment extends Fragment {
         return rootView;
     }
 
-    @Override
+   /* @Override
     public void onDestroyView() {
         super.onDestroyView();
         classTable.removeAllViews();
-    }
+    }*/
 
     private void initUI(final View rootView) throws JSONException {
         school = (Spinner)rootView.findViewById(R.id.sp_school);
@@ -125,7 +124,6 @@ public class StudentEnrollment extends Fragment {
         year = (Spinner)rootView.findViewById(R.id.sp_year);
         //Create a table layout object and link it to the fragment's table layout
         classTable = (TableLayout) rootView.findViewById(R.id.classTable);
-        dropClasses = (Button)rootView.findViewById(R.id.drop_classes);
 
         context = rootView.getContext();
         resetTable();
@@ -152,14 +150,6 @@ public class StudentEnrollment extends Fragment {
         final User user = TokenUtility.parseUserToken(getActivity());
         enrollmentAdapter = new EnrollmentAdapter();
 
-        dropClasses.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment f = StudentDropClasses.newInstance();
-                launchFragment(f);
-
-            }
-        });
 
         enrollmentAdapter.getSchools(new Callback<ArrayList<String>>() {
             @Override

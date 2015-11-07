@@ -76,11 +76,11 @@ public class StudentDropClasses extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    @Override
+    /*@Override
     public void onDestroyView() {
         super.onDestroyView();
         classTable.removeAllViews();
-    }
+    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
