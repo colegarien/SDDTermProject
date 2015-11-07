@@ -14,6 +14,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -44,6 +48,7 @@ public class TeacherQuestionResults extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private Animation barGrow;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -310,10 +315,24 @@ public class TeacherQuestionResults extends Fragment {
             params1.addRule(RelativeLayout.RIGHT_OF, letters - 61);
             TextView pct = new TextView(v.getContext());
             pct.setText(letters + "");
-            r2.addView(pct,params1);
+            r2.addView(pct, params1);
 
             letters++;
         }
+
+        ScaleAnimation barGrow = new ScaleAnimation(
+                1f, 1f,
+                0f, 1f,
+                Animation.ABSOLUTE, 0,
+                Animation.RELATIVE_TO_SELF , 1);
+        barGrow.setDuration(1000);
+        barGrow.setRepeatCount(0);
+        barGrow.setInterpolator(new AccelerateDecelerateInterpolator());
+        barGrow.setFillAfter(true);
+        barGrow.setFillBefore(true);
+        barGrow.setFillEnabled(true);
+
+        barLayout.startAnimation(barGrow);
     }
 
 
