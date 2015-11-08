@@ -34,6 +34,7 @@ public class StudentInterface extends Fragment {
     private Button attendanceRecords;
     private Button inClassResponse;
     private Button enrollment;
+    private Button currentClasses;
     private Button userInfo;
 
     private OnFragmentInteractionListener mListener;
@@ -101,6 +102,7 @@ public class StudentInterface extends Fragment {
         attendanceRecords = (Button)rootView.findViewById(R.id.stu_attendance_btn);
         inClassResponse = (Button)rootView.findViewById(R.id.stu_response_btn);
         enrollment = (Button)rootView.findViewById(R.id.user_enroll);
+        currentClasses = (Button)rootView.findViewById(R.id.drop_classes);
         userInfo = (Button)rootView.findViewById(R.id.user_info_btn);
 
 
@@ -140,6 +142,15 @@ public class StudentInterface extends Fragment {
 
                 Fragment response = StudentEnrollment.newInstance();
                 launchFragment(response);
+
+            }
+        });
+
+        currentClasses.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment f = StudentDropClasses.newInstance();
+                launchFragment(f);
 
             }
         });

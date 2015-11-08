@@ -44,11 +44,11 @@ public class ServiceHandlerAsync extends AsyncTask<ServiceCall, Integer, HttpRes
         URL url = new URL(serviceUrl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod(method);
-        if (method == "GET")
+        if (method == "GET" || method == "DELETE")
             conn.setRequestProperty("Accept", "application/json");
 
         // Send post request
-        if (method == "POST") {
+        if (method == "POST" || method == "PUT") {
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("Content-Length", Integer.toString(body.length()));
             conn.setDoOutput(true);
