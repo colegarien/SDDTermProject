@@ -183,7 +183,7 @@ public class StudentRollCall extends Fragment {
         vibrate.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 
         final MenuItem refresh = menu.add("Refresh");
-        refresh.setIcon(android.R.drawable.ic_menu_search);
+        refresh.setIcon(R.drawable.ic_action_refresh);
         refresh.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         // Get user preference
