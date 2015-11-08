@@ -15,75 +15,41 @@
     android:orientation="vertical"
     android:weightSum="1">
 
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:stretchColumns="1"
-        android:layout_weight="0.15">
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
             <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:text="Attendance(s): " />
-
-            <TextView
-                android:id="@+id/ra_tvAttendance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:layout_weight="10"
-                android:text="0                           " />
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="14"
-                android:layout_gravity="right"
-                android:layout_weight="0.0"
-                android:text="Absence(s): " />
-
-            <TextView
-                android:id="@+id/ra_tvAbsences"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="15"
-                android:text="0" />
-
-        </TableRow>
-
-        <TableRow
+            android:id="@+id/textView4"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_span="15"
-                android:id="@+id/chart"
-                android:orientation="vertical"></LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_span="15"
+        android:id="@+id/chart"
+        android:orientation="vertical"></LinearLayout>
 
 
-        </TableRow>
-
-    </TableLayout>
-    <TableLayout
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
+        android:text="Add Notes"
+        android:id="@+id/addNote" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:baselineAligned="false">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:text="Notes:"
+        android:id="@+id/textView8" />
 
-        </TableRow>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/tvNote" />
 
-    </TableLayout>
+
 </LinearLayout>

@@ -13,29 +13,42 @@
 package edu.uco.schambers.classmate.Fragments;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import org.achartengine.ChartFactory;
 import org.achartengine.model.CategorySeries;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
+import org.w3c.dom.Text;
+
 import edu.uco.schambers.classmate.R;
 
 public class TeacherAttendanceItem extends Fragment {
     int absences;
-    private TextView missing, attendance;
+    String studentName;
+    String note;
+    AlertDialog.Builder alert;
     private View mChart;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -57,6 +70,7 @@ public class TeacherAttendanceItem extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         absences = Integer.parseInt(getArguments().getString(ARG_PARAM1));
+        studentName = getArguments().getString(ARG_PARAM2);
     }
 
 
@@ -105,28 +119,52 @@ public class TeacherAttendanceItem extends Fragment {
 
     //@TargetApi(Build.VERSION_CODES.M)
     private void initUI(final View rootView) {
+        alert = new AlertDialog.Builder(getContext());
         String[] titles = new String[]{" Attendance ", " Absences "};
-        int[] values = new int[]{10, absences};
-        missing = (TextView) rootView.findViewById(R.id.ra_tvAbsences);
-        attendance = (TextView) rootView.findViewById(R.id.ra_tvAttendance);
-        attendance.setText(10+"");
-        missing.setText(absences+"");
+        int[] values = new int[]{10, 4}; //absences
+        TextView tvStudentName = (TextView)rootView.findViewById(R.id.textView4);
+        tvStudentName.setText(studentName);
         drawPieChar(rootView, rootView.getContext(), titles, values);
+        Button addNote = (Button)rootView.findViewById(R.id.addNote);
+        addNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final EditText edittext = new EditText(getContext());
+                alert.setMessage("Enter your note:");
+                alert.setTitle("Add Note");
+
+                alert.setView(edittext);
+
+                alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        note = edittext.getText().toString();
+                        TextView tvNote = (TextView) rootView.findViewById(R.id.tvNote);
+                        tvNote.setText(note);
+                    }
+                });
+
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                });
+
+                alert.show();
+            }
+        });
     }
 
 
     public void drawPieChar(View rootView, Context context, String[] title, int[] value) {
-        // Color of each Pie Chart Section
+        // Color of each Pie Chart Sections
         int[] colors = {Color.BLUE, Color.MAGENTA, Color.GREEN, Color.CYAN, Color.RED, Color.TRANSPARENT};
 
-        //Set up the percentage data
         CategorySeries categorySeries = new CategorySeries("Draw Pie");
         double sum=0;
         for(int i=0;i<value.length;i++){
             sum+=value[i];
         }
         for (int i = 0; i < title.length; i++) {
-            categorySeries.add(title[i]+" ("+(Math.round(value[i]/sum*100))+"%)", value[i]);
+            categorySeries.add(title[i]+": " + value[i] +" ("+(Math.round(value[i]/sum*100))+"%)\t\t\t\t\t", value[i]);
         }
         DefaultRenderer defaultRenderer = new DefaultRenderer();
         defaultRenderer.setShowLegend(true);
