@@ -19,6 +19,7 @@ public abstract class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     protected WifiP2pManager manager;
     protected WifiP2pManager.Channel channel;
     protected Fragment fragment;
+    private boolean connectedToGroupOwner = false;
 
     public void setManager(WifiP2pManager manager) {
         this.manager = manager;
@@ -87,6 +88,7 @@ public abstract class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             {
                 Log.d("SocketAction", "Peer is connected");
 
+                connectedToGroupOwner = true;
                 manager.requestConnectionInfo(channel, new WifiP2pManager.ConnectionInfoListener() {
                     @Override
                     public void onConnectionInfoAvailable(WifiP2pInfo info) {
@@ -94,8 +96,9 @@ public abstract class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                     }
                 });
             }
-            else
+            else if(connectedToGroupOwner && networkState.getState() == NetworkInfo.State.DISCONNECTED)
             {
+                connectedToGroupOwner = false;
                 onPeerDisconnected();
             }
 

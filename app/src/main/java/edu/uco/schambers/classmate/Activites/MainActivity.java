@@ -24,6 +24,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -187,23 +189,15 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
             @Override
             public void onFailure(int reasonCode) {
                 // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
-                String errorMessage = "";
-                switch (reasonCode){
-                    case WifiP2pManager.BUSY:
-                        errorMessage = "Busy...";
-                        break;
-                    case WifiP2pManager.ERROR:
-                        errorMessage = "An Error Occurred";
-                        break;
-                    case WifiP2pManager.P2P_UNSUPPORTED:
-                        errorMessage = "P2P Unsupported";
-                        break;
-                }
+                String errorMessage = reportErrorMessage(reasonCode);
 
                 Log.d("ServiceCreation", "Error: " + errorMessage);
             }
         });
 
+        WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
+        mManager.addServiceRequest(mChannel, serviceRequest, null);
+        mManager.discoverServices(mChannel, null);
     }
 
     public void discoverLocalService(){
@@ -212,6 +206,15 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         // String map containing information about your service.
         final HashMap<String, String> records = new HashMap<>();
 
+        // This method removes all the remembered groups from device.
+        // It prevents the situation that being as group owner once will be as group owner forever.
+        // Solves the problem of check-in indefinitely..
+        deletePersistentGroups();
+
+        WifiP2pDnsSdServiceInfo serviceInfo =
+                WifiP2pDnsSdServiceInfo.newInstance(SERVICE_INSTANCE, "_presence._tcp", null);
+        mManager.addLocalService(mChannel, serviceInfo, null);
+
         //Register listeners for DNS-SD services. These are callbacks invoked
         //by the system when a service is actually discovered.
         mManager.setDnsSdResponseListeners(mChannel,
@@ -219,7 +222,7 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                     @Override
                     public void onDnsSdServiceAvailable(String instanceName, String registrationType, WifiP2pDevice srcDevice) {
                         // A service has been discovered. Is this our app?
-                        if (instanceName.equalsIgnoreCase(SERVICE_INSTANCE)){
+                        if (instanceName.equalsIgnoreCase(SERVICE_INSTANCE) && srcDevice.isGroupOwner()) {
 
                             records.put("deviceaddress", srcDevice.deviceAddress);
                             // Notify the observers to update their UI
@@ -250,6 +253,8 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
 
                     @Override
                     public void onFailure(int reason) {
+                        reportErrorMessage(reason);
+
                         Log.d("ServiceDiscovery", "Failed adding service discovery request");
                     }
                 });
@@ -262,9 +267,30 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
 
                     @Override
                     public void onFailure(int reason) {
+                        reportErrorMessage(reason);
+
                         Log.d("ServiceDiscovery", "Service discovery failed");
                     }
                 });
+    }
+
+    private String reportErrorMessage(int reason){
+        String errorMessage = "";
+        switch (reason) {
+            case WifiP2pManager.BUSY:
+                errorMessage = "Busy. Try again later";
+                break;
+            case WifiP2pManager.ERROR:
+                errorMessage = "Internal Error. Try reopening app to solve the problem";
+                break;
+            case WifiP2pManager.P2P_UNSUPPORTED:
+                errorMessage = "P2P Unsupported";
+                break;
+        }
+
+        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+
+        return errorMessage;
     }
 
     // used for removing a local service
@@ -295,24 +321,17 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
             public void onSuccess() {
                 // Command successful! Code isn't necessarily needed here,
                 // Unless you want to update the UI or add logging statements.
+
+                // removeGroup broadcasts the disconnect state to all the connected peers
+                mManager.removeGroup(mChannel, null);
                 Log.d("ServiceRemoval", "Service removal successful");
             }
 
             @Override
             public void onFailure(int reasonCode) {
                 // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
-                String errorMessage = "";
-                switch (reasonCode) {
-                    case WifiP2pManager.BUSY:
-                        errorMessage = "Busy...";
-                        break;
-                    case WifiP2pManager.ERROR:
-                        errorMessage = "An Error Occurred";
-                        break;
-                    case WifiP2pManager.P2P_UNSUPPORTED:
-                        errorMessage = "P2P Unsupported";
-                        break;
-                }
+                String errorMessage = reportErrorMessage(reasonCode);
+
                 Log.d("ServiceRemoval", "Error: " + errorMessage);
             }
         });
@@ -323,20 +342,10 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = deviceAddress;
         config.wps.setup = WpsInfo.PBC;
+        //config.groupOwnerIntent = 15;
 
         if (serviceRequest != null)
-            mManager.removeServiceRequest(mChannel, serviceRequest,
-                    new WifiP2pManager.ActionListener() {
-
-                        @Override
-                        public void onSuccess() {
-
-                        }
-
-                        @Override
-                        public void onFailure(int arg0) {
-                        }
-                    });
+            mManager.removeServiceRequest(mChannel, serviceRequest, null);
 
         mManager.connect(mChannel, config,
                 new WifiP2pManager.ActionListener() {
@@ -348,6 +357,7 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
 
                     @Override
                     public void onFailure(int errorCode) {
+                        reportErrorMessage(errorCode);
                         Log.d("ServiceDiscovery", "Failed connecting to service");
                     }
                 });
@@ -366,6 +376,67 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         wifiReceiverIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         registerReceiver(wifiReceiver, wifiReceiverIntentFilter);
+    }
+
+    private void deletePersistentGroups(){
+        try {
+            Class persistentInterface = null;
+
+            //Iterate and get class PersistentGroupInfoListener
+            for (Class<?> classR : WifiP2pManager.class.getDeclaredClasses()) {
+                if (classR.getName().contains("PersistentGroupInfoListener")) {
+                    persistentInterface = classR;
+                    break;
+                }
+
+            }
+
+            final Method deletePersistentGroupMethod = WifiP2pManager.class.getDeclaredMethod("deletePersistentGroup", new Class[]{Channel.class, int.class, WifiP2pManager.ActionListener.class});
+
+            //anonymous class to implement PersistentGroupInfoListener which has a method, onPersistentGroupInfoAvailable
+            Object persitentInterfaceObject =
+                    java.lang.reflect.Proxy.newProxyInstance(persistentInterface.getClassLoader(),
+                            new java.lang.Class[]{persistentInterface},
+                            new java.lang.reflect.InvocationHandler() {
+                                @Override
+                                public Object invoke(Object proxy, java.lang.reflect.Method method, Object[] args) throws java.lang.Throwable {
+                                    String method_name = method.getName();
+
+                                    if (method_name.equals("onPersistentGroupInfoAvailable")) {
+                                        Class wifiP2pGroupListClass =  Class.forName("android.net.wifi.p2p.WifiP2pGroupList");
+                                        Object wifiP2pGroupListObject = wifiP2pGroupListClass.cast(args[0]);
+
+                                        Collection<WifiP2pGroup> wifiP2pGroupList = (Collection<WifiP2pGroup>) wifiP2pGroupListClass.getMethod("getGroupList", null).invoke(wifiP2pGroupListObject, null);
+                                        for (WifiP2pGroup group : wifiP2pGroupList) {
+
+                                            if (group.isGroupOwner()){
+                                                deletePersistentGroupMethod.invoke(mManager, mChannel, (Integer) WifiP2pGroup.class.getMethod("getNetworkId").invoke(group, null), new WifiP2pManager.ActionListener() {
+                                                    @Override
+                                                    public void onSuccess() {
+                                                        Log.d("ServiceDiscovery", "Remembered group removed");
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(int i) {
+
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+
+                                    return null;
+                                }
+                            });
+
+            Method requestPersistentGroupMethod =
+                    WifiP2pManager.class.getDeclaredMethod("requestPersistentGroupInfo", new Class[]{Channel.class, persistentInterface});
+
+            requestPersistentGroupMethod.invoke(mManager, mChannel, persitentInterfaceObject);
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -387,6 +458,8 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
 
                             @Override
                             public void onFailure(int reason) {
+                                reportErrorMessage(reason);
+
                                 Log.d("ServiceDiscovery", "Failed *Removing Wifi p2p group");
                             }
                         });

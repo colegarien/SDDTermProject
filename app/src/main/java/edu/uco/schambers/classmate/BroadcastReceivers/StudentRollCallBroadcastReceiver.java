@@ -58,7 +58,7 @@ public class StudentRollCallBroadcastReceiver extends WiFiDirectBroadcastReceive
 
                 Intent studentServiceIntent = new Intent(activity, StudentRollCallService.class);
                 try {
-                    studentServiceIntent.putExtra("id", String.valueOf(TokenUtility.parseUserToken(fragment.getActivity()).getId()));
+                    studentServiceIntent.putExtra("id", String.valueOf(TokenUtility.parseUserToken(fragment.getActivity()).getpKey()));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -70,7 +70,16 @@ public class StudentRollCallBroadcastReceiver extends WiFiDirectBroadcastReceive
 
     @Override
     void onPeerDisconnected() {
-
+        fragment.getActivity().unregisterReceiver(this);
+        if(fragment instanceof StudentRollCall) {
+            fragment.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((StudentRollCall) fragment).reset();
+                }
+            });
+        }
+        Log.d("SocketAction", "Disconnected");
     }
 
     @Override

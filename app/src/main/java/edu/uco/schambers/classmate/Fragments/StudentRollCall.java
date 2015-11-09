@@ -18,6 +18,7 @@ package edu.uco.schambers.classmate.Fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -48,6 +49,7 @@ import edu.uco.schambers.classmate.BroadcastReceivers.StudentRollCallBroadcastRe
 import edu.uco.schambers.classmate.ObservableManagers.ServiceDiscoveryManager;
 import edu.uco.schambers.classmate.ObservableManagers.SocketResultManager;
 import edu.uco.schambers.classmate.R;
+import edu.uco.schambers.classmate.Services.StudentQuestionService;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -69,6 +71,8 @@ public class StudentRollCall extends Fragment {
 
     //UI Components
     private TextView lblCheckinStatus;
+    private ListView list;
+    private ScrollView scrollView;
 
     private SharedPreferences prefs;
 
@@ -178,6 +182,10 @@ public class StudentRollCall extends Fragment {
         final MenuItem vibrate = menu.add("Vibrate when checked-in");
         vibrate.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 
+        final MenuItem refresh = menu.add("Refresh");
+        refresh.setIcon(R.drawable.ic_action_refresh);
+        refresh.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
         // Get user preference
         String checkedInMode = prefs.getString("CheckedInMode", null);
 
@@ -231,6 +239,15 @@ public class StudentRollCall extends Fragment {
                 return true;
             }
         });
+
+        refresh.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                discoverService();
+
+                return true;
+            }
+        });
     }
 
     @Override
@@ -247,6 +264,14 @@ public class StudentRollCall extends Fragment {
         return rootView;
     }
 
+    public void reset(){
+        lblCheckinStatus.setText("Class is over!");
+        list.setEnabled(true);
+        scrollView.setEnabled(true);
+
+        classes.clear();
+        classAdapter.notifyDataSetChanged();
+    }
 
     private void initUI(final View rootView) throws JSONException {
         initListView(rootView);
@@ -291,10 +316,10 @@ public class StudentRollCall extends Fragment {
             }
         };
 
-        final ListView list = (ListView) rootView.findViewById(R.id.list_class);
+        list = (ListView) rootView.findViewById(R.id.list_class);
         list.setAdapter(classAdapter);
 
-        final ScrollView scrollView = (ScrollView) rootView.findViewById(R.id.scrollView_class);
+        scrollView = (ScrollView) rootView.findViewById(R.id.scrollView_class);
 
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -369,11 +394,19 @@ public class StudentRollCall extends Fragment {
         if (result){
             lblCheckinStatus.setText(getString(R.string.lbl_status_checked_in));
             Toast.makeText(getActivity(), "You've checked-in", Toast.LENGTH_SHORT).show();
+
+            startStudentQuestionService();
         }
         else {
             lblCheckinStatus.setText(getString(R.string.lbl_status_failed));
             Toast.makeText(getActivity(), "Failed. Please try later", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void startStudentQuestionService(){
+        Intent i = new Intent(getActivity(), StudentQuestionService.class);
+        i.setAction(StudentQuestionService.ACTION_START_SERVICE_STICKY);
+        getActivity().startService(i);
     }
 
     public boolean allowBackPressed(){
