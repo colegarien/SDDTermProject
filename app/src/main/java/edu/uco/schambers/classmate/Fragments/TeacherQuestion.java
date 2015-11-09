@@ -134,13 +134,19 @@ public class TeacherQuestion extends Fragment {
 
         getActivity().startService(intent);
 
+        ArrayList<IQuestion> answerList = new ArrayList<>();
+
+        //SHOULD BE COMPILING THE LIST OF ANSWERED QUESTIONS
         for (IQuestion q :
                 TeacherQuestionService.answerList) {
-            adapter.add("Student answered: " + q.getAnswer());
+            adapter.add("Student answered: " + q.getAnswer()); //For displaying on this fragment
+            answerList.add(q); //Portion for sending
         }
 
+
         Bundle bundle = new Bundle();
-        bundle.putSerializable("inputList", getMockData()); // replace getMockData() with TeacherQuestionService.answerlist
+        bundle.putSerializable("inputList", answerList);
+        //bundle.putSerializable("inputList", getMockData()); // replace getMockData() with TeacherQuestionService.answerlist
         Fragment newFragment = new TeacherQuestionResults();
         newFragment.setArguments(bundle);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -191,6 +197,7 @@ public class TeacherQuestion extends Fragment {
             mockQuestion.answerQuestion(mockQuestion.getQuestionChoices().get(4));
             inputList.add(mockQuestion);
         }
+
         return inputList;
     }
 
