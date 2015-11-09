@@ -195,6 +195,9 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
             }
         });
 
+        WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
+        mManager.addServiceRequest(mChannel, serviceRequest, null);
+        mManager.discoverServices(mChannel, null);
     }
 
     public void discoverLocalService(){
@@ -208,6 +211,10 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         // Solves the problem of check-in indefinitely..
         deletePersistentGroups();
 
+        WifiP2pDnsSdServiceInfo serviceInfo =
+                WifiP2pDnsSdServiceInfo.newInstance(SERVICE_INSTANCE, "_presence._tcp", null);
+        mManager.addLocalService(mChannel, serviceInfo, null);
+
         //Register listeners for DNS-SD services. These are callbacks invoked
         //by the system when a service is actually discovered.
         mManager.setDnsSdResponseListeners(mChannel,
@@ -215,7 +222,7 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
                     @Override
                     public void onDnsSdServiceAvailable(String instanceName, String registrationType, WifiP2pDevice srcDevice) {
                         // A service has been discovered. Is this our app?
-                        if (instanceName.equalsIgnoreCase(SERVICE_INSTANCE)){
+                        if (instanceName.equalsIgnoreCase(SERVICE_INSTANCE) && srcDevice.isGroupOwner()) {
 
                             records.put("deviceaddress", srcDevice.deviceAddress);
                             // Notify the observers to update their UI
