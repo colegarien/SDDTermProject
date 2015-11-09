@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,11 +77,6 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
 
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
-
-        // This method removes all the remembered groups from device.
-        // It prevents the situation that being as group owner once will be as group owner forever.
-        // Solves the problem of check-in indefinitely..
-        this.deletePersistentGroups();
 
         startFragmentAccordingToIntentAction(getIntent());
 
@@ -206,6 +202,11 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         final LocalBroadcastManager broadcaster = LocalBroadcastManager.getInstance(this);
         // String map containing information about your service.
         final HashMap<String, String> records = new HashMap<>();
+
+        // This method removes all the remembered groups from device.
+        // It prevents the situation that being as group owner once will be as group owner forever.
+        // Solves the problem of check-in indefinitely..
+        deletePersistentGroups();
 
         //Register listeners for DNS-SD services. These are callbacks invoked
         //by the system when a service is actually discovered.
@@ -372,15 +373,60 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
 
     private void deletePersistentGroups(){
         try {
-            Method[] methods = WifiP2pManager.class.getMethods();
-            for (int i = 0; i < methods.length; i++) {
-                if (methods[i].getName().equals("deletePersistentGroup")) {
-                    // Delete any persistent group
-                    for (int netid = 0; netid < 32; netid++) {
-                        methods[i].invoke(mManager, mChannel, netid, null);
-                    }
+            Class persistentInterface = null;
+
+            //Iterate and get class PersistentGroupInfoListener
+            for (Class<?> classR : WifiP2pManager.class.getDeclaredClasses()) {
+                if (classR.getName().contains("PersistentGroupInfoListener")) {
+                    persistentInterface = classR;
+                    break;
                 }
+
             }
+
+            final Method deletePersistentGroupMethod = WifiP2pManager.class.getDeclaredMethod("deletePersistentGroup", new Class[]{Channel.class, int.class, WifiP2pManager.ActionListener.class});
+
+            //anonymous class to implement PersistentGroupInfoListener which has a method, onPersistentGroupInfoAvailable
+            Object persitentInterfaceObject =
+                    java.lang.reflect.Proxy.newProxyInstance(persistentInterface.getClassLoader(),
+                            new java.lang.Class[]{persistentInterface},
+                            new java.lang.reflect.InvocationHandler() {
+                                @Override
+                                public Object invoke(Object proxy, java.lang.reflect.Method method, Object[] args) throws java.lang.Throwable {
+                                    String method_name = method.getName();
+
+                                    if (method_name.equals("onPersistentGroupInfoAvailable")) {
+                                        Class wifiP2pGroupListClass =  Class.forName("android.net.wifi.p2p.WifiP2pGroupList");
+                                        Object wifiP2pGroupListObject = wifiP2pGroupListClass.cast(args[0]);
+
+                                        Collection<WifiP2pGroup> wifiP2pGroupList = (Collection<WifiP2pGroup>) wifiP2pGroupListClass.getMethod("getGroupList", null).invoke(wifiP2pGroupListObject, null);
+                                        for (WifiP2pGroup group : wifiP2pGroupList) {
+
+                                            if (group.isGroupOwner()){
+                                                deletePersistentGroupMethod.invoke(mManager, mChannel, (Integer) WifiP2pGroup.class.getMethod("getNetworkId").invoke(group, null), new WifiP2pManager.ActionListener() {
+                                                    @Override
+                                                    public void onSuccess() {
+                                                        Log.d("ServiceDiscovery", "Remembered group removed");
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(int i) {
+
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+
+                                    return null;
+                                }
+                            });
+
+            Method requestPersistentGroupMethod =
+                    WifiP2pManager.class.getDeclaredMethod("requestPersistentGroupInfo", new Class[]{Channel.class, persistentInterface});
+
+            requestPersistentGroupMethod.invoke(mManager, mChannel, persitentInterfaceObject);
+
         } catch(Exception e) {
             e.printStackTrace();
         }
