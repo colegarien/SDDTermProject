@@ -1,5 +1,6 @@
 package edu.uco.schambers.classmate.BroadcastReceivers;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,15 +12,23 @@ import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 
+import org.json.JSONException;
+
+import edu.uco.schambers.classmate.AdapterModels.TokenUtility;
+import edu.uco.schambers.classmate.Fragments.StudentRollCall;
+import edu.uco.schambers.classmate.ObservableManagers.IPAddressManager;
+import edu.uco.schambers.classmate.R;
+import edu.uco.schambers.classmate.Services.StudentRollCallService;
+
 /**
  * Created by WenHsi on 10/6/2015.
  */
-public abstract class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
+public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
     protected WifiP2pManager manager;
     protected WifiP2pManager.Channel channel;
-    protected Fragment fragment;
-    private boolean connectedToGroupOwner = false;
+    protected Activity activity;
+    public static boolean connectedToGroupOwner = false;
 
     public void setManager(WifiP2pManager manager) {
         this.manager = manager;
@@ -29,32 +38,77 @@ public abstract class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         this.channel = channel;
     }
 
-    public void setActivity(Fragment fragment) {
-        this.fragment = fragment;
+    public void setActivity(Activity activity) {
+        this.activity = activity;
     }
 
     public WiFiDirectBroadcastReceiver(){
         super();
     }
 
-    public WiFiDirectBroadcastReceiver(Fragment fragment) {
+    public WiFiDirectBroadcastReceiver(Activity activity) {
         super();
-        this.fragment = fragment;
+        this.activity = activity;
     }
 
-    public WiFiDirectBroadcastReceiver(WifiP2pManager manager, WifiP2pManager.Channel channel,Fragment fragment) {
+    public WiFiDirectBroadcastReceiver(WifiP2pManager manager, WifiP2pManager.Channel channel,Activity activity) {
         super();
         this.manager = manager;
         this.channel = channel;
-        this.fragment = fragment;
+        this.activity = activity;
     }
 
-    abstract void onWiFiDirectEnabled();
-    abstract void onWiFiDirectDisabled();
-    abstract void onPeerListChanged(WifiP2pDeviceList wifiP2pDeviceList);
-    abstract void onPeerConnected(NetworkInfo networkState, WifiP2pInfo wifiInfo, WifiP2pDevice device);
-    abstract void onPeerDisconnected();
-    abstract void onDeviceConfigChanged();
+    void onWiFiDirectEnabled() {
+
+    }
+
+    void onWiFiDirectDisabled() {
+
+    }
+
+    void onPeerListChanged(WifiP2pDeviceList wifiP2pDeviceList) {
+
+    }
+
+    void onPeerConnected(NetworkInfo networkState, WifiP2pInfo wifiInfo, WifiP2pDevice device) {
+        final Fragment f = activity.getFragmentManager().findFragmentById(R.id.fragment_container);
+
+        if(f instanceof StudentRollCall) {
+            if (!wifiInfo.isGroupOwner){
+                IPAddressManager.getInstance().setGroupOwnerAddress(wifiInfo.groupOwnerAddress);
+
+                Log.d("SocketAction", "Group owner address has retrieved");
+
+                Intent studentServiceIntent = new Intent(activity, StudentRollCallService.class);
+                try {
+                    studentServiceIntent.putExtra("id", String.valueOf(TokenUtility.parseUserToken(activity).getpKey()));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                activity.startService(studentServiceIntent);
+            }
+        }
+    }
+
+    void onPeerDisconnected() {
+        final Fragment f = activity.getFragmentManager().findFragmentById(R.id.fragment_container);
+
+        if(f instanceof StudentRollCall) {
+            Log.d("SocketAction", "Disconnected");
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((StudentRollCall) f).reset();
+                }
+            });
+        }
+
+    }
+
+    void onDeviceConfigChanged() {
+
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {

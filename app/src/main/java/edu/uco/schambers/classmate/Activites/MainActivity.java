@@ -364,10 +364,12 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
 
     }
 
-    public void setupBroadcastReceiver(WiFiDirectBroadcastReceiver receiver){
-        receiver.setChannel(mChannel);
-        receiver.setManager(mManager);
-        wifiReceiver = receiver;
+    public void setupBroadcastReceiver(){
+        if (wifiReceiver != null){
+            return;
+        }
+
+        wifiReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
 
         IntentFilter wifiReceiverIntentFilter;wifiReceiverIntentFilter = new IntentFilter();
         wifiReceiverIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
