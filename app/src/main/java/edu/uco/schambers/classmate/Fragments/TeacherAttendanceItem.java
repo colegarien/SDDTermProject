@@ -142,13 +142,19 @@ public class TeacherAttendanceItem extends Fragment {
                 alert.setView(layout);
                 alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
+                        boolean isEmpty = false;
                         TextView tvNote = (TextView) rootView.findViewById(R.id.tvNote);
                         note = edittext.getText().toString();
-                        String date = (dp.getMonth() + 1) + "/" + dp.getDayOfMonth() + "/" + dp.getYear();
-                        String prevNote = sp.getString("attNote-" + studentName, "");
-                        tvNote.setText(date + "-\t" + note + "\n" + prevNote);
-                        editor.putString("attNote-" + studentName, date + "-\t" + note + "\n" + prevNote);
-                        editor.commit();
+                        if (note.length() <= 0) {
+                            isEmpty = true;
+                        }
+                        if (!isEmpty) {
+                            String date = (dp.getMonth() + 1) + "/" + dp.getDayOfMonth() + "/" + dp.getYear();
+                            String prevNote = sp.getString("attNote-" + studentName, "");
+                            tvNote.setText(date + "-\t" + note + "\n" + prevNote);
+                            editor.putString("attNote-" + studentName, date + "-\t" + note + "\n" + prevNote);
+                            editor.commit();
+                        }
                     }
                 });
 
