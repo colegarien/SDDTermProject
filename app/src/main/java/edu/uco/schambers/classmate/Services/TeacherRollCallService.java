@@ -26,6 +26,7 @@ import android.widget.Toast;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
+import edu.uco.schambers.classmate.AdapterModels.User;
 import edu.uco.schambers.classmate.Fragments.TeacherRollCall;
 import edu.uco.schambers.classmate.ListenerInterfaces.OnStudentConnectListener;
 import edu.uco.schambers.classmate.ObservableManagers.IPAddressManager;
@@ -46,7 +47,7 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
 
     // TODO: change to Teacher object
     String currentTeacher = "";
-    String student_id = "";
+    String student_pk = "";
 
     // TODO: change to special Student Adapter
     private ArrayList<String> studentInfo = new ArrayList<String>();
@@ -87,7 +88,7 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
-        if (intent.getAction() != null) {
+        if (intent != null && intent.getAction() != null) {
             String action = intent.getAction();
             switch (action) {
                 case ACTION_END_ROLL_CALL_SESSION:
@@ -117,17 +118,11 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
     }
 
     @Override
-    public void onStudentConnect(String id, InetAddress ip) {
+    public void onStudentConnect(String pk, InetAddress ip) {
         // TODO: add student ID to ArrayList (possibly query from DB)
-        Log.d("StudentConnect", "Connected ID: " + id);
-        student_id = id;
-        /*handler.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(TeacherRollCallService.this.getApplicationContext(), "Student ID: " + student_id, Toast.LENGTH_SHORT).show();
-            }
-        });*/
-        studentInfo.add(student_id);
+        Log.d("StudentConnect", "Connected PK: " + pk);
+        student_pk = pk;
+        studentInfo.add(student_pk);
 
         // notify student attendance observers
         StudentAttendanceObservable.getInstance().directNotifyObservers(studentInfo);
