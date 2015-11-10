@@ -23,6 +23,7 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -40,12 +41,14 @@ import android.widget.Toast;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 import edu.uco.schambers.classmate.Activites.MainActivity;
-import edu.uco.schambers.classmate.BroadcastReceivers.StudentRollCallBroadcastReceiver;
+import edu.uco.schambers.classmate.BroadcastReceivers.WiFiDirectBroadcastReceiver;
 import edu.uco.schambers.classmate.ObservableManagers.ServiceDiscoveryManager;
 import edu.uco.schambers.classmate.ObservableManagers.SocketResultManager;
 import edu.uco.schambers.classmate.R;
@@ -64,6 +67,7 @@ public class StudentRollCall extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String CONNECTED_CLASS = "edu.uco.schambers.classmate.connected_class";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -88,6 +92,8 @@ public class StudentRollCall extends Fragment {
     private ArrayList<ClassService> classes =new ArrayList<>();
     // Adapter of classes
     private ArrayAdapter<ClassService> classAdapter;
+    // Connected class
+    private ClassService connectedClassService;
 
     /**
      * Use this factory method to create a new instance of
@@ -265,6 +271,10 @@ public class StudentRollCall extends Fragment {
     }
 
     public void reset(){
+        if (prefs.contains(CONNECTED_CLASS)){
+            prefs.edit().remove(CONNECTED_CLASS).apply();
+        }
+
         lblCheckinStatus.setText("Class is over!");
         list.setEnabled(true);
         scrollView.setEnabled(true);
@@ -273,10 +283,36 @@ public class StudentRollCall extends Fragment {
         classAdapter.notifyDataSetChanged();
     }
 
+    public void reconnect(){
+        if (!prefs.contains(CONNECTED_CLASS)){
+            Log.d("SocketAction", "Return");
+            return;
+        }
+        Log.d("SocketAction", "Reconnect");
+        String[] connectedClass = prefs.getString(CONNECTED_CLASS, "").split(",");
+        connectedClassService = new ClassService(connectedClass[0], connectedClass[1], connectedClass[2], connectedClass[3]);
+
+        classes.clear();
+        classes.add(connectedClassService);
+        classAdapter.notifyDataSetChanged();
+
+        disableClassList();
+    }
+
     private void initUI(final View rootView) throws JSONException {
         initListView(rootView);
 
         lblCheckinStatus = (TextView) rootView.findViewById(R.id.lbl_checkin_status);
+
+        Log.d("SocketAction", String.valueOf(WiFiDirectBroadcastReceiver.connectedToGroupOwner));
+        if (WiFiDirectBroadcastReceiver.connectedToGroupOwner){
+            reconnect();
+        }
+    }
+
+    private void disableClassList(){
+        scrollView.setEnabled(false);
+        list.setEnabled(false);
     }
 
     private void initListView(View rootView){
@@ -324,17 +360,17 @@ public class StudentRollCall extends Fragment {
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
                 // Mute or vibrate user's devices
                 changeAudioSetting(prefs.getString("CheckedInMode", null));
 
                 lblCheckinStatus.setText(getString(R.string.lbl_status_checking_in));
                 isCheckingIn = true;
-                scrollView.setEnabled(false);
-                list.setEnabled(false);
+                disableClassList();
 
                 initBroadcast();
-                connectToGroupOwner(classes.get(position).getDeviceAddress());
+
+                connectedClassService = classes.get(position);
+                connectToGroupOwner(connectedClassService.getDeviceAddress());
 
                 return false;
             }
@@ -386,12 +422,19 @@ public class StudentRollCall extends Fragment {
 
         /// Start discovering teacher service
         if(activity instanceof MainActivity) {
-            ((MainActivity) activity).setupBroadcastReceiver(new StudentRollCallBroadcastReceiver(this));
+            ((MainActivity) activity).setupBroadcastReceiver();
         }
     }
 
     private void updateCheckinStatus(boolean result){
         if (result){
+            String str = connectedClassService.className + ","
+                    + connectedClassService.professorName + ","
+                    + connectedClassService.deviceAddress + ","
+                    + connectedClassService.devicePort;
+
+            prefs.edit().putString(CONNECTED_CLASS, str).apply();
+
             lblCheckinStatus.setText(getString(R.string.lbl_status_checked_in));
             Toast.makeText(getActivity(), "You've checked-in", Toast.LENGTH_SHORT).show();
 
