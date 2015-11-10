@@ -276,8 +276,7 @@ public class StudentRollCall extends Fragment {
         }
 
         lblCheckinStatus.setText("Class is over!");
-        list.setEnabled(true);
-        scrollView.setEnabled(true);
+        enableClassList();
 
         classes.clear();
         classAdapter.notifyDataSetChanged();
@@ -295,6 +294,7 @@ public class StudentRollCall extends Fragment {
         classes.clear();
         classes.add(connectedClassService);
         classAdapter.notifyDataSetChanged();
+        lblCheckinStatus.setText(getString(R.string.lbl_status_checked_in));
 
         disableClassList();
     }
@@ -313,6 +313,11 @@ public class StudentRollCall extends Fragment {
     private void disableClassList(){
         scrollView.setEnabled(false);
         list.setEnabled(false);
+    }
+
+    private void enableClassList(){
+        scrollView.setEnabled(true);
+        list.setEnabled(true);
     }
 
     private void initListView(View rootView){
@@ -400,6 +405,11 @@ public class StudentRollCall extends Fragment {
     }
 
     private void discoverService(){
+        if (WiFiDirectBroadcastReceiver.connectedToGroupOwner){
+            Toast.makeText(getActivity(), "You are already in a class!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Activity activity = getActivity();
 
         /// Start discovering teacher service
