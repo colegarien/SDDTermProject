@@ -27,25 +27,31 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import edu.uco.schambers.classmate.Activites.MainActivity;
-import edu.uco.schambers.classmate.AdapterModels.DataRepo;
-import edu.uco.schambers.classmate.AdapterModels.TokenUtility;
-import edu.uco.schambers.classmate.AdapterModels.User;
+import edu.uco.schambers.classmate.Adapter.Callback;
+import edu.uco.schambers.classmate.Adapter.ClassAdapter;
+import edu.uco.schambers.classmate.AdapterModels.*;
+import edu.uco.schambers.classmate.AdapterModels.Class;
 import edu.uco.schambers.classmate.ObservableManagers.StudentAttendanceObservable;
 import edu.uco.schambers.classmate.R;
 import edu.uco.schambers.classmate.Services.TeacherRollCallService;
@@ -54,13 +60,13 @@ import edu.uco.schambers.classmate.SocketActions.SocketAction;
 public class TeacherRollCall extends Fragment {
     public static final String ARG_TEACHER = "edu.uco.schambers.classmate.arq_teacher";
     private static final String CLASS_OPEN = "edu.uco.schambers.classmate.class_open";
-    private static final String CLASS_NAME = "edu.uco.schambers.classmate.class_name";
+    private static final String CLASS_INDEX = "edu.uco.schambers.classmate.rc_class_index";
 
     //UI Components
     private View rootView;
     private Button startBtn;
     private TextView teacherText;
-    private EditText classText;
+    private Spinner classSpinner;
     private ListView connectedList;
 
     private OnFragmentInteractionListener mListener;
@@ -72,6 +78,10 @@ public class TeacherRollCall extends Fragment {
     private DataRepo dr;
     public User user;
     private String token;
+
+    // for gettign class list
+    private ClassAdapter classAdapter = new ClassAdapter();
+
 
     // for Service binding
     TeacherRollCallService teacherRollCallService;
@@ -189,26 +199,40 @@ public class TeacherRollCall extends Fragment {
 
         teacherText.setText(user.getName().toString());
 
-        // Persistent Class Name
-        classText = (EditText) rootView.findViewById(R.id.txt_rc_class);
-        classText.addTextChangedListener(new TextWatcher() {
+        // teacher classes setup
+        final List<SpinnerItem> spinnerArray =  new ArrayList<>();
+        final ArrayAdapter<SpinnerItem> dropAdapter;dropAdapter = new ArrayAdapter<SpinnerItem>(
+                getActivity(), android.R.layout.simple_spinner_item, spinnerArray);
+        dropAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        classAdapter.professorClasses(user.getpKey(), new Callback<ArrayList<edu.uco.schambers.classmate.AdapterModels.Class>>() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // update class name
-                sp.edit().putString(CLASS_NAME, classText.getText().toString()).apply();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
+            public void onComplete(ArrayList<Class> result) throws Exception {
+                spinnerArray.clear();
+                spinnerArray.add(new SpinnerItem("Select Course..", "-1"));
+                for (Class classItem : result) {
+                    spinnerArray.add(new SpinnerItem(classItem.getClass_name(), Integer.toString(classItem.getId())));
+                }
+                dropAdapter.notifyDataSetChanged();
+                classSpinner.setSelection(sp.getInt(CLASS_INDEX, 0));
             }
         });
-        if(!sp.contains(CLASS_NAME))
-            sp.edit().putString(CLASS_NAME,"").apply();
-        classText.setText(sp.getString(CLASS_NAME,""));
+
+        classSpinner = (Spinner) rootView.findViewById(R.id.spinner_rc_class);
+        classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        classSpinner.setAdapter(dropAdapter);
+
+        // reset drop-down if class is not running
+        if(!sp.getBoolean(CLASS_OPEN, false) || !sp.contains(CLASS_INDEX))
+            sp.edit().putInt(CLASS_INDEX, 0).apply();
+        classSpinner.setSelection(sp.getInt(CLASS_INDEX, 0));
 
         listAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
         connectedList = (ListView) rootView.findViewById(R.id.list_connected);
@@ -220,28 +244,35 @@ public class TeacherRollCall extends Fragment {
                 Activity activity = getActivity();
 
                 if (!sp.getBoolean(CLASS_OPEN,false)) {
+                    // if a class has been selected
+                    if (classSpinner.getSelectedItemPosition() > 0) {
+                        // TODO: change teacherText over to Teacher object
+                        Intent intent = TeacherRollCallService.getNewStartSessionIntent(activity, teacherText.getText().toString());
+                        activity.startService(intent);
 
-                    // TODO: change teacherText over to Teacher object
-                    Intent intent = TeacherRollCallService.getNewStartSessionIntent(activity, teacherText.getText().toString());
-                    activity.startService(intent);
+                        if (activity instanceof MainActivity) {
+                            ((MainActivity) activity).addLocalService(SocketAction.ROLL_CALL_PORT_NUMBER, teacherText.getText().toString(), classSpinner.getSelectedItem().toString(), true);
+                        }
 
-                    if (activity instanceof MainActivity) {
-                        ((MainActivity) activity).addLocalService(SocketAction.ROLL_CALL_PORT_NUMBER, teacherText.getText().toString(), classText.getText().toString(), true);
+                        // bind the service
+                        bindService();
+
+                        // save selected class
+                        sp.edit().putInt(CLASS_INDEX, classSpinner.getSelectedItemPosition()).apply();
+
+                        // TODO: lock all input (like class)
+                        startBtn.setText(getResources().getString(R.string.btn_roll_call_stop));
+                        sp.edit().putBoolean(CLASS_OPEN, true).apply();
+                    }else{
+                        Toast.makeText(getActivity().getApplicationContext(), "Select a Course!",Toast.LENGTH_SHORT).show();
                     }
-
-                    // bind the service
-                    bindService();
-
-                    // TODO: lock all input (like class)
-                    startBtn.setText(getResources().getString(R.string.btn_roll_call_stop));
-                    sp.edit().putBoolean(CLASS_OPEN,true).apply();
                 }else{
 
                     Intent intent = TeacherRollCallService.getNewEndSessionIntent(activity);
                     activity.startService(intent);
 
                     if (activity instanceof MainActivity) {
-                        ((MainActivity) activity).removeLocalService(SocketAction.ROLL_CALL_PORT_NUMBER, teacherText.getText().toString(), classText.getText().toString(), true);
+                        ((MainActivity) activity).removeLocalService(SocketAction.ROLL_CALL_PORT_NUMBER, teacherText.getText().toString(), classSpinner.getSelectedItem().toString(), true);
                     }
 
                     // unbind the service

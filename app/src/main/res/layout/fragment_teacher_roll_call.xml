@@ -32,11 +32,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/lbl_rc_class"/>
-            <EditText android:id="@+id/txt_rc_class"
+            <Spinner
+                android:id="@+id/spinner_rc_class"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:lines="1"/>
+                android:spinnerMode="dropdown" />
         </LinearLayout>
 
         <Button android:id="@+id/btn_start_roll_call"
