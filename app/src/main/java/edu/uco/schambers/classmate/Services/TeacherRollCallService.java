@@ -88,7 +88,7 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
-        if (intent.getAction() != null) {
+        if (intent != null && intent.getAction() != null) {
             String action = intent.getAction();
             switch (action) {
                 case ACTION_END_ROLL_CALL_SESSION:

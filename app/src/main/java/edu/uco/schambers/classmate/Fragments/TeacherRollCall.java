@@ -80,7 +80,7 @@ public class TeacherRollCall extends Fragment {
     public User user;
     private String token;
 
-    // for gettign class list
+    // for getting class list
     private ClassAdapter classAdapter = new ClassAdapter();
     // for getting student lists
     private EnrollmentAdapter enrollmentAdapter = new EnrollmentAdapter();
@@ -264,7 +264,6 @@ public class TeacherRollCall extends Fragment {
                 if (!sp.getBoolean(CLASS_OPEN,false)) {
                     // if a class has been selected
                     if (classSpinner.getSelectedItemPosition() > 0) {
-                        // TODO: change teacherText over to Teacher object
                         Intent intent = TeacherRollCallService.getNewStartSessionIntent(activity, teacherText.getText().toString());
                         activity.startService(intent);
 
@@ -278,7 +277,6 @@ public class TeacherRollCall extends Fragment {
                         // save selected class
                         sp.edit().putInt(CLASS_INDEX, classSpinner.getSelectedItemPosition()).apply();
 
-                        // TODO: lock all input (like class)
                         startBtn.setText(getResources().getString(R.string.btn_roll_call_stop));
                         classSpinner.setEnabled(false);
                         sp.edit().putBoolean(CLASS_OPEN, true).apply();
@@ -311,7 +309,6 @@ public class TeacherRollCall extends Fragment {
                     // unbind the service
                     unBindService();
 
-                    // TODO: unlock inputs (like class)
                     startBtn.setText(getResources().getString(R.string.btn_roll_call_start));
                     classSpinner.setEnabled(true);
                     sp.edit().putBoolean(CLASS_OPEN,false).apply();
