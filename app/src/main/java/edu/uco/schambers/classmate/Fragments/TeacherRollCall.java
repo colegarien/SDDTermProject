@@ -5,9 +5,9 @@
  *   UI backend for teacher roll call module, used for starting and
  *   stopping the Roll Call Wifi P2P service
  *
- * Edit: 10/7/2015
- *   added button code for starting service,
- *    cleaned up default params1 and params2,
+ * Edit: 10/9/2015
+ *   converted class name over to a Spinner and
+ *     checked-in students details are gather from the database
  *
  */
 
@@ -232,6 +232,8 @@ public class TeacherRollCall extends Fragment {
         // reset drop-down if class is not running
         if(!sp.getBoolean(CLASS_OPEN, false) || !sp.contains(CLASS_INDEX))
             sp.edit().putInt(CLASS_INDEX, 0).apply();
+        else if(sp.getBoolean(CLASS_OPEN,false))
+            classSpinner.setEnabled(false);
         classSpinner.setSelection(sp.getInt(CLASS_INDEX, 0));
 
         listAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
@@ -262,6 +264,7 @@ public class TeacherRollCall extends Fragment {
 
                         // TODO: lock all input (like class)
                         startBtn.setText(getResources().getString(R.string.btn_roll_call_stop));
+                        classSpinner.setEnabled(false);
                         sp.edit().putBoolean(CLASS_OPEN, true).apply();
                     }else{
                         Toast.makeText(getActivity().getApplicationContext(), "Select a Course!",Toast.LENGTH_SHORT).show();
@@ -280,6 +283,7 @@ public class TeacherRollCall extends Fragment {
 
                     // TODO: unlock inputs (like class)
                     startBtn.setText(getResources().getString(R.string.btn_roll_call_start));
+                    classSpinner.setEnabled(true);
                     sp.edit().putBoolean(CLASS_OPEN,false).apply();
                 }
             }
