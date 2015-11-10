@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -140,16 +141,21 @@ public class TeacherAttendanceItem extends Fragment {
         addNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                LinearLayout layout = new LinearLayout(getContext());
+                layout.setOrientation(LinearLayout.VERTICAL);
                 final EditText edittext = new EditText(getContext());
-                alert.setMessage("Enter your note:");
-                alert.setTitle("Add Note");
-                alert.setView(edittext);
+                edittext.setHint("Enter your note");
+                final DatePicker dp = new DatePicker(getContext());
+                layout.addView(edittext);
+                layout.addView(dp);
+                alert.setView(layout);
                 alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         TextView tvNote = (TextView) rootView.findViewById(R.id.tvNote);
                         note = edittext.getText().toString();
-                        tvNote.setText(note);
-                        editor.putString("attNote-" + studentName, note);
+                        String date = (dp.getMonth()+1) + "/" + dp.getDayOfMonth() + "/" + dp.getYear();
+                        tvNote.setText(date+"-"+note);
+                        editor.putString("attNote-" + studentName, date + "-" + note);
                         editor.commit();
                     }
                 });
