@@ -12,7 +12,6 @@
  */
 package edu.uco.schambers.classmate.Fragments;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
@@ -20,46 +19,38 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.text.Editable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import org.achartengine.ChartFactory;
 import org.achartengine.model.CategorySeries;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
-import org.w3c.dom.Text;
 
 import edu.uco.schambers.classmate.R;
 
 public class TeacherAttendanceItem extends Fragment {
-    int absences;
-    String studentName;
-    String note;
-    AlertDialog.Builder alert;
+    private int absences;
+    private String studentName;
+    private String note;
+    private AlertDialog.Builder alert;
     private View mChart;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    public static final String MyPREFS = "MyPREFS";
-    public static final String MySCHOOL = "MySCHOOL";
-    public SharedPreferences sp;
-    public SharedPreferences.Editor editor;
-    TextView tvNote;
+    private static final String MyPREFS = "MyPREFS";
+    private static final String MySCHOOL = "MySCHOOL";
+    private SharedPreferences sp;
+    private SharedPreferences.Editor editor;
+    private TextView tvNote;
 
     public TeacherAttendanceItem() {
         // Required empty public constructor
@@ -153,9 +144,10 @@ public class TeacherAttendanceItem extends Fragment {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         TextView tvNote = (TextView) rootView.findViewById(R.id.tvNote);
                         note = edittext.getText().toString();
-                        String date = (dp.getMonth()+1) + "/" + dp.getDayOfMonth() + "/" + dp.getYear();
-                        tvNote.setText(date+"-"+note);
-                        editor.putString("attNote-" + studentName, date + "-" + note);
+                        String date = (dp.getMonth() + 1) + "/" + dp.getDayOfMonth() + "/" + dp.getYear();
+                        String prevNote = sp.getString("attNote-" + studentName, "");
+                        tvNote.setText(date + "-\t" + note + "\n" + prevNote);
+                        editor.putString("attNote-" + studentName, date + "-\t" + note + "\n" + prevNote);
                         editor.commit();
                     }
                 });

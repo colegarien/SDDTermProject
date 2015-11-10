@@ -43,13 +43,15 @@
         android:ems="10"
         android:text="Notes:"
         android:id="@+id/textView8" />
-
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
         android:ems="10"
         android:id="@+id/tvNote" />
-
+    </ScrollView>
 
 </LinearLayout>
