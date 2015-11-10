@@ -139,7 +139,7 @@ public class TeacherQuestion extends Fragment {
         //SHOULD BE COMPILING THE LIST OF ANSWERED QUESTIONS
         for (IQuestion q :
                 TeacherQuestionService.answerList) {
-            adapter.add("Student answered: " + q.getAnswer()); //For displaying on this fragment
+            // adapter.add("Student answered: " + q.getAnswer()); //For displaying on this fragment
             answerList.add(q); //Portion for sending
         }
 
