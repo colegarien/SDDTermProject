@@ -282,7 +282,7 @@ public class TeacherAttendance extends Fragment {
         teacherAttendanceTable.bringToFront();
         teacherAttendanceTable.removeAllViews();
         //Loops through the entire list of students
-        for (StudentAbsenceByClass student : students) {
+        for (final StudentAbsenceByClass student : students) {
             //If the current student's course is equal to the course chosen
 
             //Store the number of absences
@@ -300,7 +300,7 @@ public class TeacherAttendance extends Fragment {
                         //Momentarily change background color to indicate the touch
                         v.setBackgroundColor(Color.GRAY);
                         //Set up a new fragment object
-                        Fragment teacherAttendanceItem = TeacherAttendanceItem.newInstance(absences + "", "test");
+                        Fragment teacherAttendanceItem = TeacherAttendanceItem.newInstance(absences + "", student.getName());
                         //Pass the attendance info, replace the current fragment, and place old
                         //fragment on the backstack
                         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -318,7 +318,7 @@ public class TeacherAttendance extends Fragment {
             TextView c0 = new TextView(view.getContext());
             c0.setText(student.getName());
             TextView c2 = new TextView(view.getContext());
-            c2.setText(String.valueOf(student.getAbsences()));
+            c2.setText(String.valueOf(4)); //student.getAbsences())
             //Add the data to the row
             tr.addView(c0);
             tr.addView(c2);

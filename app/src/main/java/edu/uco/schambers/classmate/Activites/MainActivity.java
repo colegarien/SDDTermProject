@@ -40,6 +40,7 @@ import edu.uco.schambers.classmate.Fragments.ResetPassword;
 import edu.uco.schambers.classmate.Fragments.StudentInterface;
 import edu.uco.schambers.classmate.Fragments.StudentResponseFragment;
 import edu.uco.schambers.classmate.Fragments.StudentRollCall;
+import edu.uco.schambers.classmate.Fragments.TeacherAttendanceItem;
 import edu.uco.schambers.classmate.Fragments.TeacherInterface;
 import edu.uco.schambers.classmate.Fragments.TeacherQuestionResults;
 import edu.uco.schambers.classmate.Fragments.UserInformation;
@@ -485,7 +486,11 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         if (f instanceof StudentRollCall && !((StudentRollCall) f).allowBackPressed()){
             return;
         }
-
+        //Back button will pop back stack in instances of teacher attendance item
+        //to allow pressing back only once
+        else if (f instanceof TeacherAttendanceItem){
+            getFragmentManager().popBackStack();
+        }
         super.onBackPressed();
     }
 }
