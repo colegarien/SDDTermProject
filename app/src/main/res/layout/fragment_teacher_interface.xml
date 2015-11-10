@@ -37,14 +37,8 @@
             android:layout_height="wrap_content"
             android:text="@string/responseres"
             android:id="@+id/teach_results_btn"
-            android:layout_gravity="center_horizontal" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/user_btn"
-            android:id="@+id/user_info_btn"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone" />
 
         <Button
             android:layout_width="match_parent"
@@ -52,6 +46,12 @@
             android:text="@string/teachattend"
             android:id="@+id/teach_attend_btn"
             android:layout_gravity="center_horizontal" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/user_btn"
+            android:id="@+id/user_info_btn" />
 
     </LinearLayout>
 </FrameLayout>
