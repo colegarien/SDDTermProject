@@ -50,6 +50,7 @@ import java.util.Observer;
 import edu.uco.schambers.classmate.Activites.MainActivity;
 import edu.uco.schambers.classmate.Adapter.Callback;
 import edu.uco.schambers.classmate.Adapter.ClassAdapter;
+import edu.uco.schambers.classmate.Adapter.EnrollmentAdapter;
 import edu.uco.schambers.classmate.AdapterModels.*;
 import edu.uco.schambers.classmate.AdapterModels.Class;
 import edu.uco.schambers.classmate.ObservableManagers.StudentAttendanceObservable;
@@ -81,6 +82,10 @@ public class TeacherRollCall extends Fragment {
 
     // for gettign class list
     private ClassAdapter classAdapter = new ClassAdapter();
+    // for getting student lists
+    private EnrollmentAdapter enrollmentAdapter = new EnrollmentAdapter();
+    private ArrayList<StudentByClass> studentByClass = new ArrayList<StudentByClass>();
+
 
 
     // for Service binding
@@ -88,7 +93,7 @@ public class TeacherRollCall extends Fragment {
     private boolean isBound = false;
     private Observer attendanceObserver;
     private ArrayAdapter<String> listAdapter;
-    private ArrayList<String> student_info = new ArrayList<String>();
+    private ArrayList<StudentByClass> student_info = new ArrayList<StudentByClass>();
 
     // TODO: Get Class Name from DB/Dropdown Box
     public static TeacherRollCall newInstance() {
@@ -113,14 +118,25 @@ public class TeacherRollCall extends Fragment {
             public void update(Observable observable, Object data) {
                 // TODO: switch over to student data-type
                 if (data != null) {
-                    student_info = (ArrayList<String>) data;
+                    // current student PK's
+                    ArrayList<String> student_pks = (ArrayList<String>) data;
+                    // add student that need to be added
+                    student_info.clear();
+                    for (String pk : student_pks){
+                        for (StudentByClass stu : studentByClass){
+                            if ((""+stu.getId()).equals(pk))
+                                student_info.add(stu);
+                        }
+                    }
 
                     // TODO: display arraylist
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
                             listAdapter.clear();
-                            listAdapter.addAll(student_info);
+                            for (StudentByClass stu : student_info) {
+                                listAdapter.add(stu.getName());
+                            }
                             listAdapter.notifyDataSetChanged();
                         }
                     });
@@ -201,7 +217,7 @@ public class TeacherRollCall extends Fragment {
 
         // teacher classes setup
         final List<SpinnerItem> spinnerArray =  new ArrayList<>();
-        final ArrayAdapter<SpinnerItem> dropAdapter;dropAdapter = new ArrayAdapter<SpinnerItem>(
+        final ArrayAdapter<SpinnerItem> dropAdapter = new ArrayAdapter<SpinnerItem>(
                 getActivity(), android.R.layout.simple_spinner_item, spinnerArray);
         dropAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         classAdapter.professorClasses(user.getpKey(), new Callback<ArrayList<edu.uco.schambers.classmate.AdapterModels.Class>>() {
@@ -266,6 +282,20 @@ public class TeacherRollCall extends Fragment {
                         startBtn.setText(getResources().getString(R.string.btn_roll_call_stop));
                         classSpinner.setEnabled(false);
                         sp.edit().putBoolean(CLASS_OPEN, true).apply();
+
+                        // get student List for current class
+                        try {
+                            enrollmentAdapter.getStudentsByClass(Integer.parseInt(((SpinnerItem) classSpinner.getSelectedItem()).getValue()), new Callback<ArrayList<StudentByClass>>() {
+                                @Override
+                                public void onComplete(ArrayList<StudentByClass> result) throws Exception {
+                                    studentByClass.clear();
+                                    studentByClass.addAll(result);
+                                }
+                            });
+                        }catch(JSONException e){
+                            Log.d("TeacherRollCall", e.getMessage());
+                        }
+
                     }else{
                         Toast.makeText(getActivity().getApplicationContext(), "Select a Course!",Toast.LENGTH_SHORT).show();
                     }
