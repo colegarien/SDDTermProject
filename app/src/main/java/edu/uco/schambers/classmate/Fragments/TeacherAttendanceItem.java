@@ -36,6 +36,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import org.achartengine.ChartFactory;
 import org.achartengine.model.CategorySeries;
 import org.achartengine.renderer.DefaultRenderer;
@@ -52,6 +54,11 @@ public class TeacherAttendanceItem extends Fragment {
     private View mChart;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    public static final String MyPREFS = "MyPREFS";
+    public static final String MySCHOOL = "MySCHOOL";
+    public SharedPreferences sp;
+    public SharedPreferences.Editor editor;
+    TextView tvNote;
 
     public TeacherAttendanceItem() {
         // Required empty public constructor
@@ -71,6 +78,8 @@ public class TeacherAttendanceItem extends Fragment {
         super.onCreate(savedInstanceState);
         absences = Integer.parseInt(getArguments().getString(ARG_PARAM1));
         studentName = getArguments().getString(ARG_PARAM2);
+        sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+        editor = sp.edit();
     }
 
 
@@ -119,6 +128,8 @@ public class TeacherAttendanceItem extends Fragment {
 
     //@TargetApi(Build.VERSION_CODES.M)
     private void initUI(final View rootView) {
+        tvNote = (TextView) rootView.findViewById(R.id.tvNote);
+        tvNote.setText(sp.getString("attNote-"+studentName,"N/A"));
         alert = new AlertDialog.Builder(getContext());
         String[] titles = new String[]{" Attendance ", " Absences "};
         int[] values = new int[]{10, 4}; //absences
@@ -132,14 +143,14 @@ public class TeacherAttendanceItem extends Fragment {
                 final EditText edittext = new EditText(getContext());
                 alert.setMessage("Enter your note:");
                 alert.setTitle("Add Note");
-
                 alert.setView(edittext);
-
                 alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        note = edittext.getText().toString();
                         TextView tvNote = (TextView) rootView.findViewById(R.id.tvNote);
+                        note = edittext.getText().toString();
                         tvNote.setText(note);
+                        editor.putString("attNote-" + studentName, note);
+                        editor.commit();
                     }
                 });
 
