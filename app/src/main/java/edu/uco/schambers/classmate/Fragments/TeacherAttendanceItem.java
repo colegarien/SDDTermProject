@@ -171,7 +171,7 @@ public class TeacherAttendanceItem extends Fragment {
 
     public void drawPieChar(View rootView, Context context, String[] title, int[] value) {
         // Color of each Pie Chart Sections
-        int[] colors = {Color.BLUE, Color.MAGENTA, Color.GREEN, Color.CYAN, Color.RED, Color.TRANSPARENT};
+        int[] colors = {Color.BLUE, Color.YELLOW, Color.GREEN, Color.CYAN, Color.RED, Color.TRANSPARENT};
 
         CategorySeries categorySeries = new CategorySeries("Draw Pie");
         double sum=0;
