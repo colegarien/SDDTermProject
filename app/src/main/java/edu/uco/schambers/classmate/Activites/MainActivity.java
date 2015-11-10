@@ -210,6 +210,9 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         // It prevents the situation that being as group owner once will be as group owner forever.
         // Solves the problem of check-in indefinitely..
         deletePersistentGroups();
+        mManager.clearServiceRequests(mChannel, null);
+        mManager.clearLocalServices(mChannel, null);
+        mManager.stopPeerDiscovery(mChannel, null);
 
         WifiP2pDnsSdServiceInfo serviceInfo =
                 WifiP2pDnsSdServiceInfo.newInstance(SERVICE_INSTANCE, "_presence._tcp", null);
