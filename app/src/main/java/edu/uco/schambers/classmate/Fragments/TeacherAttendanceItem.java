@@ -131,7 +131,7 @@ public class TeacherAttendanceItem extends Fragment {
     private void initUI(final View rootView) {
         tvNote = (TextView) rootView.findViewById(R.id.tvNote);
         tvNote.setText(sp.getString("attNote-"+studentName,"N/A"));
-        alert = new AlertDialog.Builder(getContext());
+        alert = new AlertDialog.Builder(getActivity());
         String[] titles = new String[]{" Attendance ", " Absences "};
         int[] values = new int[]{10, 4}; //absences
         TextView tvStudentName = (TextView)rootView.findViewById(R.id.textView4);
@@ -141,11 +141,11 @@ public class TeacherAttendanceItem extends Fragment {
         addNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LinearLayout layout = new LinearLayout(getContext());
+                LinearLayout layout = new LinearLayout(getActivity());
                 layout.setOrientation(LinearLayout.VERTICAL);
-                final EditText edittext = new EditText(getContext());
+                final EditText edittext = new EditText(getActivity());
                 edittext.setHint("Enter your note");
-                final DatePicker dp = new DatePicker(getContext());
+                final DatePicker dp = new DatePicker(getActivity());
                 layout.addView(edittext);
                 layout.addView(dp);
                 alert.setView(layout);
