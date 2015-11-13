@@ -117,7 +117,7 @@ public class StudentDropClasses extends Fragment {
 
     public void refreshList() {
         try {
-            enrollmentAdapter.getEnrolledClasses(TokenUtility.parseUserToken(getActivity()).getpKey(), new Callback<ArrayList<Class>>() {
+            enrollmentAdapter.getEnrolledClasses(TokenUtility.parseUserToken(getActivity()).getpKey(), false, new Callback<ArrayList<Class>>() {
                 @Override
                 public void onComplete(ArrayList<Class> result) throws Exception {
                     classList.clear();

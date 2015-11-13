@@ -16,13 +16,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import org.achartengine.ChartFactory;
@@ -31,11 +29,10 @@ import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 import org.json.JSONException;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import edu.uco.schambers.classmate.Adapter.AttendanceAdapter;
 import edu.uco.schambers.classmate.Adapter.Callback;
 import edu.uco.schambers.classmate.Adapter.EnrollmentAdapter;
 import edu.uco.schambers.classmate.AdapterModels.*;
@@ -71,7 +68,9 @@ public class StudentAttendance extends Fragment {
     private int[] sattendance;
     private int[] sabsences;
     private String[] sdate;
-    private int studentPKey;
+    ArrayAdapter<SpinnerItem> adapter;
+    List<SpinnerItem> arraySpinner;
+    private int userId;
 
     private TextView missing, attendance;
    // private DatabaseHelper databaseHelper;
@@ -93,7 +92,7 @@ public class StudentAttendance extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        attendanceRecords[0] = new AttendanceRecord(1,"Data Structures",1,0,"09/10/2015");
+        /*attendanceRecords[0] = new AttendanceRecord(1,"Data Structures",1,0,"09/10/2015");
         attendanceRecords[1] = new AttendanceRecord(2,"Data Structures",1,0,"09/13/2015");
         attendanceRecords[2] = new AttendanceRecord(3,"Data Structures",1,0,"09/16/2015");
         attendanceRecords[3] = new AttendanceRecord(4,"Data Structures",1,0,"09/19/2015");
@@ -139,7 +138,7 @@ public class StudentAttendance extends Fragment {
         attendanceRecords[43] = new AttendanceRecord(7,"Web Server",0,1,"09/28/2015");
         attendanceRecords[44] = new AttendanceRecord(8,"Web Server",1,0,"09/31/2015");
         attendanceRecords[45] = new AttendanceRecord(9,"Web Server",0,1,"10/03/2015");
-        attendanceRecords[46] = new AttendanceRecord(10,"Web Server",1,0,"10/06/2015");
+        attendanceRecords[46] = new AttendanceRecord(10,"Web Server",1,0,"10/06/2015");*/
 
     }
 
@@ -191,20 +190,23 @@ public class StudentAttendance extends Fragment {
 
     @TargetApi(Build.VERSION_CODES.M)
     private void initUI(final View rootView) {
-
+        arraySpinner = new ArrayList<>();
+        s = (Spinner) rootView.findViewById(R.id.classlist);
+        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, arraySpinner);
+        s.setAdapter(adapter);
        // List<ClassMate> lstClassMate = databaseHelper.getAllClassMate();
 
-        final List<SpinnerItem> arraySpinner =  new ArrayList<>();
-
         try {
-            studentPKey = TokenUtility.parseUserToken(getActivity()).getpKey();
+            userId = TokenUtility.parseUserToken(getActivity()).getpKey();
 
-            EnrollmentAdapter.getEnrolledClasses(studentPKey, new Callback<ArrayList<Class>>() {
+            EnrollmentAdapter.getEnrolledClasses(userId, true, new Callback<ArrayList<Class>>() {
                 @Override
                 public void onComplete(ArrayList<Class> result) throws Exception {
+                    arraySpinner.add(new SpinnerItem("Select Class", ""));
                     for (Class c : result) {
                         arraySpinner.add(new SpinnerItem(c.getClass_name(), Integer.toString(c.getId())));
                     }
+                    adapter.notifyDataSetChanged();
                 }
             });
         } catch (Exception e) {
@@ -218,30 +220,61 @@ public class StudentAttendance extends Fragment {
         arraySpinner.add("Mobile Apps");
         arraySpinner.add("Web Server");*/
 
-        s = (Spinner) rootView.findViewById(R.id.classlist);
-        ArrayAdapter<SpinnerItem> adapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_spinner_item, arraySpinner);
-        s.setAdapter(adapter);
         s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int position, long id) {
+            public void onItemSelected(final AdapterView<?> parent, View view,
+                                       final int position, long id) {
 
-                SpinnerItem item = (SpinnerItem) parent.getItemAtPosition(position);
-                int classId = Integer.parseInt(item.getValue());
+                if (parent.getSelectedItemPosition() == 0) return;
 
-
-
-                String[] titles = new String[]{"attendance", "absences"};
-                int attendances = 0;
-                int absences = 0;
-
-                TableLayout teacherAttendanceTable = (TableLayout) rootView.findViewById(R.id.studentAttendanceTable);
+                final TableLayout teacherAttendanceTable = (TableLayout) rootView.findViewById(R.id.studentAttendanceTable);
                 teacherAttendanceTable.setStretchAllColumns(true);
                 teacherAttendanceTable.bringToFront();
                 teacherAttendanceTable.removeAllViews();
-                for (int i = 0; i < attendanceRecords.length; i++) {
+                SpinnerItem item = (SpinnerItem)s.getSelectedItem();
+                int classId = Integer.parseInt(item.getValue());
+
+                try {
+                    AttendanceAdapter.getStudentAbsencesByClass(classId, userId, new Callback<ArrayList<StudentAbsenceByClass>>() {
+                        @Override
+                        public void onComplete(ArrayList<StudentAbsenceByClass> result) throws Exception {
+                            int number = 0;
+                            for (StudentAbsenceByClass sac: result){
+                                if (!sac.isPresent()) {
+                                    TableRow tr = new TableRow(getActivity());
+                                    TextView c0 = new TextView(getActivity());
+                                    c0.setText(++number + "");
+                                    TextView c1 = new TextView(getActivity());
+                                    c1.setText(sac.getRollCall());
+                                    tr.addView(c0);
+                                    tr.addView(c1);
+                                    teacherAttendanceTable.addView(tr);
+                                }
+                            }
+
+                            int attendances = 0;
+                            int absences = 0;
+                            for (StudentAbsenceByClass sac: result){
+                                if (sac.isPresent())
+                                    attendances++;
+                                else
+                                    absences++;
+                            }
+
+                            attendance.setText(attendances+"");
+                            missing.setText(absences+"");
+                            int[] values = new int[]{attendances, absences};
+                            String[] titles = new String[]{"attendance", "absences"};
+                            drawPieChar(rootView, getActivity(), titles, values);
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+              /*  for (int i = 0; i < attendanceRecords.length; i++) {
                     if (attendanceRecords[i].absences == 1 && attendanceRecords[i].className.equals(parent.getItemAtPosition(position))) { //Here where I change "parent.getItemAtPosition(position)"
                         TableRow tr = new TableRow(getActivity());
                         TextView c0 = new TextView(getActivity());
@@ -256,11 +289,8 @@ public class StudentAttendance extends Fragment {
                     else if (attendanceRecords[i].attendances == 1 && attendanceRecords[i].className.equals(parent.getItemAtPosition(position))){
                         attendances++;
                     }
-                }
-                attendance.setText(attendances+"");
-                missing.setText(absences+"");
-                int[] values = new int[]{attendances, absences};
-                drawPieChar(rootView, getActivity(), titles, values);
+                }*/
+
 
             }
 

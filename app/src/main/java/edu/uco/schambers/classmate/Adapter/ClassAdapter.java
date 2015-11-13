@@ -121,7 +121,7 @@ public class ClassAdapter {
             }
         });
 
-        call.execute(new ServiceCall(Url + "studentabsencesbyclass/" + classId, "GET", ""));
+        call.execute(new ServiceCall(Url + "absencesbyclass/" + classId, "GET", ""));
     }
 
 
