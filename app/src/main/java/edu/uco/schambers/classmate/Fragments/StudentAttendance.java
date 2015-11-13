@@ -29,11 +29,17 @@ import org.achartengine.ChartFactory;
 import org.achartengine.model.CategorySeries;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
+import org.json.JSONException;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.uco.schambers.classmate.Adapter.Callback;
+import edu.uco.schambers.classmate.Adapter.EnrollmentAdapter;
+import edu.uco.schambers.classmate.AdapterModels.*;
+import edu.uco.schambers.classmate.AdapterModels.Class;
 import edu.uco.schambers.classmate.R;
 //import edu.uco.schambers.classmate.model.ClassMate;
 //import edu.uco.schambers.classmate.sqlite.DatabaseHelper;
@@ -65,6 +71,7 @@ public class StudentAttendance extends Fragment {
     private int[] sattendance;
     private int[] sabsences;
     private String[] sdate;
+    private int studentPKey;
 
     private TextView missing, attendance;
    // private DatabaseHelper databaseHelper;
@@ -187,15 +194,32 @@ public class StudentAttendance extends Fragment {
 
        // List<ClassMate> lstClassMate = databaseHelper.getAllClassMate();
 
-        final List<String> arraySpinner =  new ArrayList<String>();
-        arraySpinner.add("Data Structures");
+        final List<SpinnerItem> arraySpinner =  new ArrayList<>();
+
+        try {
+            studentPKey = TokenUtility.parseUserToken(getActivity()).getpKey();
+
+            EnrollmentAdapter.getEnrolledClasses(studentPKey, new Callback<ArrayList<Class>>() {
+                @Override
+                public void onComplete(ArrayList<Class> result) throws Exception {
+                    for (Class c : result) {
+                        arraySpinner.add(new SpinnerItem(c.getClass_name(), Integer.toString(c.getId())));
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        /*arraySpinner.add("Data Structures");
         arraySpinner.add("Programming I");
         arraySpinner.add("Programming II");
         arraySpinner.add("Mobile Apps");
-        arraySpinner.add("Web Server");
+        arraySpinner.add("Web Server");*/
 
         s = (Spinner) rootView.findViewById(R.id.classlist);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+        ArrayAdapter<SpinnerItem> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_spinner_item, arraySpinner);
         s.setAdapter(adapter);
         s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -203,6 +227,11 @@ public class StudentAttendance extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
+
+                SpinnerItem item = (SpinnerItem) parent.getItemAtPosition(position);
+                int classId = Integer.parseInt(item.getValue());
+
+
 
                 String[] titles = new String[]{"attendance", "absences"};
                 int attendances = 0;
