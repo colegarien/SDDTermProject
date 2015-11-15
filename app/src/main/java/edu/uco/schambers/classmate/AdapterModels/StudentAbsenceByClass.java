@@ -1,58 +1,24 @@
 package edu.uco.schambers.classmate.AdapterModels;
 
+import java.util.Date;
+
 public class StudentAbsenceByClass {
-    private int enrollmentId;
-    private int studentId;
-    private int userId;
-    private String name;
-    private String className;
-    private int absences;
+    private String rollCall;
+    private boolean isPresent;
 
-    public int getEnrollmentId() {
-        return enrollmentId;
+    public String getRollCall() {
+        return rollCall;
     }
 
-    public void setEnrollmentId(int enrollmentId) {
-        this.enrollmentId = enrollmentId;
+    public void setRollCall(String rollCall) {
+        this.rollCall = rollCall;
     }
 
-    public int getStudentId() {
-        return studentId;
+    public boolean isPresent() {
+        return isPresent;
     }
 
-    public void setStudentId(int studentId) {
-        this.studentId = studentId;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
-    public int getAbsences() {
-        return absences;
-    }
-
-    public void setAbsences(int absences) {
-        this.absences = absences;
+    public void setIsPresent(boolean isPresent) {
+        this.isPresent = isPresent;
     }
 }

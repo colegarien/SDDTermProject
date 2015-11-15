@@ -11,7 +11,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import edu.uco.schambers.classmate.AdapterModels.Class;
-import edu.uco.schambers.classmate.AdapterModels.StudentAbsenceByClass;
 import edu.uco.schambers.classmate.AdapterModels.StudentByClass;
 
 public class EnrollmentAdapter {
@@ -85,7 +84,7 @@ public class EnrollmentAdapter {
         call.execute(new ServiceCall(Url + "semesters/" + URLEncoder.encode(school, "UTF-8").replace("+", "%20") + "/" + year, "GET", ""));
     }
 
-    public void getEnrolledClasses(int userId, final Callback<ArrayList<Class>> callback) throws UnsupportedEncodingException {
+    public static void getEnrolledClasses(int userId, boolean showOld, final Callback<ArrayList<Class>> callback) throws UnsupportedEncodingException {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
             @Override
             public void onComplete(HttpResponse response) throws Exception {
@@ -110,7 +109,7 @@ public class EnrollmentAdapter {
             }
         });
 
-        call.execute(new ServiceCall(Url + "Enrollments/" + userId, "GET", ""));
+        call.execute(new ServiceCall(Url + "Enrollments/" + userId + "/" + (showOld ? "1" : "0"), "GET", ""));
     }
 
     public void getClasses(String school, final String year, final String semester, int userId, final Callback<ArrayList<Class>> callback) throws UnsupportedEncodingException {

@@ -1,14 +1,12 @@
 package edu.uco.schambers.classmate.Fragments;
 
 import edu.uco.schambers.classmate.Adapter.Callback;
-import edu.uco.schambers.classmate.Adapter.ClassAdapter;
 import edu.uco.schambers.classmate.Adapter.EnrollmentAdapter;
 import edu.uco.schambers.classmate.Adapter.HttpResponse;
 import edu.uco.schambers.classmate.AdapterModels.Class;
 
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -17,14 +15,11 @@ import android.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -34,12 +29,9 @@ import android.widget.Toast;
 import org.json.JSONException;
 
 import java.io.UnsupportedEncodingException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import edu.uco.schambers.classmate.AdapterModels.StudentAbsenceByClass;
 import edu.uco.schambers.classmate.AdapterModels.TokenUtility;
 import edu.uco.schambers.classmate.AdapterModels.User;
 import edu.uco.schambers.classmate.R;

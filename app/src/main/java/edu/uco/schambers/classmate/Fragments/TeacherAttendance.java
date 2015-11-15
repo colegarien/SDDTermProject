@@ -48,7 +48,7 @@ public class TeacherAttendance extends Fragment {
     ClassAdapter classAdapter = new ClassAdapter();
 
     //UI Components
-    ArrayList<StudentAbsenceByClass> students = new ArrayList<>();
+    ArrayList<AbsenceByClass> students = new ArrayList<>();
 
     public static TeacherAttendance newInstance(String param1, String param2) {
         TeacherAttendance fragment = new TeacherAttendance();
@@ -218,14 +218,14 @@ public class TeacherAttendance extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 final int pos = position;
                 SpinnerItem item = (SpinnerItem)parent.getSelectedItem();
-                classAdapter.studentAbsences(Integer.parseInt(item.getValue()), new Callback<ArrayList<StudentAbsenceByClass>>() {
+                classAdapter.studentAbsences(Integer.parseInt(item.getValue()), new Callback<ArrayList<AbsenceByClass>>() {
                     @Override
-                    public void onComplete(ArrayList<StudentAbsenceByClass> result) throws Exception {
+                    public void onComplete(ArrayList<AbsenceByClass> result) throws Exception {
                         for (int i=0; i<result.size(); i++){
                             Log.d("RAYAN TEST", result.get(i).getName());
                         }
                         students.clear();
-                        for (StudentAbsenceByClass studentAbsense : result) {
+                        for (AbsenceByClass studentAbsense : result) {
                             students.add(studentAbsense);
                         }
 
@@ -282,7 +282,7 @@ public class TeacherAttendance extends Fragment {
         teacherAttendanceTable.bringToFront();
         teacherAttendanceTable.removeAllViews();
         //Loops through the entire list of students
-        for (final StudentAbsenceByClass student : students) {
+        for (final AbsenceByClass student : students) {
             //If the current student's course is equal to the course chosen
 
             //Store the number of absences
