@@ -292,6 +292,8 @@ public class TeacherRollCall extends Fragment {
                                 @Override
                                 public void onComplete(HttpResponse result) throws Exception {
                                     //TODO: handle http response
+                                    Log.d("TakeRollCall", "HttpResponse: "+result.getResponse());
+                                    Log.d("TakeRollCall", "HttpResponse Code: "+result.getHttpCode());
                                 }
                             });
                             enrollmentAdapter.getStudentsByClass(Integer.parseInt(((SpinnerItem) classSpinner.getSelectedItem()).getValue()), new Callback<ArrayList<StudentByClass>>() {
@@ -330,6 +332,8 @@ public class TeacherRollCall extends Fragment {
                             @Override
                             public void onComplete(HttpResponse result) throws Exception {
                                 //TODO: handle http response
+                                Log.d("SaveAttendance", "HttpResponse: "+result.getResponse());
+                                Log.d("SaveAttendance", "HttpResponse Code: "+result.getHttpCode());
                             }
                         });
                     }catch(JSONException e){
