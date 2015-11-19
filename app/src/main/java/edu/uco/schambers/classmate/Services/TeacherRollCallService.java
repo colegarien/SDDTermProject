@@ -129,6 +129,7 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
     }
     public void addAttendance(Attendance a){
         studentAttendance.add(a);
+        Log.d("TeacherRollCallService", "Enroll ID: "+a.getEnrollmentId());
     }
     public void addStudent(StudentByClass s){
         boolean inClassAlready = false;
@@ -140,6 +141,8 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
         }
         if(!inClassAlready) {
             studentByClass.add(s);
+            Log.d("TeacherRollCallService","Student Added: "+s.getName());
+
             Attendance newStu = new Attendance();
             newStu.setEnrollmentId(s.getEnrollmentId());
             newStu.setDate(new Date());
@@ -152,14 +155,24 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
     public void onStudentConnect(String pk, InetAddress ip) {
         Log.d("StudentConnect", "Connected PK: " + pk);
         student_pk = pk;
-        studentInfo.add(student_pk);
+        // student already in
+        boolean studentInAlready = false;
+        for(String cur_pk : studentInfo){
+            if(cur_pk==pk){
+                studentInAlready= true;
+                break;
+            }
+        }
+        if(!studentInAlready) {
+            studentInfo.add(student_pk);
 
-        // notify student attendance observers
-        StudentAttendanceObservable.getInstance().directNotifyObservers(studentInfo);
+            // notify student attendance observers
+            StudentAttendanceObservable.getInstance().directNotifyObservers(studentInfo);
 
-        if (ip!=null){
-            IPAddressManager.getInstance().addStudentAddress(ip);
-            Log.d("StudentConnect", "IP Added: " + ip.toString());
+            if (ip != null) {
+                IPAddressManager.getInstance().addStudentAddress(ip);
+                Log.d("StudentConnect", "IP Added: " + ip.toString());
+            }
         }
     }
 

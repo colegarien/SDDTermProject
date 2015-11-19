@@ -131,7 +131,6 @@ public class TeacherRollCall extends Fragment {
                             if ((""+stu.getId()).equals(pk)) {
                                 //student_info.add(stu);
                                 teacherRollCallService.addStudent(stu);
-                                Log.d("StudentRollCall", "Added Name: " + stu.getName());
                             }
                         }
                     }
@@ -324,6 +323,18 @@ public class TeacherRollCall extends Fragment {
                     startBtn.setText(getResources().getString(R.string.btn_roll_call_start));
                     classSpinner.setEnabled(true);
                     sp.edit().putBoolean(CLASS_OPEN,false).apply();
+
+                    // save the attendance
+                    try {
+                        attendanceAdapter.saveAttendance(teacherRollCallService.getStudentAttendance(),new Callback<HttpResponse>() {
+                            @Override
+                            public void onComplete(HttpResponse result) throws Exception {
+                                //TODO: handle http response
+                            }
+                        });
+                    }catch(JSONException e){
+                        Log.d("TeacherRollCall", e.getMessage());
+                    }
                 }
             }
         });
