@@ -43,14 +43,18 @@ import android.widget.Toast;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import edu.uco.schambers.classmate.Activites.MainActivity;
+import edu.uco.schambers.classmate.Adapter.AttendanceAdapter;
 import edu.uco.schambers.classmate.Adapter.Callback;
 import edu.uco.schambers.classmate.Adapter.ClassAdapter;
 import edu.uco.schambers.classmate.Adapter.EnrollmentAdapter;
+import edu.uco.schambers.classmate.Adapter.HttpResponse;
 import edu.uco.schambers.classmate.AdapterModels.*;
 import edu.uco.schambers.classmate.AdapterModels.Class;
 import edu.uco.schambers.classmate.ObservableManagers.StudentAttendanceObservable;
@@ -85,6 +89,8 @@ public class TeacherRollCall extends Fragment {
     // for getting student lists
     private EnrollmentAdapter enrollmentAdapter = new EnrollmentAdapter();
     private ArrayList<StudentByClass> studentByClass = new ArrayList<StudentByClass>();
+    // for saving student attendance
+    private AttendanceAdapter attendanceAdapter = new AttendanceAdapter();
 
 
 
@@ -116,7 +122,6 @@ public class TeacherRollCall extends Fragment {
         attendanceObserver = new Observer() {
             @Override
             public void update(Observable observable, Object data) {
-                // TODO: switch over to student data-type
                 if (data != null) {
                     // current student PK's
                     ArrayList<String> student_pks = (ArrayList<String>) data;
@@ -129,7 +134,6 @@ public class TeacherRollCall extends Fragment {
                         }
                     }
 
-                    // TODO: display arraylist
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
@@ -283,6 +287,12 @@ public class TeacherRollCall extends Fragment {
 
                         // get student List for current class
                         try {
+                            attendanceAdapter.takeRollCall(Integer.parseInt(((SpinnerItem) classSpinner.getSelectedItem()).getValue()), new Date(),new Callback<HttpResponse>() {
+                                @Override
+                                public void onComplete(HttpResponse result) throws Exception {
+                                    //TODO: handle http response
+                                }
+                            });
                             enrollmentAdapter.getStudentsByClass(Integer.parseInt(((SpinnerItem) classSpinner.getSelectedItem()).getValue()), new Callback<ArrayList<StudentByClass>>() {
                                 @Override
                                 public void onComplete(ArrayList<StudentByClass> result) throws Exception {
