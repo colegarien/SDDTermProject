@@ -25,7 +25,10 @@ import android.widget.Toast;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Date;
 
+import edu.uco.schambers.classmate.AdapterModels.Attendance;
+import edu.uco.schambers.classmate.AdapterModels.StudentByClass;
 import edu.uco.schambers.classmate.AdapterModels.User;
 import edu.uco.schambers.classmate.Fragments.TeacherRollCall;
 import edu.uco.schambers.classmate.ListenerInterfaces.OnStudentConnectListener;
@@ -51,6 +54,8 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
 
     // TODO: change to special Student Adapter
     private ArrayList<String> studentInfo = new ArrayList<String>();
+    private ArrayList<Attendance> studentAttendance = new ArrayList<Attendance>();
+    private ArrayList<StudentByClass> studentByClass = new ArrayList<StudentByClass>();
 
     public TeacherRollCallService() {
     }
@@ -116,10 +121,35 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
     public ArrayList<String> getStudentInfo(){
         return studentInfo;
     }
+    public ArrayList<Attendance> getStudentAttendance(){
+        return studentAttendance;
+    }
+    public ArrayList<StudentByClass> getStudentByClass(){
+        return studentByClass;
+    }
+    public void addAttendance(Attendance a){
+        studentAttendance.add(a);
+    }
+    public void addStudent(StudentByClass s){
+        boolean inClassAlready = false;
+        for (StudentByClass stu : studentByClass) {
+            if (stu.getId() == s.getId()){
+                inClassAlready = true;
+                break;
+            }
+        }
+        if(!inClassAlready) {
+            studentByClass.add(s);
+            Attendance newStu = new Attendance();
+            newStu.setEnrollmentId(s.getEnrollmentId());
+            newStu.setDate(new Date());
+
+            this.addAttendance(newStu);
+        }
+    }
 
     @Override
     public void onStudentConnect(String pk, InetAddress ip) {
-        // TODO: add student ID to ArrayList (possibly query from DB)
         Log.d("StudentConnect", "Connected PK: " + pk);
         student_pk = pk;
         studentInfo.add(student_pk);

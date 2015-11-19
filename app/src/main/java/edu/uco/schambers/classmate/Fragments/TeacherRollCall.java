@@ -99,7 +99,6 @@ public class TeacherRollCall extends Fragment {
     private boolean isBound = false;
     private Observer attendanceObserver;
     private ArrayAdapter<String> listAdapter;
-    private ArrayList<StudentByClass> student_info = new ArrayList<StudentByClass>();
 
     // TODO: Get Class Name from DB/Dropdown Box
     public static TeacherRollCall newInstance() {
@@ -126,11 +125,14 @@ public class TeacherRollCall extends Fragment {
                     // current student PK's
                     ArrayList<String> student_pks = (ArrayList<String>) data;
                     // add student that need to be added
-                    student_info.clear();
+                    //student_info.clear();
                     for (String pk : student_pks){
                         for (StudentByClass stu : studentByClass){
-                            if ((""+stu.getId()).equals(pk))
-                                student_info.add(stu);
+                            if ((""+stu.getId()).equals(pk)) {
+                                //student_info.add(stu);
+                                teacherRollCallService.addStudent(stu);
+                                Log.d("StudentRollCall", "Added Name: " + stu.getName());
+                            }
                         }
                     }
 
@@ -138,7 +140,7 @@ public class TeacherRollCall extends Fragment {
                         @Override
                         public void run() {
                             listAdapter.clear();
-                            for (StudentByClass stu : student_info) {
+                            for (StudentByClass stu : teacherRollCallService.getStudentByClass()) {
                                 listAdapter.add(stu.getName());
                             }
                             listAdapter.notifyDataSetChanged();
