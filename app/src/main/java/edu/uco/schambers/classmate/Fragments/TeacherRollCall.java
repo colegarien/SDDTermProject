@@ -288,6 +288,10 @@ public class TeacherRollCall extends Fragment {
 
                         // get student List for current class
                         try {
+                            int tmpid =Integer.parseInt(((SpinnerItem) classSpinner.getSelectedItem()).getValue());
+                            Date tmpdate = new Date();
+                            Log.d("takeRollCall", "id: "+tmpid);
+                            Log.d("takeRollCall", "date: "+ tmpdate);
                             attendanceAdapter.takeRollCall(Integer.parseInt(((SpinnerItem) classSpinner.getSelectedItem()).getValue()), new Date(),new Callback<HttpResponse>() {
                                 @Override
                                 public void onComplete(HttpResponse result) throws Exception {
