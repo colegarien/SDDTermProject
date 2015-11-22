@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -42,8 +43,10 @@ public class AttendanceAdapter {
     public static void takeRollCall(int classId, Date date, final Callback<HttpResponse> callback) throws JSONException {
         JSONObject jsonObject = new JSONObject();
 
-        jsonObject.put("Class_Id", classId);
-        jsonObject.put("Date", date);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd\tHH:mm:ss");
+
+        jsonObject.put("Class_id", classId);
+        jsonObject.put("Date", formatter.format(date));
 
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
 
