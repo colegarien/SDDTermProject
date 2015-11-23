@@ -318,7 +318,7 @@ public class TeacherAttendance extends Fragment {
             TextView c0 = new TextView(view.getContext());
             c0.setText(student.getName());
             TextView c2 = new TextView(view.getContext());
-            c2.setText(String.valueOf(4)); //student.getAbsences())
+            c2.setText(String.valueOf(student.getAbsences())); //student.getAbsences())
             //Add the data to the row
             tr.addView(c0);
             tr.addView(c2);
