@@ -3,7 +3,7 @@
  * Author: Rayan Al-Hammami
  * Purpose:
  *   UI backend for teacher attendance and class management
- *   module.
+ *   module
  *      Edit 10/09/2015
  *      Added selectable functionality for student table rows
  */
@@ -31,6 +31,7 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.uco.schambers.classmate.Adapter.AttendanceAdapter;
 import edu.uco.schambers.classmate.Adapter.Callback;
 import edu.uco.schambers.classmate.Adapter.ClassAdapter;
 import edu.uco.schambers.classmate.AdapterModels.*;
@@ -45,6 +46,7 @@ public class TeacherAttendance extends Fragment {
     private Spinner sSemester;
     private Spinner sYear;
     User user;
+    private int attendances=0,absences=0,classId=0,studentId=0;
     ClassAdapter classAdapter = new ClassAdapter();
 
     //UI Components
@@ -125,6 +127,7 @@ public class TeacherAttendance extends Fragment {
         }
         sSemester = (Spinner) rootView.findViewById(R.id.semester_sp);
         sYear = (Spinner) rootView.findViewById(R.id.year_sp);
+        //Attendance Logic
 
         //ArrayList set up to hold values of courses
         final List<SpinnerItem> spinnerArray =  new ArrayList<>();
@@ -175,6 +178,7 @@ public class TeacherAttendance extends Fragment {
                         spinnerArray.add(new SpinnerItem("Select Course..", "-1"));
                         for (Class classItem : result) {
                             spinnerArray.add(new SpinnerItem(classItem.getClass_name(), Integer.toString(classItem.getId())));
+
                         }
                         adapter.notifyDataSetChanged();
                     }
@@ -201,6 +205,7 @@ public class TeacherAttendance extends Fragment {
                         spinnerArray.add(new SpinnerItem("Select Course..", "-1"));
                         for (Class classItem : result) {
                             spinnerArray.add(new SpinnerItem(classItem.getClass_name(), Integer.toString(classItem.getId())));
+                            classId = classItem.getId();
                         }
                         adapter.notifyDataSetChanged();
                     }
@@ -284,9 +289,23 @@ public class TeacherAttendance extends Fragment {
         //Loops through the entire list of students
         for (final AbsenceByClass student : students) {
             //If the current student's course is equal to the course chosen
-
-            //Store the number of absences
-            final int absences = student.getAbsences();
+            studentId = student.getStudentId();
+            //Get Attendance Info
+            try {
+                AttendanceAdapter.getStudentAbsencesByClass(classId, studentId, new Callback<ArrayList<StudentAbsenceByClass>>() {
+                    @Override
+                    public void onComplete(ArrayList<StudentAbsenceByClass> result) throws Exception {
+                        for (StudentAbsenceByClass sac : result) {
+                            if (sac.isPresent())
+                                attendances++;
+                            else
+                                absences++;
+                        }
+                    }
+                });
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             //Create a new table row
             TableRow tr = new TableRow(view.getContext());
             //Set up the clickable functionality for the table row
@@ -299,21 +318,26 @@ public class TeacherAttendance extends Fragment {
                             event.getAction() == MotionEvent.ACTION_CANCEL) {
                         //Momentarily change background color to indicate the touch
                         v.setBackgroundColor(Color.GRAY);
-                        //Set up a new fragment object
-                        Fragment teacherAttendanceItem = TeacherAttendanceItem.newInstance(absences + "", student.getName());
-                        //Pass the attendance info, replace the current fragment, and place old
-                        //fragment on the backstack
-                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                        transaction.replace(R.id.fragment_container, teacherAttendanceItem);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                        //Once touch is lifted, return the row color
-                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                        v.setBackgroundColor(Color.LTGRAY);
+                            //Set up a new fragment object
+                            Fragment teacherAttendanceItem = TeacherAttendanceItem.newInstance(absences + "", attendances+"",student.getName());
+                            //Pass the attendance info, replace the current fragment, and place old
+                            //fragment on the backstack
+                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                            transaction.replace(R.id.fragment_container, teacherAttendanceItem);
+                            transaction.addToBackStack(null);
+                            transaction.commit();
+                            //Once touch is lifted, return the row color
+                        }
+
+                        else if(event.getAction()==MotionEvent.ACTION_UP)
+
+                        {
+                            v.setBackgroundColor(Color.LTGRAY);
+                        }
+
+                        return false;
                     }
-                    return false;
-                }
-            });
+                        });
             //Set each column's data in the row
             TextView c0 = new TextView(view.getContext());
             c0.setText(student.getName());

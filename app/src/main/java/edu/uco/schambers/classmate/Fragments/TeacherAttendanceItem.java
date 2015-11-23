@@ -39,13 +39,14 @@ import org.achartengine.renderer.SimpleSeriesRenderer;
 import edu.uco.schambers.classmate.R;
 
 public class TeacherAttendanceItem extends Fragment {
-    private int absences;
+    private int absences,attendances;
     private String studentName;
     private String note;
     private AlertDialog.Builder alert;
     private View mChart;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM3 = "param3";
     private static final String MyPREFS = "MyPREFS";
     private static final String MySCHOOL = "MySCHOOL";
     private SharedPreferences sp;
@@ -56,11 +57,12 @@ public class TeacherAttendanceItem extends Fragment {
         // Required empty public constructor
     }
 
-    public static TeacherAttendanceItem newInstance(String param1, String param2) {
+    public static TeacherAttendanceItem newInstance(String param1, String param2, String param3) {
         TeacherAttendanceItem fragment = new TeacherAttendanceItem();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM3, param3);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,7 +71,8 @@ public class TeacherAttendanceItem extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         absences = Integer.parseInt(getArguments().getString(ARG_PARAM1));
-        studentName = getArguments().getString(ARG_PARAM2);
+        attendances = Integer.parseInt(getArguments().getString(ARG_PARAM2));
+        studentName = getArguments().getString(ARG_PARAM3);
         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
         editor = sp.edit();
     }
@@ -124,7 +127,7 @@ public class TeacherAttendanceItem extends Fragment {
         tvNote.setText(sp.getString("attNote-"+studentName,"N/A"));
         alert = new AlertDialog.Builder(getActivity());
         String[] titles = new String[]{" Attendance ", " Absences "};
-        int[] values = new int[]{10, 4}; //absences
+        int[] values = new int[]{attendances, absences};
         TextView tvStudentName = (TextView)rootView.findViewById(R.id.textView4);
         tvStudentName.setText(studentName);
         drawPieChar(rootView, rootView.getContext(), titles, values);
