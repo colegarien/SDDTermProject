@@ -255,8 +255,9 @@ public class UserInformation extends Fragment {
                     changePass.setChecked(false);
                 }
                 if(addSchoolActive == false){
-                    ChangeAddSchoolVisibility(addSchoolActive);
                     addSchoolActive = true;
+                    ChangeAddSchoolVisibility(addSchoolActive);
+
                 } else {
                     sp = getActivity().getSharedPreferences(MySCHOOL, Context.MODE_PRIVATE);
                     editor = sp.edit();
@@ -266,8 +267,8 @@ public class UserInformation extends Fragment {
                     editor.commit();
                     loadSchoolData(spinner);
                     Toast.makeText(getActivity(), "Your school has been added!", Toast.LENGTH_LONG).show();
-                    ChangeAddSchoolVisibility(addSchoolActive);
                     addSchoolActive = false;
+                    ChangeAddSchoolVisibility(addSchoolActive);
                 }
             }
         });
@@ -289,8 +290,9 @@ public class UserInformation extends Fragment {
                 }
 
                 if (addSchoolActive == true){
-                    ChangeAddSchoolVisibility(addSchoolActive);
                     addSchoolActive = false;
+                    ChangeAddSchoolVisibility(addSchoolActive);
+
                 }
 
             }
@@ -364,15 +366,15 @@ public class UserInformation extends Fragment {
 
     private void ChangeAddSchoolVisibility(boolean addSchool){
         if(addSchool == false){
-            state.setVisibility(View.VISIBLE);
-            school.setVisibility(View.VISIBLE);
-            cancel.setVisibility(View.VISIBLE);
-            changePass.setVisibility(View.GONE);
-        } else if(addSchool == true){
             state.setVisibility(View.GONE);
             school.setVisibility(View.GONE);
             cancel.setVisibility(View.GONE);
             changePass.setVisibility(View.VISIBLE);
+        } else if(addSchool == true){
+            state.setVisibility(View.VISIBLE);
+            school.setVisibility(View.VISIBLE);
+            cancel.setVisibility(View.VISIBLE);
+            changePass.setVisibility(View.GONE);
         }
     }
 
