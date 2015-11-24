@@ -448,7 +448,7 @@ public class StudentEnrollment extends Fragment {
         if(f != null)
         {
             FragmentTransaction trans = getFragmentManager().beginTransaction();
-            trans.replace(R.id.fragment_container, f).addToBackStack("debug");
+            trans.replace(R.id.fragment_container, f).addToBackStack(null);
             trans.commit();
         }
     }

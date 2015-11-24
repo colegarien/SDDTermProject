@@ -2,6 +2,7 @@ package edu.uco.schambers.classmate.Activites;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -62,6 +63,7 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
     public static final String MyPREFS = "MyPREFS";
     public SharedPreferences sp;
     public SharedPreferences.Editor editor;
+    public FragmentManager fm;
 
     // Service identity
     public static final String SERVICE_INSTANCE = "_test";
@@ -138,9 +140,11 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
             editor.clear();
             editor.commit();
 
+            fm = getFragmentManager();
+            fm.popBackStack(null, fm.POP_BACK_STACK_INCLUSIVE);
             FragmentTransaction trans = getFragmentManager().beginTransaction();
             Fragment AuthFragment = new Auth();
-            trans.replace(R.id.fragment_container, AuthFragment).addToBackStack(null);
+            trans.replace(R.id.fragment_container, AuthFragment);
             trans.commit();
             return true;
 
