@@ -11,10 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -22,16 +19,13 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import edu.uco.schambers.classmate.Adapter.Callback;
 import edu.uco.schambers.classmate.Adapter.EnrollmentAdapter;
 import edu.uco.schambers.classmate.Adapter.HttpResponse;
 import edu.uco.schambers.classmate.AdapterModels.Class;
 import edu.uco.schambers.classmate.AdapterModels.TokenUtility;
-import edu.uco.schambers.classmate.AdapterModels.User;
 import edu.uco.schambers.classmate.R;
 
 /**
@@ -42,7 +36,7 @@ import edu.uco.schambers.classmate.R;
  * Use the {@link TeacherClassManagement#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class StudentDropClasses extends Fragment {
+public class StudentCurrentClasses extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     ArrayList<Class> classList;
@@ -60,14 +54,14 @@ public class StudentDropClasses extends Fragment {
      * @return A new instance of fragment TeacherClassManagement.
      */
     // TODO: Rename and change types and number of parameters
-    public static StudentDropClasses newInstance() {
-        StudentDropClasses fragment = new StudentDropClasses();
+    public static StudentCurrentClasses newInstance() {
+        StudentCurrentClasses fragment = new StudentCurrentClasses();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
 
-    public StudentDropClasses() {
+    public StudentCurrentClasses() {
         // Required empty public constructor
     }
 

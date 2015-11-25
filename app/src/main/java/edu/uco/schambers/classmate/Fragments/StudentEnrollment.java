@@ -39,9 +39,9 @@ import edu.uco.schambers.classmate.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link TeacherClassManagement.OnFragmentInteractionListener} interface
+ * {@link StudentEnrollment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link TeacherClassManagement#newInstance} factory method to
+ * Use the {@link StudentEnrollment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class StudentEnrollment extends Fragment {
@@ -72,7 +72,7 @@ public class StudentEnrollment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment TeacherClassManagement.
+     * @return A new instance of fragment StudentEnrollment.
      */
     // TODO: Rename and change types and number of parameters
     public static StudentEnrollment newInstance() {
