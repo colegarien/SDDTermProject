@@ -1,3 +1,14 @@
+/* Team 9Lives
+ *
+ * Author: Matt McHughes
+ * Purpose:
+ *   UI for student users
+ *
+ *      Edit 11/24/2015
+ *          cleaned up and commented code
+ *
+ */
+
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
@@ -95,7 +106,7 @@ public class StudentInterface extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
-
+    //initialize UI components
     private void initUI(final View rootView) {
 
         rollcall = (Button) rootView.findViewById(R.id.stu_roll_btn);
@@ -105,7 +116,7 @@ public class StudentInterface extends Fragment {
         currentClasses = (Button)rootView.findViewById(R.id.drop_classes);
         userInfo = (Button)rootView.findViewById(R.id.user_info_btn);
 
-
+        //initialize UI component listeners
         rollcall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -190,7 +201,7 @@ public class StudentInterface extends Fragment {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
-
+    //fragment launcher
     private void launchFragment(Fragment f)
     {
         if(f != null)

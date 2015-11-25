@@ -1,3 +1,14 @@
+/* Team 9Lives
+ *
+ * Author: Matt McHughes
+ * Purpose:
+ *   UI for teacher users
+ *
+ *      Edit 11/24/2015
+ *          cleaned up and commented code
+ *
+ */
+
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
@@ -88,7 +99,7 @@ public class TeacherInterface extends Fragment {
 
 
     }
-
+    //init UI components
     private void initUI(final View rootView) {
 
         rollcall = (Button) rootView.findViewById(R.id.teach_roll_btn);
@@ -98,7 +109,7 @@ public class TeacherInterface extends Fragment {
         userInfo = (Button)rootView.findViewById(R.id.user_info_btn);
         attend = (Button)rootView.findViewById(R.id.teach_attend_btn);
 
-
+        //set ui component listeners
         rollcall.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -203,7 +214,7 @@ public class TeacherInterface extends Fragment {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
-
+    //fragment launcher
     private void launchFragment(Fragment f)
     {
         if(f != null)

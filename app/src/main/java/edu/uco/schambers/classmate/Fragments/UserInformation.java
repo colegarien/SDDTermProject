@@ -1,3 +1,14 @@
+/* Team 9Lives
+ *
+ * Author: Matt McHughes
+ * Purpose:
+ *   UI user information that displays information according to student vs. teacher
+ *
+ *      Edit 11/24/2015
+ *          cleaned up and commented code
+ *
+ */
+
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
@@ -147,7 +158,7 @@ public class UserInformation extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
-
+    //init UI components
     private void initUI(final View rootView) throws JSONException {
 
         name  = (TextView)rootView.findViewById(R.id.stored_name_lbl);
@@ -171,27 +182,35 @@ public class UserInformation extends Fragment {
         spinnerArray =  new ArrayList<String>();
         addSchoolActive = false;
 
-
+        //check sharedPreferences and update information accordingly
         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
         sp2 = getActivity().getSharedPreferences(MySCHOOL, Context.MODE_PRIVATE);
+
+        //check authorization token from sp, use user information to update text fields
+
         token = sp.getString("AUTH_TOKEN", null);
         user = TokenUtility.parseUserToken(token);
         name.setText(user.getName().toString());
         email.setText(user.getEmail().toString());
+
+        //if schools exist in sp, get them all and list them in the appropriate spinners
+
         for(int i = 0; i < sp2.getInt("SCHOOL_COUNT", 1); i++){
             schoolArray[i] = sp2.getString("SCHOOL_ARRAY_" + i, null);
             spinnerArray.add(schoolArray[i]);
             Log.i("school array", sp2.getString("SCHOOL_ARRAY_" + i, "not found"));
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinnerArray);
-
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner sItems = (Spinner) rootView.findViewById(R.id.spinner);
         sItems.setAdapter(adapter);
+
+        //init id text and change visibility of components for initial view
         id.setText(Integer.toString(user.getId()));
         toChangePass = false;
         ChangePasswordVisibility(toChangePass);
 
+        //init state listener
         state.setSelection(0);
         state.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -214,6 +233,8 @@ public class UserInformation extends Fragment {
 
             }
         });
+
+        //initial view options
         add.setVisibility(View.GONE);
         schoolLbl.setVisibility(View.GONE);
         spinner.setVisibility(View.GONE);
@@ -226,7 +247,7 @@ public class UserInformation extends Fragment {
             schoolLbl.setVisibility(View.VISIBLE);
             spinner.setVisibility(View.VISIBLE);
         }
-
+        //init ui component listeners
         changePass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -234,7 +255,7 @@ public class UserInformation extends Fragment {
                 ChangePasswordVisibility(toChangePass);
             }
         });
-
+        //make add button functionality work in appropriate context
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -256,7 +277,7 @@ public class UserInformation extends Fragment {
                 }
             }
         });
-
+        //make cancel button work in appropriate context
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -279,7 +300,7 @@ public class UserInformation extends Fragment {
 
             }
         });
-
+        //set confirm button for changing user password
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -317,28 +338,13 @@ public class UserInformation extends Fragment {
                     }
 
                 }
-
-
-                /*if (!dr.validateUser(user.getEmail().toString(), currentPass.getText().toString())) {
-                    currentPass.setError("Incorrect Current Password");
-                } else if (!user.isValidPassword(newPass.getText().toString())) {
-                    newPass.setError("Password must be less than four characters");
-                } else if (!newPass.getText().toString().equals(confirmNewPass.getText().toString())) {
-                    newPass.setError("New passwords do not match.");
-                } else {
-                    user.setPassword(newPass.getText().toString());
-                    toChangePass = false;
-                    ChangePasswordVisibility(toChangePass);
-                    Toast.makeText(getActivity(), "Your Password has been Updated", Toast.LENGTH_LONG).show();
-
-                      }*/
             }
         });
 
 
 
     }
-
+    //function for changing password reset visibility
     private void ChangePasswordVisibility(boolean cp){
         if(cp == true){
             currentPass.setVisibility(View.VISIBLE);
@@ -390,7 +396,7 @@ public class UserInformation extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
     
-
+    //fragment launcher
     private void launchFragment(Fragment f) {
         if (f != null) {
             FragmentTransaction trans = getFragmentManager().beginTransaction();

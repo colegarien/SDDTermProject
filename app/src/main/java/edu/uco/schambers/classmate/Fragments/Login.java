@@ -1,3 +1,14 @@
+/* Team 9Lives
+ *
+ * Author: Matt McHughes
+ * Purpose:
+ *   UI Signup for new users
+ *
+ *      Edit 11/24/2015
+ *          cleaned up and commented code
+ *
+ */
+
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
@@ -137,7 +148,7 @@ public class Login extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
-
+    //init UI components
     private void initUI(final View rootView) {
         cb = (CheckBox) rootView.findViewById(R.id.student_cb);
         idET = (EditText) rootView.findViewById(R.id.student_id_et);
@@ -159,6 +170,7 @@ public class Login extends Fragment {
 
         cbVisibility();
 
+        //initialize UI component Listeners
         cb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -211,6 +223,7 @@ public class Login extends Fragment {
             }
         });
 
+        //initialize state spinner
         state.setSelection(0);
         state.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -264,9 +277,7 @@ public class Login extends Fragment {
                     idET.startAnimation(errorBlink);
                     idET.requestFocus();
                     idET.setError("please fill out all appropriate information");
-                } /*else if (cb.isChecked() && dr.userExist(Integer.parseInt(idET.getText().toString()))) {
-                    idET.setError("User already exist");
-                }*/ else {
+                }  else {
                     sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
                     editor = sp.edit();
 
@@ -277,6 +288,7 @@ public class Login extends Fragment {
                     user.setEmail(email.getText().toString());
                     user.setPassword(pass.getText().toString());
 
+                    //set student/teacher attributes accordingly
                     if(cb.isChecked()){
                         user.setIsStudent(true);
                         user.setId(Integer.parseInt(idET.getText().toString()));
@@ -293,7 +305,7 @@ public class Login extends Fragment {
 
                         editor.commit();
                     }
-
+                    //create new user
                     try {
                         new UserAdapter().createUser(user, new Callback<HttpResponse>() {
                             @Override
@@ -318,7 +330,7 @@ public class Login extends Fragment {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
+                    //login new user
                     try {
                         aa.authenticate(email.getText().toString(), pass.getText().toString(), new Callback<HttpResponse>() {
                             @Override
@@ -352,17 +364,18 @@ public class Login extends Fragment {
                         pass.setError("Incorrect E-Mail or Password");
                     }
 
-                    //store username in Shared Preferences
-                    /*sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-                    editor = sp.edit();
-                    editor.putString("USER_KEY", user.getEmail());
-                    editor.commit();*/
                 }
             }
         });
 
     }
+    /*
 
+    FUNCTIONS
+
+     */
+
+    //function for student checkbox vs. teacher school spinner
     public void cbVisibility() {
 
         if (!cb.isChecked()) {
@@ -376,6 +389,35 @@ public class Login extends Fragment {
             school.setVisibility(View.INVISIBLE);
             state.setVisibility(View.INVISIBLE);
         }
+    }
+    //fragment launcher
+    private void launchFragment(Fragment f) {
+        if (f != null) {
+            FragmentTransaction trans = getFragmentManager().beginTransaction();
+            trans.replace(R.id.fragment_container, f).addToBackStack("debug");
+            trans.commit();
+        }
+    }
+    //function to check which interface to send user to
+    public void ChooseInterface(boolean isStudent) {
+        if (!isStudent) {
+            Fragment teacher = TeacherInterface.newInstance("test", "test");
+            launchFragment(teacher);
+        }else{
+            Fragment student = StudentInterface.newInstance("test", "test");
+            launchFragment(student);
+        }
+    }
+
+    //logout function
+    public void Logout(){
+        sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
+        editor = sp.edit();
+        editor.remove("AUTH_TOKEN");
+        editor.clear();
+        editor.putString("AUTH_TOKEN", "");
+        editor.commit();
+
     }
 
 
@@ -417,33 +459,6 @@ public class Login extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-    private void launchFragment(Fragment f) {
-        if (f != null) {
-            FragmentTransaction trans = getFragmentManager().beginTransaction();
-            trans.replace(R.id.fragment_container, f).addToBackStack(null);
-            trans.commit();
-        }
-    }
-
-    public void ChooseInterface(boolean isStudent) {
-        if (!isStudent) {
-            Fragment teacher = TeacherInterface.newInstance("test", "test");
-            launchFragment(teacher);
-        }else{
-            Fragment student = StudentInterface.newInstance("test", "test");
-            launchFragment(student);
-        }
-    }
-
-    public void Logout(){
-        sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-        editor = sp.edit();
-        editor.remove("AUTH_TOKEN");
-        editor.clear();
-        editor.putString("AUTH_TOKEN", "");
-        editor.commit();
-
-    }
+    
 
 }

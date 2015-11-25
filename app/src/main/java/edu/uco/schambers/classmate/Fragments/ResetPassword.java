@@ -1,3 +1,13 @@
+/* Team 9Lives
+ *
+ * Author: Matt McHughes
+ * Purpose:
+ *   reset password for existing users who have forgotten their password
+ *
+ *      Todo: wire reset password email
+ *
+ */
+
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
@@ -99,7 +109,7 @@ public class ResetPassword extends Fragment {
         super.onDetach();
         mListener = null;
     }
-
+    //init UI components
     private void initUI(final View rootView){
         email = (EditText) rootView.findViewById(R.id.user_email_et);
         reset = (Button) rootView.findViewById(R.id.reset_pass_btn);
@@ -128,7 +138,7 @@ public class ResetPassword extends Fragment {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
-
+    //fragment launcher
     private void launchFragment(Fragment f)
     {
         if(f != null)

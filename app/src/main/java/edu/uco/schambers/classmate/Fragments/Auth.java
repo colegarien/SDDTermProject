@@ -1,3 +1,14 @@
+/* Team 9Lives
+ *
+ * Author: Matt McHughes
+ * Purpose:
+ *   UI Login for users
+ *
+ *      Edit 11/24/2015
+ *          cleaned up and commented code
+ *
+ */
+
 package edu.uco.schambers.classmate.Fragments;
 
 import android.app.Activity;
@@ -130,7 +141,7 @@ public class Auth extends Fragment {
         super.onDetach();
         mListener = null;
     }
-
+    //initalize UI components
     private void initUI(final View rootView) {
 
         ll = (LinearLayout) rootView.findViewById(R.id.auth_ll);
@@ -142,6 +153,7 @@ public class Auth extends Fragment {
         dr = new DataRepo(getActivity());
         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
 
+        //check sharedPreferences for login token, if available auto-login
         if(sp.contains("AUTH_TOKEN") && (!sp.getString("AUTH_TOKEN", "").equals(""))) {
             token = sp.getString("AUTH_TOKEN", null);
             try {
@@ -152,7 +164,7 @@ public class Auth extends Fragment {
             }
         }
 
-
+        //initialize UI Listeners
         email.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
@@ -192,6 +204,8 @@ public class Auth extends Fragment {
             @Override
             public void onClick(View v)
             {
+
+                //validate email & password
                 if (!user.isValidEmail(email.getText().toString())) {
                     errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
                     email.startAnimation(errorBlink);
@@ -203,10 +217,13 @@ public class Auth extends Fragment {
                     pass.requestFocus();
                     pass.setError("please enter a password.");
                 }  else {
+
+                    //create authorization token
+
                     AuthAdapter auth = new AuthAdapter(getActivity());
                     sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
                     token = sp.getString("AUTH_TOKEN", null);
-
+                    //attempt logging in
                     try {
                         auth.authenticate(email.getText().toString(), pass.getText().toString(), new Callback<HttpResponse>() {
                             @Override
@@ -250,12 +267,15 @@ public class Auth extends Fragment {
                 }
             }
         });
+
+        //animation for login fragment
         titleMove = AnimationUtils.loadAnimation(getActivity(), R.anim.signinmove);
         ll.startAnimation(titleMove);
 
 
     }
 
+    //function for sending user to appropriate user interface
     public void ChooseInterface(boolean isStudent) {
         if (!isStudent) {
             Fragment teacher = TeacherInterface.newInstance("test", "test");
@@ -265,7 +285,7 @@ public class Auth extends Fragment {
             launchFragment(student);
         }
     }
-
+    //function for autologin to appropriate user interface
     public void ChooseAutoInterface(boolean isStudent) {
         if (!isStudent) {
             Fragment teacher = TeacherInterface.newInstance("test", "test");
@@ -290,7 +310,7 @@ public class Auth extends Fragment {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
-
+    //fragment launcher
     private void launchFragment(Fragment f)
     {
         if(f != null)
@@ -306,11 +326,11 @@ public class Auth extends Fragment {
         if(f != null)
         {
             FragmentTransaction trans = getFragmentManager().beginTransaction();
-            trans.replace(R.id.fragment_container, f).addToBackStack(null);;
+            trans.replace(R.id.fragment_container, f).addToBackStack(null);
             trans.commit();
         }
     }
-
+    //fragment launcher for autologin
     private void launchAutoLoginFragment(Fragment f){
         if(f != null)
         {
