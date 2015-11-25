@@ -150,6 +150,8 @@ public class UserInformation extends Fragment {
 
     private void initUI(final View rootView) throws JSONException {
 
+        //initialize UI components
+
         name  = (TextView)rootView.findViewById(R.id.stored_name_lbl);
         email = (TextView)rootView.findViewById(R.id.stored_email_lbl);
         schoolLbl = (TextView)rootView.findViewById(R.id.ui_school_lbl);
@@ -167,30 +169,38 @@ public class UserInformation extends Fragment {
         spinner = (Spinner)rootView.findViewById(R.id.spinner);
         add = (Button)rootView.findViewById(R.id.addClass_btn);
 
-        String[] schoolArray = new String[25];
-        spinnerArray =  new ArrayList<String>();
-        addSchoolActive = false;
 
-
+        //check shared preferences for user information
         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
-        sp2 = getActivity().getSharedPreferences(MySCHOOL, Context.MODE_PRIVATE);
+
         token = sp.getString("AUTH_TOKEN", null);
         user = TokenUtility.parseUserToken(token);
         name.setText(user.getName().toString());
         email.setText(user.getEmail().toString());
-        for(int i = 0; i < sp2.getInt("SCHOOL_COUNT", 1); i++){
-            schoolArray[i] = sp2.getString("SCHOOL_ARRAY_" + i, null);
-            spinnerArray.add(schoolArray[i]);
-            Log.i("school array", sp2.getString("SCHOOL_ARRAY_" + i, "not found"));
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinnerArray);
-
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner sItems = (Spinner) rootView.findViewById(R.id.spinner);
-        sItems.setAdapter(adapter);
         id.setText(Integer.toString(user.getId()));
+        loadSchoolData(spinner);
+        //initialize original view
+
         toChangePass = false;
         ChangePasswordVisibility(toChangePass);
+        addSchoolActive = false;
+
+
+        //initialize original view for teacher vs. student
+
+        add.setVisibility(View.GONE);
+        schoolLbl.setVisibility(View.GONE);
+        spinner.setVisibility(View.GONE);
+
+        if (!user.isStudent()) {
+            id.setVisibility(View.GONE);
+            idLbl.setVisibility(View.GONE);
+            add.setVisibility(View.VISIBLE);
+            schoolLbl.setVisibility(View.VISIBLE);
+            spinner.setVisibility(View.VISIBLE);
+        }
+
+        // set state spinner and functionality
 
         state.setSelection(0);
         state.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -214,35 +224,38 @@ public class UserInformation extends Fragment {
 
             }
         });
-        add.setVisibility(View.GONE);
-        schoolLbl.setVisibility(View.GONE);
-        spinner.setVisibility(View.GONE);
 
 
-        if (!user.isStudent()) {
-            id.setVisibility(View.GONE);
-            idLbl.setVisibility(View.GONE);
-            add.setVisibility(View.VISIBLE);
-            schoolLbl.setVisibility(View.VISIBLE);
-            spinner.setVisibility(View.VISIBLE);
-        }
-
+        //set change password functionality & view
         changePass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toChangePass = true;
-                ChangePasswordVisibility(toChangePass);
+
+                if(addSchoolActive == true){
+                    addSchoolActive = false;
+                    ChangePasswordVisibility(toChangePass);
+                } else{
+                    toChangePass = true;
+                    ChangePasswordVisibility(toChangePass);
+                }
+
+
             }
         });
+
+        //set add school button functionality
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if(toChangePass == true){
+                    toChangePass = false;
+                    ChangePasswordVisibility(toChangePass);
+                    changePass.setChecked(false);
+                }
                 if(addSchoolActive == false){
-                    state.setVisibility(View.VISIBLE);
-                    school.setVisibility(View.VISIBLE);
-                    cancel.setVisibility(View.VISIBLE);
-                    changePass.setVisibility(View.GONE);
+                    ChangeAddSchoolVisibility(addSchoolActive);
                     addSchoolActive = true;
                 } else {
                     sp = getActivity().getSharedPreferences(MySCHOOL, Context.MODE_PRIVATE);
@@ -251,15 +264,20 @@ public class UserInformation extends Fragment {
                     editor.putInt("SCHOOL_COUNT", count + 1);
                     editor.putString("SCHOOL_ARRAY_" + count, school.getSelectedItem().toString());
                     editor.commit();
-                    Fragment user = UserInformation.newInstance("test", "test");
-                    launchFragment(user);
+                    loadSchoolData(spinner);
+                    Toast.makeText(getActivity(), "Your school has been added!", Toast.LENGTH_LONG).show();
+                    ChangeAddSchoolVisibility(addSchoolActive);
+                    addSchoolActive = false;
                 }
             }
         });
 
+        //function if user cancels change of password
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
 
                 if(toChangePass == true){
                     toChangePass = false;
@@ -268,18 +286,17 @@ public class UserInformation extends Fragment {
                     newPass.setText("");
                     confirmNewPass.setText("");
                     changePass.setChecked(false);
-                }else if (addSchoolActive == true){
-                    state.setVisibility(View.GONE);
-                    school.setVisibility(View.GONE);
-                    cancel.setVisibility(View.GONE);
-                    changePass.setVisibility(View.VISIBLE);
-                    addSchoolActive = false;
                 }
 
+                if (addSchoolActive == true){
+                    ChangeAddSchoolVisibility(addSchoolActive);
+                    addSchoolActive = false;
+                }
 
             }
         });
 
+        //function if user confirms changing password
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -317,21 +334,6 @@ public class UserInformation extends Fragment {
                     }
 
                 }
-
-
-                /*if (!dr.validateUser(user.getEmail().toString(), currentPass.getText().toString())) {
-                    currentPass.setError("Incorrect Current Password");
-                } else if (!user.isValidPassword(newPass.getText().toString())) {
-                    newPass.setError("Password must be less than four characters");
-                } else if (!newPass.getText().toString().equals(confirmNewPass.getText().toString())) {
-                    newPass.setError("New passwords do not match.");
-                } else {
-                    user.setPassword(newPass.getText().toString());
-                    toChangePass = false;
-                    ChangePasswordVisibility(toChangePass);
-                    Toast.makeText(getActivity(), "Your Password has been Updated", Toast.LENGTH_LONG).show();
-
-                      }*/
             }
         });
 
@@ -340,6 +342,8 @@ public class UserInformation extends Fragment {
     }
 
     private void ChangePasswordVisibility(boolean cp){
+
+        //if user is changing password, make appropriate components visible,
         if(cp == true){
             currentPass.setVisibility(View.VISIBLE);
             newPass.setVisibility(View.VISIBLE);
@@ -356,6 +360,36 @@ public class UserInformation extends Fragment {
             cancel.setVisibility(View.GONE);
             changePass.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void ChangeAddSchoolVisibility(boolean addSchool){
+        if(addSchool == false){
+            state.setVisibility(View.VISIBLE);
+            school.setVisibility(View.VISIBLE);
+            cancel.setVisibility(View.VISIBLE);
+            changePass.setVisibility(View.GONE);
+        } else if(addSchool == true){
+            state.setVisibility(View.GONE);
+            school.setVisibility(View.GONE);
+            cancel.setVisibility(View.GONE);
+            changePass.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void loadSchoolData(Spinner sItems){
+        String[] schoolArray = new String[100];
+        spinnerArray =  new ArrayList<String>();
+        addSchoolActive = false;
+
+        sp2 = getActivity().getSharedPreferences(MySCHOOL, Context.MODE_PRIVATE);
+
+        for(int i = 0; i < sp2.getInt("SCHOOL_COUNT", 1); i++){
+            schoolArray[i] = sp2.getString("SCHOOL_ARRAY_" + i, null);
+            spinnerArray.add(schoolArray[i]);
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinnerArray);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sItems.setAdapter(adapter);
     }
 
     @Override
