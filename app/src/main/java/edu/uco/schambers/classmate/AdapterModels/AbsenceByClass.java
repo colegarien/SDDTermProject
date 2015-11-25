@@ -1,5 +1,9 @@
 package edu.uco.schambers.classmate.AdapterModels;
 
+/**
+ * Created by Nelson.
+ */
+
 public class AbsenceByClass {
     private int enrollmentId;
     private int studentId;

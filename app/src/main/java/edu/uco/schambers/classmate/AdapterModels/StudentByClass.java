@@ -1,5 +1,9 @@
 package edu.uco.schambers.classmate.AdapterModels;
 
+/**
+ * Created by Nelson.
+ */
+
 public class StudentByClass {
     private int id;
     private String name;

@@ -37,6 +37,10 @@ import edu.uco.schambers.classmate.AdapterModels.User;
 import edu.uco.schambers.classmate.R;
 
 /**
+ * Created by Nelson.
+ */
+
+/**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * {@link StudentEnrollment.OnFragmentInteractionListener} interface

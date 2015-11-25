@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Created by Nelson.
+ */
 
 public class User implements Serializable {
 	private int pKey;
@@ -58,18 +61,18 @@ public class User implements Serializable {
 	}
 
 
+	//Regex
 	private static final String NAME = "[a-zA-Z ]+";
 	private static final String EMAIL = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
+	//validate string using regex
 	public static boolean isValidName(String name) {
-
 		Pattern pattern = Pattern.compile(NAME);
 		Matcher matcher = pattern.matcher(name);
 		return matcher.matches();
 	}
-	// validating email id
+	// validating email address using regex
 	public static boolean isValidEmail(String email) {
-
 		Pattern pattern = Pattern.compile(EMAIL);
 		Matcher matcher = pattern.matcher(email);
 		return matcher.matches();

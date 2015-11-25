@@ -29,11 +29,15 @@ import edu.uco.schambers.classmate.AdapterModels.TokenUtility;
 import edu.uco.schambers.classmate.R;
 
 /**
+ * Created by Nelson.
+ */
+
+/**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link TeacherClassManagement.OnFragmentInteractionListener} interface
+ * {@link StudentCurrentClasses.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link TeacherClassManagement#newInstance} factory method to
+ * Use the {@link StudentCurrentClasses#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class StudentCurrentClasses extends Fragment {
@@ -51,7 +55,7 @@ public class StudentCurrentClasses extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment TeacherClassManagement.
+     * @return A new instance of fragment StudentCurrentClasses.
      */
     // TODO: Rename and change types and number of parameters
     public static StudentCurrentClasses newInstance() {

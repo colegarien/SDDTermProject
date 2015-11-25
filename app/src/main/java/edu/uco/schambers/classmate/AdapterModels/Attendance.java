@@ -2,6 +2,10 @@ package edu.uco.schambers.classmate.AdapterModels;
 
 import java.util.Date;
 
+/**
+ * Created by Nelson.
+ */
+
 public class Attendance {
     private int enrollmentId;
     private Date date;
