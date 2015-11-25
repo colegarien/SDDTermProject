@@ -11,6 +11,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * Created by Nelson
+ */
 
 public class ServiceHandlerAsync extends AsyncTask<ServiceCall, Integer, HttpResponse> {
 
@@ -40,6 +43,7 @@ public class ServiceHandlerAsync extends AsyncTask<ServiceCall, Integer, HttpRes
         }
     }
 
+    //making a http request to the web service and getting a responce
     private static HttpResponse makeServiceCall(String serviceUrl, String method, String body) throws IOException {
         URL url = new URL(serviceUrl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();

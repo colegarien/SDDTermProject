@@ -17,6 +17,10 @@ import edu.uco.schambers.classmate.AdapterModels.Class;
 import edu.uco.schambers.classmate.AdapterModels.StudentAbsenceByClass;
 import edu.uco.schambers.classmate.AdapterModels.StudentByClass;
 
+/**
+ * Created by Nelson.
+ */
+
 public class AttendanceAdapter {
     private final static String Url = "http://classmateapi.azurewebsites.net/api/";
 

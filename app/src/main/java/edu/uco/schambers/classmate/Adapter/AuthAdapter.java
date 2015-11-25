@@ -24,8 +24,8 @@ public class AuthAdapter {
         this.activity = activity;
     }
 
-    //validate then generate token
-    public void authenticate(String email, String password, final Callback<HttpResponse> callback) throws JSONException, IOException {
+    //validate user then generate token
+    public static void authenticate(String email, String password, final Callback<HttpResponse> callback) throws JSONException, IOException {
 
 
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
