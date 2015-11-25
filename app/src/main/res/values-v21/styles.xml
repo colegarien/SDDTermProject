@@ -11,11 +11,11 @@
         <item name="android:textColor">#1565C0</item>
         <item name="android:textColorPrimary">#000</item>
         <item name="android:buttonStyle">@style/ButtonViewStyle</item>
+        <item name="android:colorButtonNormal">#1565C0</item>
+
     </style>
 
     <style name="ButtonViewStyle" parent="android:Widget.Material.Light.Button">
-        <item name="android:textColor">#1565C0</item>
-        <item name="android:textStyle">bold</item>
-        
+        <item name="android:textColor">#FFFFFF</item>
     </style>
 </resources>

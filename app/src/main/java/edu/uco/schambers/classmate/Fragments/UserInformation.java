@@ -347,6 +347,7 @@ public class UserInformation extends Fragment {
             confirm.setVisibility(View.VISIBLE);
             cancel.setVisibility(View.VISIBLE);
             changePass.setVisibility(View.GONE);
+            add.setVisibility(View.GONE);
 
         }else{
             currentPass.setVisibility(View.GONE);
@@ -355,6 +356,7 @@ public class UserInformation extends Fragment {
             confirm.setVisibility(View.GONE);
             cancel.setVisibility(View.GONE);
             changePass.setVisibility(View.VISIBLE);
+            add.setVisibility(View.VISIBLE);
         }
     }
 

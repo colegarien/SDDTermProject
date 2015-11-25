@@ -42,7 +42,7 @@
     <string name="student">Student</string>
     <string name="roll">Roll Call</string>
     <string name="attendance">Attendance Records</string>
-    <string name="response">In Class Response</string>
+    <string name="response">Question Center</string>
     <string name="responseres">Response Results</string>
     <string name="classmanage">Class Management</string>
     <string name="user_enrollment">Enrollment</string>
