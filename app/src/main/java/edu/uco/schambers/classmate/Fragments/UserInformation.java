@@ -92,7 +92,6 @@ public class UserInformation extends Fragment {
     public static final String MyPREFS = "MyPREFS";
     public static final String MySCHOOL = "MySCHOOL";
     public String token;
-    private DataRepo dr;
     public User user;
     Fragment context = this;
 
