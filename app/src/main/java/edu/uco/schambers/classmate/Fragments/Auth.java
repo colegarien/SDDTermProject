@@ -175,7 +175,7 @@ public class Auth extends Fragment {
             @Override
             public void onClick(View v) {
                 Fragment signup = Login.newInstance("test", "test");
-                launchFragment(signup);
+                launchBackStackFragment(signup);
             }
         });
 
@@ -183,7 +183,7 @@ public class Auth extends Fragment {
             @Override
             public void onClick(View v) {
                 Fragment reset = ResetPassword.newInstance("test", "test");
-                launchFragment(reset);
+                launchBackStackFragment(reset);
             }
         });
 
@@ -297,6 +297,16 @@ public class Auth extends Fragment {
         {
             FragmentTransaction trans = getFragmentManager().beginTransaction();
             trans.replace(R.id.fragment_container, f);
+            trans.commit();
+        }
+    }
+
+    private void launchBackStackFragment(Fragment f)
+    {
+        if(f != null)
+        {
+            FragmentTransaction trans = getFragmentManager().beginTransaction();
+            trans.replace(R.id.fragment_container, f).addToBackStack(null);;
             trans.commit();
         }
     }
