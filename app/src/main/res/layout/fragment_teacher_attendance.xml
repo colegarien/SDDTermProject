@@ -34,12 +34,6 @@
         android:id="@+id/spinnerClassSelect"
         android:spinnerMode="dropdown" />
 
-    <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/spinnerSort"
-        android:spinnerMode="dropdown" />
-
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
