@@ -6,6 +6,7 @@
  *   UI backend for teacher attendance and class management
  *   module.
  * Edits:
+ *      11/25/2015 11:31 PM Rayan Al-Hammami*   Code Cleanup and Verification of Teacher Attendance Piechart Pulling Actual Data
  *      11/1/2015 9:36 PM	Matt McHughes	clean up code
         11/1/2015 9:30 PM	Matt McHughes	teacher class management only shows current schools teacher has added
         10/27/2015 3:59 PM	Steven	make table layout correct for all devices
