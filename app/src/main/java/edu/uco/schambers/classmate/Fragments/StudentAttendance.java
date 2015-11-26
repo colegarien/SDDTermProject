@@ -38,42 +38,52 @@ import edu.uco.schambers.classmate.Adapter.EnrollmentAdapter;
 import edu.uco.schambers.classmate.AdapterModels.*;
 import edu.uco.schambers.classmate.AdapterModels.Class;
 import edu.uco.schambers.classmate.R;
-//import edu.uco.schambers.classmate.model.ClassMate;
-//import edu.uco.schambers.classmate.sqlite.DatabaseHelper;
 
-class AttendanceRecord{
+// Creating class to handles passing values by making getter and setter methods
+class AttendanceRecord {
     int number;
     String className;
     int attendances;
     int absences;
     String date;
-    public int getNumber(){return number;}
-    public String getClassName(){return className;}
-    public int getAttendances(){return attendances;}
-    public int getAbsences(){return absences;}
-    public String getDate(){return date;}
-    AttendanceRecord(int number,String className, int attendances, int absences,String date){
-        this.number=number;
+
+    public int getNumber() {
+        return number;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public int getAttendances() {
+        return attendances;
+    }
+
+    public int getAbsences() {
+        return absences;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    AttendanceRecord(int number, String className, int attendances, int absences, String date) {
+        this.number = number;
         this.className = className;
         this.attendances = attendances;
         this.absences = absences;
-        this.date=date;
+        this.date = date;
     }
 }
 
 public class StudentAttendance extends Fragment {
     private Spinner s;
-    private int[] snumber;
-    private AttendanceRecord [] attendanceRecords = new AttendanceRecord[47];
-    private int[] sattendance;
-    private int[] sabsences;
-    private String[] sdate;
     ArrayAdapter<SpinnerItem> adapter;
     List<SpinnerItem> arraySpinner;
     private int userId;
 
     private TextView missing, attendance;
-   // private DatabaseHelper databaseHelper;
+    // private DatabaseHelper databaseHelper;
     private OnFragmentInteractionListener mListener;
     private View mChart;
 
@@ -85,64 +95,21 @@ public class StudentAttendance extends Fragment {
         return fragment;
     }
 
+    // constructor of StudentAttendance class
     public StudentAttendance() {
         // Required empty public constructor
     }
 
+    //overriding method onCreate  an overriden method is one having same name
+    // and signature in child class this is between parent and child class
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*attendanceRecords[0] = new AttendanceRecord(1,"Data Structures",1,0,"09/10/2015");
-        attendanceRecords[1] = new AttendanceRecord(2,"Data Structures",1,0,"09/13/2015");
-        attendanceRecords[2] = new AttendanceRecord(3,"Data Structures",1,0,"09/16/2015");
-        attendanceRecords[3] = new AttendanceRecord(4,"Data Structures",1,0,"09/19/2015");
-        attendanceRecords[4] = new AttendanceRecord(5,"Data Structures",0,1,"09/22/2015");
-        attendanceRecords[5] = new AttendanceRecord(6,"Data Structures",1,0,"09/25/2015");
-        attendanceRecords[6] = new AttendanceRecord(7,"Data Structures",0,1,"09/28/2015");
-        attendanceRecords[7] = new AttendanceRecord(1,"Programming I",1,0,"09/10/2015");
-        attendanceRecords[8] = new AttendanceRecord(2,"Programming I",1,0,"09/13/2015");
-        attendanceRecords[9] = new AttendanceRecord(3,"Programming I",1,0,"09/16/2015");
-        attendanceRecords[10] = new AttendanceRecord(4,"Programming I",1,0,"09/19/2015");
-        attendanceRecords[11] = new AttendanceRecord(5,"Programming I",1,0,"09/22/2015");
-        attendanceRecords[12] = new AttendanceRecord(6,"Programming I",1,0,"09/25/2015");
-        attendanceRecords[13] = new AttendanceRecord(7,"Programming I",1,0,"09/28/2015");
-        attendanceRecords[14] = new AttendanceRecord(1,"Programming II",1,0,"09/09/2015");
-        attendanceRecords[15] = new AttendanceRecord(2,"Programming II",0,1,"09/12/2015");
-        attendanceRecords[16] = new AttendanceRecord(3,"Programming II",1,0,"09/15/2015");
-        attendanceRecords[17] = new AttendanceRecord(4,"Programming II",0,1,"09/18/2015");
-        attendanceRecords[18] = new AttendanceRecord(5,"Programming II",0,1,"09/20/2015");
-        attendanceRecords[19] = new AttendanceRecord(6,"Programming II",0,1,"09/22/2015");
-        attendanceRecords[20] = new AttendanceRecord(7,"Programming II",1,0,"09/24/2015");
-        attendanceRecords[21] = new AttendanceRecord(8,"Programming II",1,0,"09/26/2015");
-        attendanceRecords[22] = new AttendanceRecord(9,"Programming II",1,0,"09/29/2015");
-        attendanceRecords[23] = new AttendanceRecord(10,"Programming II",1,0,"09/31/2015");
-        attendanceRecords[24] = new AttendanceRecord(1,"Mobile Apps",1,0,"09/09/2015");
-        attendanceRecords[25] = new AttendanceRecord(2,"Mobile Apps",1,0,"09/11/2015");
-        attendanceRecords[26] = new AttendanceRecord(3,"Mobile Apps",1,0,"09/13/2015");
-        attendanceRecords[27] = new AttendanceRecord(4,"Mobile Apps",1,0,"09/15/2015");
-        attendanceRecords[28] = new AttendanceRecord(5,"Mobile Apps",1,0,"09/17/2015");
-        attendanceRecords[29] = new AttendanceRecord(6,"Mobile Apps",1,0,"09/19/2015");
-        attendanceRecords[30] = new AttendanceRecord(7,"Mobile Apps",0,1,"09/21/2015");
-        attendanceRecords[31] = new AttendanceRecord(8,"Mobile Apps",0,1,"09/23/2015");
-        attendanceRecords[32] = new AttendanceRecord(9,"Mobile Apps",0,1,"09/25/2015");
-        attendanceRecords[33] = new AttendanceRecord(10,"Mobile Apps",1,0,"09/27/2015");
-        attendanceRecords[34] = new AttendanceRecord(11,"Mobile Apps",1,0,"09/29/2015");
-        attendanceRecords[35] = new AttendanceRecord(12,"Mobile Apps",0,1,"09/31/2015");
-        attendanceRecords[36] = new AttendanceRecord(13,"Mobile Apps",1,0,"10/02/2015");
-        attendanceRecords[37] = new AttendanceRecord(1,"Web Server",1,0,"09/10/2015");
-        attendanceRecords[38] = new AttendanceRecord(2,"Web Server",1,0,"09/13/2015");
-        attendanceRecords[39] = new AttendanceRecord(3,"Web Server",1,0,"09/16/2015");
-        attendanceRecords[40] = new AttendanceRecord(4,"Web Server",0,1,"09/19/2015");
-        attendanceRecords[41] = new AttendanceRecord(5,"Web Server",0,1,"09/22/2015");
-        attendanceRecords[42] = new AttendanceRecord(6,"Web Server",0,1,"09/25/2015");
-        attendanceRecords[43] = new AttendanceRecord(7,"Web Server",0,1,"09/28/2015");
-        attendanceRecords[44] = new AttendanceRecord(8,"Web Server",1,0,"09/31/2015");
-        attendanceRecords[45] = new AttendanceRecord(9,"Web Server",0,1,"10/03/2015");
-        attendanceRecords[46] = new AttendanceRecord(10,"Web Server",1,0,"10/06/2015");*/
 
     }
 
-
+    //overriding method onCreateOptionsMenuan overriden method is one having same name
+    // and signature in child class this is between parent and child class
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -152,18 +119,18 @@ public class StudentAttendance extends Fragment {
         final MenuItem vibrate = menu.add("Vibrate when checked-in");
         vibrate.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         vibrate.setVisible(!mute.isVisible());
-
+        //making visible on screen setting property visible
         mute.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-
+            //overridden process here on menuitem
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                vibrate.setVisible(true);
-                mute.setVisible(false);
+                vibrate.setVisible(true); //set visible property of  vibrate true
+                mute.setVisible(false); //set visible property of  mute   false
 
                 return true;
             }
         });
-
+        //implementing listener for vibrate
         vibrate.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
             @Override
@@ -181,28 +148,29 @@ public class StudentAttendance extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_student_attendance, container, false);
-        initUI(rootView);
+        initUI(rootView); //graphics for user interface
         missing = (TextView) rootView.findViewById(R.id.tvabsences);
         attendance = (TextView) rootView.findViewById(R.id.tvattendance);
         return rootView;
     }
 
-
+    //Api usage making for userinterface
     @TargetApi(Build.VERSION_CODES.M)
     private void initUI(final View rootView) {
         arraySpinner = new ArrayList<>();
         s = (Spinner) rootView.findViewById(R.id.classlist);
+        //decalraing adapter for layout
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, arraySpinner);
         s.setAdapter(adapter);
-       // List<ClassMate> lstClassMate = databaseHelper.getAllClassMate();
-
+        //  implementation of exception handling
         try {
             userId = TokenUtility.parseUserToken(getActivity()).getpKey();
 
             EnrollmentAdapter.getEnrolledClasses(userId, true, new Callback<ArrayList<Class>>() {
+                //overridden method which throw exception on completion of array
                 @Override
                 public void onComplete(ArrayList<Class> result) throws Exception {
-                    arraySpinner.add(new SpinnerItem("Select Class", ""));
+                    arraySpinner.add(new SpinnerItem("Select Class", "")); //adding record to array
                     for (Class c : result) {
                         arraySpinner.add(new SpinnerItem(c.getClass_name(), Integer.toString(c.getId())));
                     }
@@ -213,34 +181,29 @@ public class StudentAttendance extends Fragment {
             e.printStackTrace();
         }
 
-
-        /*arraySpinner.add("Data Structures");
-        arraySpinner.add("Programming I");
-        arraySpinner.add("Programming II");
-        arraySpinner.add("Mobile Apps");
-        arraySpinner.add("Web Server");*/
-
         s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(final AdapterView<?> parent, View view,
                                        final int position, long id) {
-
+                // checking and selecting item from array or record
                 if (parent.getSelectedItemPosition() == 0) return;
-
+                //layout setting
                 final TableLayout teacherAttendanceTable = (TableLayout) rootView.findViewById(R.id.studentAttendanceTable);
                 teacherAttendanceTable.setStretchAllColumns(true);
                 teacherAttendanceTable.bringToFront();
                 teacherAttendanceTable.removeAllViews();
-                SpinnerItem item = (SpinnerItem)s.getSelectedItem();
+                SpinnerItem item = (SpinnerItem) s.getSelectedItem();
                 int classId = Integer.parseInt(item.getValue());
+   /*      setting record in the form of table  and checking attendance absence of
+   students display there atendance and absence inthe form of table   */
 
                 try {
                     AttendanceAdapter.getStudentAbsencesByClass(classId, userId, new Callback<ArrayList<StudentAbsenceByClass>>() {
                         @Override
                         public void onComplete(ArrayList<StudentAbsenceByClass> result) throws Exception {
                             int number = 0;
-                            for (StudentAbsenceByClass sac: result){
+                            for (StudentAbsenceByClass sac : result) {
                                 if (!sac.isPresent()) {
                                     TableRow tr = new TableRow(getActivity());
                                     TextView c0 = new TextView(getActivity());
@@ -255,15 +218,15 @@ public class StudentAttendance extends Fragment {
 
                             int attendances = 0;
                             int absences = 0;
-                            for (StudentAbsenceByClass sac: result){
+                            for (StudentAbsenceByClass sac : result) {
                                 if (sac.isPresent())
                                     attendances++;
                                 else
                                     absences++;
                             }
 
-                            attendance.setText(attendances+"");
-                            missing.setText(absences+"");
+                            attendance.setText(attendances + "");
+                            missing.setText(absences + "");
                             int[] values = new int[]{attendances, absences};
                             String[] titles = new String[]{"attendance", "absences"};
                             drawPieChar(rootView, getActivity(), titles, values);
@@ -274,24 +237,6 @@ public class StudentAttendance extends Fragment {
                 }
 
 
-              /*  for (int i = 0; i < attendanceRecords.length; i++) {
-                    if (attendanceRecords[i].absences == 1 && attendanceRecords[i].className.equals(parent.getItemAtPosition(position))) { //Here where I change "parent.getItemAtPosition(position)"
-                        TableRow tr = new TableRow(getActivity());
-                        TextView c0 = new TextView(getActivity());
-                        c0.setText(attendanceRecords[i].number + "");
-                        TextView c1 = new TextView(getActivity());
-                        c1.setText(attendanceRecords[i].date + "");
-                        tr.addView(c0);
-                        tr.addView(c1);
-                        teacherAttendanceTable.addView(tr);
-                        absences++;
-                    }
-                    else if (attendanceRecords[i].attendances == 1 && attendanceRecords[i].className.equals(parent.getItemAtPosition(position))){
-                        attendances++;
-                    }
-                }*/
-
-
             }
 
             @Override
@@ -300,6 +245,9 @@ public class StudentAttendance extends Fragment {
             }
         });
     }
+/*     drawing pie chart accoring to above given percentages of students
+                weather how much students are presenr and how much not present
+              this chart will display the summary of above whole record   */
 
 
     public void drawPieChar(View rootView, Context context, String[] title, int[] value) {
@@ -307,14 +255,14 @@ public class StudentAttendance extends Fragment {
         int[] colors = {Color.BLUE, Color.MAGENTA, Color.GREEN, Color.CYAN, Color.RED, Color.TRANSPARENT};
 
         CategorySeries categorySeries = new CategorySeries("Draw Pie");
-        double sum=0;
-        for(int i=0;i<value.length;i++){
-            sum+=value[i];
+        double sum = 0;
+        for (int i = 0; i < value.length; i++) {
+            sum += value[i];
         }
         for (int i = 0; i < title.length; i++) {
-            categorySeries.add(title[i]+" ("+(Math.round(value[i]/sum*100))+"%)", value[i]);
+            categorySeries.add(title[i] + " (" + (Math.round(value[i] / sum * 100)) + "%)", value[i]);
         }
-        Log.d("LOOK!!!!",Math.round(value[1]/sum*100)+"");
+        Log.d("LOOK!!!!", Math.round(value[1] / sum * 100) + "");
         DefaultRenderer defaultRenderer = new DefaultRenderer();
         defaultRenderer.setShowLegend(true);
         defaultRenderer.setLabelsColor(Color.BLACK);
@@ -345,6 +293,7 @@ public class StudentAttendance extends Fragment {
     }
 
     // TODO: Rename method, update argument and hook method into UI event
+    //   implementing an event on pressing any button in reponse to any listener
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);

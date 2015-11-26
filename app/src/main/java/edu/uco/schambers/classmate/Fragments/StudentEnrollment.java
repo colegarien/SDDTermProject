@@ -45,13 +45,14 @@ import edu.uco.schambers.classmate.R;
  * create an instance of this fragment.
  */
 public class StudentEnrollment extends Fragment {
+    /*variables declaration*/
     private OnFragmentInteractionListener mListener;
 
-    ArrayList<Class> classList;
+    ArrayList<Class> classList;//declaring arraylist of type class
 
-    Spinner school;
-    ArrayAdapter<String> schoolAdapter;
-    ArrayList<String> schoolList;
+    Spinner school;//declaring spinner name school
+    ArrayAdapter<String> schoolAdapter; //declaring adapter array name schooladapter
+    ArrayList<String> schoolList;//declaring arraylist for schoollist
 
     Spinner semester;
     ArrayAdapter<String> semesterAdapter;
@@ -90,12 +91,13 @@ public class StudentEnrollment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    /* view creation for above record */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View rootView =  inflater.inflate(R.layout.fragment_student_enrollment, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_student_enrollment, container, false);
         try {
             initUI(rootView);
         } catch (JSONException e) {
@@ -104,16 +106,11 @@ public class StudentEnrollment extends Fragment {
         return rootView;
     }
 
-   /* @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        classTable.removeAllViews();
-    }*/
-
+    /*     GUI    setting    */
     private void initUI(final View rootView) throws JSONException {
-        school = (Spinner)rootView.findViewById(R.id.sp_school);
-        semester = (Spinner)rootView.findViewById(R.id.sp_semester);
-        year = (Spinner)rootView.findViewById(R.id.sp_year);
+        school = (Spinner) rootView.findViewById(R.id.sp_school);
+        semester = (Spinner) rootView.findViewById(R.id.sp_semester);
+        year = (Spinner) rootView.findViewById(R.id.sp_year);
         //Create a table layout object and link it to the fragment's table layout
         classTable = (TableLayout) rootView.findViewById(R.id.classTable);
 
@@ -130,9 +127,9 @@ public class StudentEnrollment extends Fragment {
         semesterList = new ArrayList<>();
 
         // instantiate array adapters for each object
-        schoolAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item, schoolList);
-        yearAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item, yearList);
-        semesterAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item, semesterList);
+        schoolAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, schoolList);
+        yearAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, yearList);
+        semesterAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, semesterList);
 
         // bind lists to controls
         school.setAdapter(schoolAdapter);
@@ -141,12 +138,10 @@ public class StudentEnrollment extends Fragment {
 
         final User user = TokenUtility.parseUserToken(getActivity());
         enrollmentAdapter = new EnrollmentAdapter();
-
-
+/*  getting school lists    */
         enrollmentAdapter.getSchools(new Callback<ArrayList<String>>() {
             @Override
             public void onComplete(ArrayList<String> result) throws Exception {
-                //schoolList = result;
                 schoolList.clear();
                 schoolList.add("Select school...");
                 for (String school : result) {
@@ -155,7 +150,7 @@ public class StudentEnrollment extends Fragment {
                 schoolAdapter.notifyDataSetChanged();
             }
         });
-
+/*  adding listener for school list and getting all record about school enrollment like year,smester etc   */
         school.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -189,11 +184,11 @@ public class StudentEnrollment extends Fragment {
 
             }
         });
-
+/* checking which school is selected and inserting selected schoolinto record and enabled there features   */
         year.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if(year.getSelectedItemPosition() == 0){
+                if (year.getSelectedItemPosition() == 0) {
                     return;
                 }
                 String selectedSchool = school.getSelectedItem().toString();
@@ -224,6 +219,8 @@ public class StudentEnrollment extends Fragment {
 
             }
         });
+ /*    again inserting selected record to list by convering them into repective types as list,
+          first get record with the help of methdods above defined  then store into list  */
 
         semester.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -254,7 +251,7 @@ public class StudentEnrollment extends Fragment {
 
             }
         });
-
+/* button making and adding event on button click   */
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -263,36 +260,12 @@ public class StudentEnrollment extends Fragment {
             }
         };
 
-        //refreshList();
-        /*((EditText) rootView.findViewById(R.id.classname_et)).setText("");
-        rootView.findViewById(R.id.classname_et).requestFocus();
-        ((EditText) rootView.findViewById(R.id.schoolname_et)).setText("");*/
-
     }
 
-    /*public void refreshList() throws JSONException {
-        final User user = TokenUtility.parseUserToken(getActivity());
-        final ClassAdapter classAdapter = new ClassAdapter();
-
-        classAdapter.professorClasses(user.getpKey(), new Callback<ArrayList<Class>>() {
-            @Override
-            public void onComplete(ArrayList<Class> result) throws Exception {
-                listItems.clear();
-                for (Class classItem : result) {
-                    listItems.add(
-                            classItem.getClass_name() + "-" +
-                                    classItem.getSemester() + "-" +
-                                    Integer.toString(classItem.getYear()) + "\n" +
-                                    classItem.getSchool());
-                }
-                adapter.notifyDataSetChanged();
-            }
-        });
-    }*/
-
-    public void buildTable(){
+    /* displaying above all recorded data in the form of table */
+    public void buildTable() {
         resetTable();
-
+        
         //Loops through the entire list of students
         for (final Class classItem : classList) {
             //Create a new table row
@@ -305,17 +278,16 @@ public class StudentEnrollment extends Fragment {
             c1.setText(classItem.getProfessor_name());
             final Button c2 = new Button(context);
             c2.setText("Enroll");
-            //c2.setEnabled(false);
-            if(classItem.isEnrolled()){
+            if (classItem.isEnrolled()) {
                 c2.setEnabled(false);
                 c2.setText("Enrolled");
             }
 
-            if (!isSemesterAvailable(classItem.getYear(), classItem.getSemester())){
+            if (!isSemesterAvailable(classItem.getYear(), classItem.getSemester())) {
                 c2.setEnabled(false);
                 c2.setText("View Only");
             }
-
+/*   adding events and listener on button click with the help of http codes and displaying error messages if there is any error  */
             c2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -324,11 +296,11 @@ public class StudentEnrollment extends Fragment {
                             @Override
                             public void onComplete(HttpResponse result) throws Exception {
                                 Log.d("EnrollDebug", "Enroll result" + result);
-                                if(result.getHttpCode() == 409){
+                                if (result.getHttpCode() == 409) {
                                     Toast.makeText(getActivity(), "Cant Enroll in the same class twice", Toast.LENGTH_LONG).show();
                                 } else if (result.getHttpCode() >= 400) {
                                     Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_LONG).show();
-                                } else{
+                                } else {
                                     Toast.makeText(getActivity(), "Enrollment was Successful ", Toast.LENGTH_LONG).show();
                                     c2.setEnabled(false);
                                     c2.setText("Enrolled");
@@ -350,8 +322,8 @@ public class StudentEnrollment extends Fragment {
         }
     }
 
-    private void resetTable(){
-        if (classTable == null){
+    private void resetTable() {
+        if (classTable == null) {
             return;
         }
 
@@ -363,7 +335,7 @@ public class StudentEnrollment extends Fragment {
             classTableHeader = new TableRow(context);
             //Set up the clickable functionality for the table row
             classTableHeader.setClickable(false);
-
+/*    designing of table settting attributes of table for userinterface . like paddding,background,foreground,textsize,textcolor etc   */
             TextView hClassName = new TextView(context);
             hClassName.setText("Class");
             TextView hProf = new TextView(context);
@@ -387,7 +359,7 @@ public class StudentEnrollment extends Fragment {
             hClassName.setTextSize(18);
             hProf.setTextSize(18);
             hEnrollStatus.setTextSize(18);
-
+/*   setting header of the table */
             classTableHeader.addView(hClassName, new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f));
             classTableHeader.addView(hProf, new TableRow.LayoutParams(1, TableRow.LayoutParams.WRAP_CONTENT, 1f));
             classTableHeader.addView(hEnrollStatus, new TableRow.LayoutParams(2, TableRow.LayoutParams.WRAP_CONTENT, 1f));
@@ -396,17 +368,17 @@ public class StudentEnrollment extends Fragment {
         classTable.addView(classTableHeader);
     }
 
-    private boolean isSemesterAvailable(int year, String semester){
+    private boolean isSemesterAvailable(int year, String semester) {
         Calendar cal = Calendar.getInstance();
         int currentYear = cal.get(Calendar.YEAR);
 
         // For example: class year 2014 < current year 2015
         // Semester is no longer available
-        if (year< currentYear){
+        if (year < currentYear) {
             return false;
         }
 
-        if (year == currentYear){
+        if (year == currentYear) {
 
             int monthInt = cal.get(Calendar.MONTH) + 1;
 
@@ -443,10 +415,8 @@ public class StudentEnrollment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private void launchFragment(Fragment f)
-    {
-        if(f != null)
-        {
+    private void launchFragment(Fragment f) {
+        if (f != null) {
             FragmentTransaction trans = getFragmentManager().beginTransaction();
             trans.replace(R.id.fragment_container, f).addToBackStack(null);
             trans.commit();
