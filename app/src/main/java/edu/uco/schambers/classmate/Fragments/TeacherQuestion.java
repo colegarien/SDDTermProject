@@ -146,6 +146,7 @@ public class TeacherQuestion extends Fragment {
             for (IQuestion q : TeacherQuestionService.answerList) {
                 answerList.add(q); //Portion for sending
             }
+            bundle.putSerializable("inputList",answerList);
         }
 
         //Finish packaging into bundle
