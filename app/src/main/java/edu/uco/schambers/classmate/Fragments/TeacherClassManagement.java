@@ -1,3 +1,29 @@
+/* Team 9Lives
+ *
+ * Author: Rayan Al-Hammami (Modified version of Student Attendance Module
+ *         with permission of Mossi Al-Obaid)
+ * Purpose:
+ *   UI backend for teacher attendance and class management
+ *   module.
+ * Edits:
+ *      11/25/2015 11:31 PM Rayan Al-Hammami*   Code Cleanup and Verification of Teacher Attendance Piechart Pulling Actual Data
+ *      11/1/2015 9:36 PM	Matt McHughes	clean up code
+        11/1/2015 9:30 PM	Matt McHughes	teacher class management only shows current schools teacher has added
+        10/27/2015 3:59 PM	Steven	make table layout correct for all devices
+        10/27/2015 3:36 PM	Rayan Al-Hammami*	Corrected Formatting in Class Management Table and Corrected Redundant Classes...
+        10/27/2015 1:40 PM	Steven	fix crash on entering class management
+        10/27/2015 1:24 PM	Rayan Al-Hammami*	Swapped Function Arguments for createClass in ClassAdapter and Tested...
+        10/27/2015 1:23 PM	Rayan Al-Hammami*	Added CSV Import for Schools in Class Management...
+        10/27/2015 10:18 AM	Matt McHughes	starting styles for 21+
+        10/25/2015 4:07 PM	nelalison	renamed my Database package to AdapterModels
+        10/12/2015 4:24 PM	nelalison	create class and update classList done
+        10/11/2015 8:39 PM	Rayan Al-Hammami*	Added Simple Input Validation to Class Management Interface...
+        10/11/2015 8:39 PM	ralhamami	Created Teacher Class Management Fragment and Edited TeacherInterface Launch Config...
+        10/11/2015 8:39 PM	Rayan Al-Hammami*	Created Teacher Class Management Fragment and Edited TeacherInterface Launch Config...
+        9/26/2015 3:51 PM	Steven	Refactor broadcast receiver into a background service....
+        9/14/2015 8:41 PM	Connor Archer	Connor Archer's Teacher Question Module up to date.Completes my Sprint 1 Requirements.
+        9/12/2015 2:52 PM	Steven	implement launching StudentResponseFragment through notifications...
+*/
 package edu.uco.schambers.classmate.Fragments;
 
 import edu.uco.schambers.classmate.Adapter.Callback;
@@ -15,11 +41,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TableLayout;
@@ -31,57 +55,42 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import edu.uco.schambers.classmate.AdapterModels.TokenUtility;
 import edu.uco.schambers.classmate.AdapterModels.User;
 import edu.uco.schambers.classmate.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TeacherClassManagement.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link TeacherClassManagement#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class TeacherClassManagement extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    //Will hold incoming arguments
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    //Will hold added classes
+    private ArrayList<String> listItems;
 
-    ListView addedClasses;
-    ArrayList<String> listItems;
-    ArrayAdapter<String> adapter;
-    ArrayAdapter<String> schooladapter;
-    private List<String> spinnerArray;
-    Button addButton;
-    Spinner semester;
-    Spinner year;
+    //Will act as adapter to the above list
+    private ArrayAdapter<String> adapter;
+
+    //Spinner to hold schools
+    private List<String> spinnerSchool;
+
+    //Will reference button and spinner controls
+    private Button addButton;
+    private Spinner semester;
+    private Spinner year;
     private Spinner schoolName;
-    ProgressBar pb;
+
+    //Animation
     private Animation errorBlink;
+
+    //Will reference shared preferences
     public SharedPreferences sp;
     public SharedPreferences.Editor editor;
     public static final String MyPREFS = "MyPREFS";
     public static final String MySCHOOL = "MySCHOOL";
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TeacherClassManagement.
-     */
-    // TODO: Rename and change types and number of parameters
     public static TeacherClassManagement newInstance(String param1, String param2) {
         TeacherClassManagement fragment = new TeacherClassManagement();
         Bundle args = new Bundle();
@@ -119,69 +128,54 @@ public class TeacherClassManagement extends Fragment {
     }
 
     private void initUI(final View rootView) throws JSONException {
-        //addedClasses = (ListView)rootView.findViewById(R.id.add_class_lst);
+        //Set up button and spinner references
         addButton = (Button)rootView.findViewById(R.id.add_class_btn);
         semester = (Spinner)rootView.findViewById(R.id.semester_sp);
         year = (Spinner)rootView.findViewById(R.id.year_sp);
+
+        //Initialize listItems
         listItems = new ArrayList<String>();
         String[] schoolArray = new String[25];
-        spinnerArray =  new ArrayList<String>();
+        spinnerSchool =  new ArrayList<String>();
         sp = getActivity().getSharedPreferences(MySCHOOL, Context.MODE_PRIVATE);
 
+        //Get the schools from shared preferences and store them within the schoolArray
         for(int i = 0; i < sp.getInt("SCHOOL_COUNT", 1); i++){
             schoolArray[i] = sp.getString("SCHOOL_ARRAY_" + i, null);
-            spinnerArray.add(schoolArray[i]);
-            Log.i("school array", sp.getString("SCHOOL_ARRAY_" + i, "not found"));
+            spinnerSchool.add(schoolArray[i]);
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinnerArray);
 
+        //Configure the school adapter
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinnerSchool);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         schoolName = (Spinner) rootView.findViewById(R.id.schoolname_sp);
         schoolName.setAdapter(adapter);
 
-
-//        adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, listItems);
-//        //addedClasses.setAdapter(adapter);
-//        Spinner stateName = (Spinner)rootView.findViewById(R.id.state_sp);
-//        stateName.setSelection(0);
-//        stateName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                Scanner scanner = new Scanner(getResources().openRawResource(R.raw.schools));
-//                List<String> list = new ArrayList<String>();
-//                while (scanner.hasNextLine()) {
-//                    String data = scanner.nextLine();
-//                    String[] values = data.split(",");
-//                    if (values[1].equals(parent.getSelectedItem().toString()))
-//                        list.add(values[0]);
-//                }
-//                schooladapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
-//                Spinner schoolName = (Spinner) rootView.findViewById(R.id.schoolname_sp);
-//                schoolName.setAdapter(schooladapter);
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//
-//            }
-//        });
-//        final Spinner schoolName = ((Spinner) rootView.findViewById(R.id.schoolname_sp));
+        //Get the current user's information
         final User user = TokenUtility.parseUserToken(getActivity());
+
+        //Set up a new ClassAdapter object to retrieve class info
         final ClassAdapter classAdapter = new ClassAdapter();
 
+        //Refresh the list
         refreshList();
+
+        //Set the classname edittext to "" and return focus to it
         ((EditText) rootView.findViewById(R.id.classname_et)).setText("");
         rootView.findViewById(R.id.classname_et).requestFocus();
 
+        //Add an onclicklistener to the add button
         addButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                 boolean valid = true;
-                EditText classNameTemp = ((EditText) rootView.findViewById(R.id.classname_et));
 
+                //Make all necessary references
+                EditText classNameTemp = ((EditText) rootView.findViewById(R.id.classname_et));
                 Spinner semester = (Spinner) rootView.findViewById((R.id.semester_sp));
                 Spinner year = (Spinner) rootView.findViewById((R.id.year_sp));
 
+                //Validate the user input data
                 if (classNameTemp.getText().toString().length() == 0) {
                     errorBlink = AnimationUtils.loadAnimation(getActivity(), R.anim.errorblink);
                     classNameTemp.startAnimation(errorBlink);
@@ -196,11 +190,14 @@ public class TeacherClassManagement extends Fragment {
                             .show();
                     valid = false;
                 }
+
+                //If the information is valid however, create the class in the DB through the
+                //class adapter object, and refresh the on-screen list
                 if (valid) {
-
                     try {
-
-                        classAdapter.createClass(user.getpKey(), classNameTemp.getText().toString(), schoolName.getSelectedItem().toString(), semester.getSelectedItem().toString(), Integer.parseInt(year.getSelectedItem().toString()), new Callback<Boolean>() {
+                        classAdapter.createClass(user.getpKey(), classNameTemp.getText().toString(),
+                                schoolName.getSelectedItem().toString(), semester.getSelectedItem().toString(),
+                                Integer.parseInt(year.getSelectedItem().toString()), new Callback<Boolean>() {
                                     @Override
                                     public void onComplete(Boolean isAdded) throws Exception {
                                         if (isAdded) {
@@ -217,29 +214,19 @@ public class TeacherClassManagement extends Fragment {
                         e.printStackTrace();
                         Toast.makeText(getActivity(), "Error creating new class", Toast.LENGTH_LONG).show();
                     }
-
-                    /*listItems.add(classNameTemp.getText() + "-" +
-                            semester.getSelectedItem() + "-" + year.getSelectedItem() + "\n" +
-                            schoolName.getText());
-                    adapter.notifyDataSetChanged();
-                    ((EditText) rootView.findViewById(R.id.classname_et)).setText("");
-                    rootView.findViewById(R.id.classname_et).requestFocus();
-                    ((EditText) rootView.findViewById(R.id.schoolname_et)).setText("");
-                    Toast.makeText(getActivity(), "Class Added!", Toast.LENGTH_LONG)
-                            .show();*/
                 }
-
-
             }
         });
-
-
     }
 
+    //Method for refreshing the list
     public void refreshList() throws JSONException {
+        //Get user info and set up a new ClassAdapter object
         final User user = TokenUtility.parseUserToken(getActivity());
         final ClassAdapter classAdapter = new ClassAdapter();
 
+        //Get this teacher's class information and populate
+        //the on-screen list
         classAdapter.professorClasses(user.getpKey(), new Callback<ArrayList<Class>>() {
             @Override
             public void onComplete(ArrayList<Class> result) throws Exception {
@@ -270,9 +257,9 @@ public class TeacherClassManagement extends Fragment {
                     tr.addView(c0, new TableRow.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, 1f));
                     tr.addView(c2, new TableRow.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, .5f));
                     tr.addView(c3, new TableRow.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, 1f));
+
                     //Add the row to the table
                     classTable.addView(tr);
-
                     listItems.add(
                             classItem.getClass_name() + "-" +
                                     classItem.getSemester() + "-" +
@@ -280,24 +267,12 @@ public class TeacherClassManagement extends Fragment {
                                     classItem.getSchool());
                 }
                 adapter.notifyDataSetChanged();
-
             }
         });
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
 }
