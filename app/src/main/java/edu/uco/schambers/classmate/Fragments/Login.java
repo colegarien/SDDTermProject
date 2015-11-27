@@ -88,7 +88,6 @@ public class Login extends Fragment {
 
     //user class
     public User user;
-    private DataRepo dr;
 
     /**
      * Use this factory method to create a new instance of
@@ -154,7 +153,6 @@ public class Login extends Fragment {
 
 
         user = new User();
-        dr = new DataRepo(getActivity());
         aa= new AuthAdapter(getActivity());
 
         cbVisibility();

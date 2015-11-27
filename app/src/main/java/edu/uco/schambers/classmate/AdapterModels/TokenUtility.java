@@ -7,6 +7,10 @@ import android.content.SharedPreferences;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Created by Nelson.
+ */
+
 public class TokenUtility {
 
     public static String getSharedPreferences(Activity activity) {

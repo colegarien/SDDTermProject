@@ -1,6 +1,8 @@
 package edu.uco.schambers.classmate.AdapterModels;
 
-import java.util.Date;
+/**
+ * Created by Nelson.
+ */
 
 public class StudentAbsenceByClass {
     private String rollCall;

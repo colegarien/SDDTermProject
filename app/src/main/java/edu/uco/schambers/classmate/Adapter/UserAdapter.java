@@ -7,9 +7,14 @@ import java.io.IOException;
 
 import edu.uco.schambers.classmate.AdapterModels.User;
 
+/**
+ * Created by Nelson.
+ */
+
 public class UserAdapter {
     private final static String Url = "http://classmateapi.azurewebsites.net/api/";
 
+    //create user account for student or professor
     public void createUser(User user, final Callback<HttpResponse> callback) throws JSONException, IOException {
         JSONObject json = new JSONObject();
 
@@ -31,6 +36,7 @@ public class UserAdapter {
         call.execute(new ServiceCall(Url + "Users", "POST", json.toString()));
     }
 
+    //change user password when only when logged in
     public void changePass(String email, String oldPass, String newPass, final Callback<HttpResponse> callback) throws JSONException, IOException {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
             @Override

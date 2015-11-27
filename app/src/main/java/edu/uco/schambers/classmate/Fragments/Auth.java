@@ -26,7 +26,6 @@ import java.io.IOException;
 import edu.uco.schambers.classmate.Adapter.AuthAdapter;
 import edu.uco.schambers.classmate.Adapter.Callback;
 import edu.uco.schambers.classmate.Adapter.HttpResponse;
-import edu.uco.schambers.classmate.AdapterModels.DataRepo;
 import edu.uco.schambers.classmate.AdapterModels.TokenUtility;
 import edu.uco.schambers.classmate.AdapterModels.User;
 import edu.uco.schambers.classmate.R;
@@ -60,7 +59,6 @@ public class Auth extends Fragment {
     public SharedPreferences sp;
     public SharedPreferences.Editor editor;
     public static final String MyPREFS = "MyPREFS";
-    private DataRepo dr;
     public User user;
     private String token;
     Fragment context = this;
@@ -139,7 +137,6 @@ public class Auth extends Fragment {
         signin = (Button) rootView.findViewById(R.id.sign_in_btn);
         signup = (TextView)  rootView.findViewById(R.id.signup_lbl);
         resetLink = (TextView) rootView.findViewById(R.id.reset_pw_lbl);
-        dr = new DataRepo(getActivity());
         sp = getActivity().getSharedPreferences(MyPREFS, Context.MODE_PRIVATE);
 
         if(sp.contains("AUTH_TOKEN") && (!sp.getString("AUTH_TOKEN", "").equals(""))) {

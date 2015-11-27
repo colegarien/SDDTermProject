@@ -80,7 +80,6 @@ public class TeacherRollCall extends Fragment {
     public SharedPreferences sp;
     public static final String MyPREFS = "MyPREFS";
     public String user_key;
-    private DataRepo dr;
     public User user;
     private String token;
 

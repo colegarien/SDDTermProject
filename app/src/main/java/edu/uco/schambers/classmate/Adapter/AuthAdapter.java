@@ -9,7 +9,7 @@ import org.json.JSONException;
 import java.io.IOException;
 
 /**
- * Created by calitova on 9/22/2015.
+ * Created by Nelson on 9/22/2015.
  */
 public class AuthAdapter {
     private final static String Url = "http://classmateapi.azurewebsites.net/api/authenticate";
@@ -24,7 +24,8 @@ public class AuthAdapter {
         this.activity = activity;
     }
 
-    public void authenticate(String email, String password, final Callback<HttpResponse> callback) throws JSONException, IOException {
+    //validate user then generate token
+    public static void authenticate(String email, String password, final Callback<HttpResponse> callback) throws JSONException, IOException {
 
 
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {

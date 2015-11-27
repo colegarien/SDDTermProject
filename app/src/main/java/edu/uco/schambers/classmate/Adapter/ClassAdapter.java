@@ -11,10 +11,15 @@ import java.util.ArrayList;
 import edu.uco.schambers.classmate.AdapterModels.*;
 import edu.uco.schambers.classmate.AdapterModels.Class;
 
+/**
+ * Created by Nelson.
+ */
+
 public class ClassAdapter {
     private final static String Url = "http://classmateapi.azurewebsites.net/api/";
 
-    public void createClass(int professorId, String className, String school, String semester, int year, final Callback<Boolean> callback) throws JSONException {
+    //create professor class
+    public static void createClass(int professorId, String className, String school, String semester, int year, final Callback<Boolean> callback) throws JSONException {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
 
             @Override
@@ -36,7 +41,8 @@ public class ClassAdapter {
         call.execute(new ServiceCall(Url + "classes/", "POST", jsonObject.toString()));
     }
 
-    public void professorClasses(int professorId, final Callback<ArrayList<Class>> callback) {
+    //Get all professor classes based on id
+    public static void professorClasses(int professorId, final Callback<ArrayList<Class>> callback) {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
             @Override
             public void onComplete(HttpResponse response) throws Exception {
@@ -65,7 +71,8 @@ public class ClassAdapter {
         call.execute(new ServiceCall(Url + "professorclasses/" + professorId, "GET", ""));
     }
 
-    public void professorClasses(int professorId, String semester, int year, final Callback<ArrayList<Class>> callback) {
+    //Get a professor class based on his Id, Semester, and Year
+    public static void professorClasses(int professorId, String semester, int year, final Callback<ArrayList<Class>> callback) {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
             @Override
             public void onComplete(HttpResponse response) throws Exception {
@@ -94,7 +101,8 @@ public class ClassAdapter {
         call.execute(new ServiceCall(Url + "professorclasses/" + professorId + "/" + semester + "/" + year, "GET", ""));
     }
 
-    public void studentAbsences(int classId, final Callback<ArrayList<AbsenceByClass>> callback) {
+    //Get all student absences for a particular class
+    public static void studentAbsences(int classId, final Callback<ArrayList<AbsenceByClass>> callback) {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
             @Override
             public void onComplete(HttpResponse response) throws Exception {

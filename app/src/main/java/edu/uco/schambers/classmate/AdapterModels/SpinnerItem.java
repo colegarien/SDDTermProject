@@ -1,7 +1,7 @@
 package edu.uco.schambers.classmate.AdapterModels;
 
 /**
- * Created by calitova on 10/12/2015.
+ * Created by Nelson on 10/12/2015.
  */
 public class SpinnerItem {
     private String spinnerText;

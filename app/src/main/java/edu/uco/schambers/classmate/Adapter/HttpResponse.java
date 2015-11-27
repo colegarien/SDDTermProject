@@ -1,5 +1,9 @@
 package edu.uco.schambers.classmate.Adapter;
 
+/**
+ * Created by Nelson.
+ */
+
 public class HttpResponse {
     private String response;
     private int httpCode;

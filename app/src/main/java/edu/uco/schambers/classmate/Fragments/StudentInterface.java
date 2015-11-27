@@ -149,7 +149,7 @@ public class StudentInterface extends Fragment {
         currentClasses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment f = StudentDropClasses.newInstance();
+                Fragment f = StudentCurrentClasses.newInstance();
                 launchFragment(f);
 
             }

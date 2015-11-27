@@ -13,10 +13,15 @@ import java.util.ArrayList;
 import edu.uco.schambers.classmate.AdapterModels.Class;
 import edu.uco.schambers.classmate.AdapterModels.StudentByClass;
 
+/**
+ * Created by Nelson.
+ */
+
 public class EnrollmentAdapter {
     private final static String Url = "http://classmateapi.azurewebsites.net/api/";
 
-    public void getSchools(final Callback<ArrayList<String>> callback) {
+    //Getting a list of schools
+    public static void getSchools(final Callback<ArrayList<String>> callback) {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
             @Override
             public void onComplete(HttpResponse response) throws Exception {
@@ -38,7 +43,8 @@ public class EnrollmentAdapter {
         call.execute(new ServiceCall(Url + "schools", "GET", ""));
     }
 
-    public void getYears(String school, final Callback<ArrayList<String>> callback) throws UnsupportedEncodingException {
+    //Getting a list of years based on a particular school
+    public static void getYears(String school, final Callback<ArrayList<String>> callback) throws UnsupportedEncodingException {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
             @Override
             public void onComplete(HttpResponse response) throws Exception {
@@ -62,7 +68,8 @@ public class EnrollmentAdapter {
         call.execute(new ServiceCall(url, "GET", ""));
     }
 
-    public void getSemesters(String school, String year, final Callback<ArrayList<String>> callback) throws UnsupportedEncodingException {
+    //Getting a list of Semesters based on a particular Year
+    public static void getSemesters(String school, String year, final Callback<ArrayList<String>> callback) throws UnsupportedEncodingException {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
             @Override
             public void onComplete(HttpResponse response) throws Exception {
@@ -84,6 +91,7 @@ public class EnrollmentAdapter {
         call.execute(new ServiceCall(Url + "semesters/" + URLEncoder.encode(school, "UTF-8").replace("+", "%20") + "/" + year, "GET", ""));
     }
 
+    //Get current student enrolled classes
     public static void getEnrolledClasses(int userId, boolean showOld, final Callback<ArrayList<Class>> callback) throws UnsupportedEncodingException {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
             @Override
@@ -112,7 +120,8 @@ public class EnrollmentAdapter {
         call.execute(new ServiceCall(Url + "Enrollments/" + userId + "/" + (showOld ? "1" : "0"), "GET", ""));
     }
 
-    public void getClasses(String school, final String year, final String semester, int userId, final Callback<ArrayList<Class>> callback) throws UnsupportedEncodingException {
+    //Get all classes based on school, year, semester, and user_Id to check if student IsEnrolled
+    public static void getClasses(String school, final String year, final String semester, int userId, final Callback<ArrayList<Class>> callback) throws UnsupportedEncodingException {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
             @Override
             public void onComplete(HttpResponse response) throws Exception {
@@ -143,6 +152,7 @@ public class EnrollmentAdapter {
         call.execute(new ServiceCall(Url + "classes/" + URLEncoder.encode(school, "UTF-8").replace("+", "%20") + "/" + year + "/" + semester + "/" + userId, "GET", ""));
     }
 
+    //Enroll student in a class
     public void classEnroll(int user_id, int class_id, final Callback<HttpResponse> callback) throws JSONException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("Class_Id", class_id);
@@ -158,6 +168,7 @@ public class EnrollmentAdapter {
         call.execute(new ServiceCall(Url + "Enrollments/", "POST", jsonObject.toString()));
     }
 
+    //delete a class enrollment entry
     public void dropClass(int class_id, int user_id, final Callback<HttpResponse> callback) throws JSONException {
 
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
@@ -171,6 +182,7 @@ public class EnrollmentAdapter {
         call.execute(new ServiceCall(Url + "Dropclass/" + class_id + "/" + user_id + "/", "DELETE", ""));
     }
 
+    //Get every student in a particular class
     public void getStudentsByClass(int class_id, final Callback<ArrayList<StudentByClass>> callback) throws JSONException {
         ServiceHandlerAsync call = new ServiceHandlerAsync(new Callback<HttpResponse>() {
 
