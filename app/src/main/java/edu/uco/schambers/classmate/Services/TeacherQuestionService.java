@@ -1,3 +1,15 @@
+/**
+ * Team 9Lives
+ * <p/>
+ * Author: Connor Archer
+ * Purpose:
+ * Back end for the Teacher side of the question/answer feature. Controls sending questions
+ * to connected student devices and facilitates communication with the StudentQuestionService
+ * and the TeacherQuestion fragment.
+ * <p/>
+ * Edit: 11/25/2015
+ * Cleaned up code, removing some redundant sections and adding relevant missing comments.
+ */
 package edu.uco.schambers.classmate.Services;
 
 import android.app.Notification;
@@ -12,30 +24,30 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 
 import edu.uco.schambers.classmate.Activites.MainActivity;
-import edu.uco.schambers.classmate.Fragments.StudentResponseFragment;
 import edu.uco.schambers.classmate.Fragments.TeacherQuestion;
 import edu.uco.schambers.classmate.ListenerInterfaces.OnQuestionReceivedListener;
-import edu.uco.schambers.classmate.Models.Questions.DefaultMultiChoiceQuestion;
 import edu.uco.schambers.classmate.Models.Questions.DefaultUnanswerdQuestion;
 import edu.uco.schambers.classmate.Models.Questions.IQuestion;
 import edu.uco.schambers.classmate.ObservableManagers.IPAddressManager;
 import edu.uco.schambers.classmate.R;
 import edu.uco.schambers.classmate.SocketActions.SocketAction;
-import edu.uco.schambers.classmate.SocketActions.StudentReceiveQuestionsAction;
-import edu.uco.schambers.classmate.SocketActions.StudentSendQuestionAction;
 import edu.uco.schambers.classmate.SocketActions.TeacherReceiveQuestionsAction;
 import edu.uco.schambers.classmate.SocketActions.TeacherSendQuestionAction;
 
+/**
+ * TeacherQuestionService class a business object for handling and relegating actions received
+ * from the TeacherQuestion fragment boundary object and the neighboring StudentQuestionService
+ * from the student devices.
+ */
 public class TeacherQuestionService extends Service implements OnQuestionReceivedListener {
     public static final String ACTION_NOTIFY_QUESTION_RECEIVED = "edu.uco.schambers.classmate.Services.TeacherQuestionService.ACTION_NOTIFY_QUESTION_RECEIVED";
-    public static final String ACTION_REQUEST_QUESTION_RESPONSE = "edu.uco.schambers.classmate.Services.TeacherQuestionService.ACTION_REQUEST_QUESTION_RESPONSE";
     public static final String ACTION_SEND_QUESTION_RESPONSE = "edu.uco.schambers.classmate.Services.TeacherQuestionService.ACTION_SEND_QUESTION_RESPONSE";
-
     public static final String ACTION_CALL_TIME = "edu.uco.schambers.classmate.Services.TeacherQuestionService.ACTION_CALL_TIME";
+
+    public static final String ACTION_REQUEST_QUESTION_RESPONSE = "edu.uco.schambers.classmate.Services.TeacherQuestionService.ACTION_REQUEST_QUESTION_RESPONSE";
 
     private SocketAction listenForQuestions;
     public static ArrayList<IQuestion> answerList;
@@ -123,7 +135,7 @@ public class TeacherQuestionService extends Service implements OnQuestionReceive
     }
 
     private void sendQuestionResponse(IQuestion question) {
-        //Todo CARCHER TQS.sendQuestionResponse() -> SocketAction StudentSQA
+        //CARCHER TQS.sendQuestionResponse() -> SocketAction StudentSQA
         SocketAction sendQuestion = new TeacherSendQuestionAction(question, this);
         sendQuestion.execute();
     }
@@ -133,7 +145,7 @@ public class TeacherQuestionService extends Service implements OnQuestionReceive
     }
 
 
-    //NOT SURE IF THIS EVEN WORKS GIVEN CHANGES, WILL BE REWORKING IT OR POSSIBLY JUST REMOVING IT
+    //Notifies that an answer was recieved
     private void notifyQuestionReceived(IQuestion question) {
         NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
@@ -187,7 +199,7 @@ public class TeacherQuestionService extends Service implements OnQuestionReceive
     public void onQuestionSentSuccessfully(String domain, int port) {
         final String domainFinal = domain;
         final int portFinal = port;
-        //Yes, I know this is totally awful. Its not going to stay this way, I swear. Just want these toasts to fire for debug purposes.
+        //Debugging purposes
         handler.post(new Runnable()
         {
             @Override
