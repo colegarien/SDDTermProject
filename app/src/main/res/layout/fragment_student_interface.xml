@@ -16,40 +16,46 @@
             android:layout_height="wrap_content"
             android:text="@string/roll"
             android:id="@+id/stu_roll_btn"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/stu_attendance_btn"
             android:layout_gravity="center_horizontal"
-            android:text="@string/attendance" />
+            android:text="@string/attendance"
+            android:layout_marginTop="10dp" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/response"
             android:id="@+id/stu_response_btn"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/user_enrollment"
             android:id="@+id/user_enroll"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp" />
 
         <Button
             android:id="@+id/drop_classes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Current Classes" />
+            android:text="Current Classes"
+            android:layout_marginTop="10dp" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/user_btn"
             android:id="@+id/user_info_btn"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp" />
     </LinearLayout>
 </FrameLayout>

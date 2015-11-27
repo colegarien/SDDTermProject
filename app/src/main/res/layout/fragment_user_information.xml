@@ -25,7 +25,8 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/user_info_name"
             android:id="@+id/ui_name_lbl"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -41,7 +42,8 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/ui_school_lbl"
             android:id="@+id/ui_school_lbl"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp" />
 
         <Spinner
             android:layout_width="match_parent"
@@ -57,7 +59,8 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/user_info_email"
             android:id="@+id/ui_email_lbl"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -73,7 +76,8 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/user_info_id"
             android:id="@+id/ui_id_lbl"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -111,7 +115,8 @@
             android:layout_height="wrap_content"
             android:text="@string/add_class_btn"
             android:id="@+id/addClass_btn"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp" />
 
         <EditText
             android:layout_width="match_parent"
@@ -149,7 +154,8 @@
             android:text="@string/change_pw"
             android:id="@+id/change_pw_cb"
             android:layout_gravity="center_horizontal"
-            android:checked="false" />
+            android:checked="false"
+            android:layout_marginTop="50dp" />
 
         <Button
             android:layout_width="wrap_content"
@@ -164,7 +170,8 @@
             android:layout_height="wrap_content"
             android:text="@string/cancel_pw"
             android:id="@+id/cancel_btn"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp" />
 
 
     </LinearLayout>
