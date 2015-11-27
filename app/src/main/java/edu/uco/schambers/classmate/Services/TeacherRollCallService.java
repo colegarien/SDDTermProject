@@ -5,8 +5,8 @@
  *   Background Service for managing the classroom session
  *   Main function is to monitor Students attendance during class
  *
- * Edit: 10/12/2015
- *   Updated onStudentConnect method to gather student IP
+ * Edit: 11/19/2015
+ *   Refactoring so the service holds student attendance information
  *
  */
 
@@ -48,24 +48,23 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
 
     Handler handler;
 
-    // TODO: change to Teacher object
     String currentTeacher = "";
     String student_pk = "";
 
-    // TODO: change to special Student Adapter
+    // keeps track of student primary keys
     private ArrayList<String> studentInfo = new ArrayList<String>();
+    // attendance records for each student
     private ArrayList<Attendance> studentAttendance = new ArrayList<Attendance>();
+    // student records gotten from database
     private ArrayList<StudentByClass> studentByClass = new ArrayList<StudentByClass>();
 
     public TeacherRollCallService() {
     }
 
-    // TODO: use Teacher object (check for person responsible, may do myself)
     public static Intent getNewStartSessionIntent(Context context, String teacherName){
         Intent startSessionIntent = getBaseIntent(context);
         startSessionIntent.setAction(ACTION_START_ROLL_CALL_SESSION);
         Bundle bundle = new Bundle();
-        // TODO: as mentioned above, this will be changed to teacher object
         bundle.putSerializable(TeacherRollCall.ARG_TEACHER, teacherName);
         startSessionIntent.putExtras(bundle);
         return startSessionIntent;
@@ -98,12 +97,10 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
             switch (action) {
                 case ACTION_END_ROLL_CALL_SESSION:
                     ((TeacherRollCallAction) listenForStudents).stopListening();
-                    // TODO: submit attendance to database
                     Toast.makeText(getApplicationContext(), "Class Session Closed", Toast.LENGTH_LONG).show();
                     stopSelf();
                     break;
                 case ACTION_START_ROLL_CALL_SESSION:
-                    // TODO: change to Teacher object
                     currentTeacher = (String) intent.getExtras().getSerializable(TeacherRollCall.ARG_TEACHER);
                     Toast.makeText(getApplicationContext(), "Class Session Started", Toast.LENGTH_LONG).show();
                     break;
@@ -117,7 +114,7 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
         return locBinder;
     }
 
-    // for bound fragments
+    // Functionality available to bound fragments
     public ArrayList<String> getStudentInfo(){
         return studentInfo;
     }
@@ -132,6 +129,7 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
         Log.d("TeacherRollCallService", "Enroll ID: "+a.getEnrollmentId());
     }
     public void addStudent(StudentByClass s){
+        // verify that the student has not connected to the class session
         boolean inClassAlready = false;
         for (StudentByClass stu : studentByClass) {
             if (stu.getId() == s.getId()){
@@ -139,6 +137,7 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
                 break;
             }
         }
+        // if the student has not checked in yet
         if(!inClassAlready) {
             studentByClass.add(s);
             Log.d("TeacherRollCallService","Student Added: "+s.getName());
@@ -155,7 +154,8 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
     public void onStudentConnect(String pk, InetAddress ip) {
         Log.d("StudentConnect", "Connected PK: " + pk);
         student_pk = pk;
-        // student already in
+
+        // verify that the student has not connected already
         boolean studentInAlready = false;
         for(String cur_pk : studentInfo){
             if(cur_pk==pk){
@@ -163,12 +163,12 @@ public class TeacherRollCallService extends Service implements OnStudentConnectL
                 break;
             }
         }
+        // if the student has yet to connect
         if(!studentInAlready) {
             studentInfo.add(student_pk);
 
-            // notify student attendance observers
+            // notify student attendance observers (i.e. TeacherRollCall fragment)
             StudentAttendanceObservable.getInstance().directNotifyObservers(studentInfo);
-
             if (ip != null) {
                 IPAddressManager.getInstance().addStudentAddress(ip);
                 Log.d("StudentConnect", "IP Added: " + ip.toString());

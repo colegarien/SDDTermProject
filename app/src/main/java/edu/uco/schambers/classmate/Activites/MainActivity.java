@@ -157,7 +157,12 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         //todo
     }
 
-    // For Adding Local WIFI P2P Services
+    // Author: Cole Garien
+    // Purpose: For Adding Local WIFI P2P Services
+    // Params: port='port number to broadcast related to roll call socket';
+    //         buddyName='teacher's name';
+    //         className='the name of the class';
+    //         isTeacher='is the service being broadcast by a teacher';
     public void addLocalService(int port, String buddyName, String className, boolean isTeacher){
         //  Create a string map containing information about your service.
         Map<String, String> record = new HashMap<>();
@@ -301,7 +306,12 @@ public class MainActivity extends Activity implements StudentResponseFragment.On
         return errorMessage;
     }
 
-    // used for removing a local service
+    // Author: Cole Garien
+    // Purpose: used for removing a local P2P services
+    // Params: port='port number to broadcast related to roll call socket';
+    //         buddyName='teacher's name';
+    //         className='the name of the class';
+    //         isTeacher='is the service being broadcast by a teacher';
     public void removeLocalService(int port, String buddyName, String className, boolean isTeacher){
         //  Create a string map containing information about your service.
         Map<String, String> record = new HashMap<String, String>();
