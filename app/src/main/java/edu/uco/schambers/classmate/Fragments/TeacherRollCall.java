@@ -2,12 +2,13 @@
  *
  * Author: Cole Garien
  * Purpose:
- *   UI backend for teacher roll call module, used for starting and
- *   stopping the Roll Call Wifi P2P service
+ *   UI frontend for teacher roll call module, used for starting and
+ *   stopping the Roll Call Wifi P2P service along with tracking the
+ *   students' attendance as they check in
  *
- * Edit: 10/9/2015
- *   converted class name over to a Spinner and
- *     checked-in students details are gather from the database
+ * Edit: 11/22/2015
+ *   Added functionality for tracking attendance
+ *   Added interaction with cloud adapter for saving attednace
  *
  */
 
@@ -25,8 +26,6 @@ import android.app.Fragment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +33,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -43,7 +41,6 @@ import android.widget.Toast;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Observable;
@@ -99,7 +96,6 @@ public class TeacherRollCall extends Fragment {
     private Observer attendanceObserver;
     private ArrayAdapter<String> listAdapter;
 
-    // TODO: Get Class Name from DB/Dropdown Box
     public static TeacherRollCall newInstance() {
         TeacherRollCall fragment = new TeacherRollCall();
         Bundle args = new Bundle();
@@ -117,26 +113,28 @@ public class TeacherRollCall extends Fragment {
         if (getArguments() != null) {
         }
 
+        // Observer that creates an attendance record for a student
+        //   as they check into the calls session
         attendanceObserver = new Observer() {
             @Override
             public void update(Observable observable, Object data) {
                 if (data != null) {
                     // current student PK's
                     ArrayList<String> student_pks = (ArrayList<String>) data;
-                    // add student that need to be added
-                    //student_info.clear();
+                    // add students that need to be added
                     for (String pk : student_pks){
                         for (StudentByClass stu : studentByClass){
                             if ((""+stu.getId()).equals(pk)) {
-                                //student_info.add(stu);
                                 teacherRollCallService.addStudent(stu);
                             }
                         }
                     }
 
+                    // Modifications to UI must be done on the main thread
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
+                            // refresh the list adapter with currently checked-in students
                             listAdapter.clear();
                             for (StudentByClass stu : teacherRollCallService.getStudentByClass()) {
                                 listAdapter.add(stu.getName());
@@ -224,6 +222,7 @@ public class TeacherRollCall extends Fragment {
         final ArrayAdapter<SpinnerItem> dropAdapter = new ArrayAdapter<SpinnerItem>(
                 getActivity(), android.R.layout.simple_spinner_item, spinnerArray);
         dropAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Drop Box contents loaded from the cloud database
         classAdapter.professorClasses(user.getpKey(), new Callback<ArrayList<edu.uco.schambers.classmate.AdapterModels.Class>>() {
             @Override
             public void onComplete(ArrayList<Class> result) throws Exception {
@@ -294,7 +293,7 @@ public class TeacherRollCall extends Fragment {
                             attendanceAdapter.takeRollCall(Integer.parseInt(((SpinnerItem) classSpinner.getSelectedItem()).getValue()), new Date(),new Callback<HttpResponse>() {
                                 @Override
                                 public void onComplete(HttpResponse result) throws Exception {
-                                    //TODO: handle http response
+                                    //logging HTTP responses
                                     Log.d("TakeRollCall", "HttpResponse: "+result.getResponse());
                                     Log.d("TakeRollCall", "HttpResponse Code: "+result.getHttpCode());
                                 }
@@ -334,7 +333,7 @@ public class TeacherRollCall extends Fragment {
                         attendanceAdapter.saveAttendance(teacherRollCallService.getStudentAttendance(),new Callback<HttpResponse>() {
                             @Override
                             public void onComplete(HttpResponse result) throws Exception {
-                                //TODO: handle http response
+                                //log HTTP responses
                                 Log.d("SaveAttendance", "HttpResponse: "+result.getResponse());
                                 Log.d("SaveAttendance", "HttpResponse Code: "+result.getHttpCode());
                             }
@@ -347,7 +346,6 @@ public class TeacherRollCall extends Fragment {
         });
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
