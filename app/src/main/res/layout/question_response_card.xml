@@ -52,6 +52,8 @@
                 android:layout_below="@+id/radio_response_group"
                 android:layout_alignParentEnd="true"
                 style="?android:borderlessButtonStyle"
+                android:textColor="#1565C0"
+                android:textStyle="bold"
                 />
 
 

@@ -34,6 +34,8 @@
                 android:layout_below="@id/propose_card_question_text"
                 android:layout_alignParentEnd="true"
                 style="?android:borderlessButtonStyle"
+                android:textColor="#1565C0"
+                android:textStyle="bold"
                 />
 
 
